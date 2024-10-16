@@ -12,15 +12,14 @@ function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Re
     return PlotErrorBars(label_id, promote(x, y, neg, pos), count, offset, stride)
 end
 
-function PlotErrorBars(x::AbstractArray{T}, y::AbstractArray{T}, error::AbstractArray{T};
-                       label_id::String="",
+function PlotErrorBars(label_id, x::AbstractArray{T}, y::AbstractArray{T}, error::AbstractArray{T};
                        count::Integer=min(length(x), length(y), length(error)),
                        offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
     return PlotErrorBars(label_id, x, y, error, count, offset, stride * sizeof(T))
 end
 
-function PlotErrorBars(x::AbstractArray{T}, y::AbstractArray{T}, negative::AbstractArray{T},
-                       positive::AbstractArray{T}; label_id::String="",
+function PlotErrorBars(label_id, x::AbstractArray{T}, y::AbstractArray{T}, negative::AbstractArray{T},
+                       positive::AbstractArray{T};
                        count::Integer=min(length(x), length(y), length(negative),
                                           length(positive)), offset::Integer=0,
                        stride::Integer=1) where {T<:ImPlotData}
@@ -28,14 +27,14 @@ function PlotErrorBars(x::AbstractArray{T}, y::AbstractArray{T}, negative::Abstr
                          stride * sizeof(T))
 end
 
-function PlotErrorBars(x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
+function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
                        error::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBars(promote(x, y, error)...; kwargs...)
+    return PlotErrorBars(label_id, promote(x, y, error)...; kwargs...)
 end
 
-function PlotErrorBars(x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
+function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
                        neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBars(promote(x, y, pos, neg)...; kwargs...)
+    return PlotErrorBars(label_id, promote(x, y, pos, neg)...; kwargs...)
 end
 
 # Horizontal Error bars
@@ -50,16 +49,14 @@ function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:R
     return PlotErrorBarsH(label_id, promote(x, y, neg, pos), count, offset, stride)
 end
 
-function PlotErrorBarsH(x::AbstractArray{T}, y::AbstractArray{T}, error::AbstractArray{T};
-                        label_id::String="",
+function PlotErrorBarsH(label_id, x::AbstractArray{T}, y::AbstractArray{T}, error::AbstractArray{T};
                         count::Integer=min(length(x), length(y), length(error)),
                         offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
     return PlotErrorBarsH(label_id, x, y, error, count, offset, stride * sizeof(T))
 end
 
-function PlotErrorBarsH(x::AbstractArray{T}, y::AbstractArray{T},
+function PlotErrorBarsH(label_id, x::AbstractArray{T}, y::AbstractArray{T},
                         negative::AbstractArray{T}, positive::AbstractArray{T};
-                        label_id::String="",
                         count::Integer=min(length(x), length(y), length(negative),
                                            length(positive)), offset::Integer=0,
                         stride::Integer=1) where {T<:ImPlotData}
@@ -67,12 +64,12 @@ function PlotErrorBarsH(x::AbstractArray{T}, y::AbstractArray{T},
                           stride * sizeof(T))
 end
 
-function PlotErrorBarsH(x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
+function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
                         error::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBarsH(promote(x, y, error)...; kwargs...)
+    return PlotErrorBarsH(label_id, promote(x, y, error)...; kwargs...)
 end
 
-function PlotErrorBarsH(x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
+function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
                         neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBarsH(promote(x, y, pos, neg)...; kwargs...)
+    return PlotErrorBarsH(label_id, promote(x, y, pos, neg)...; kwargs...)
 end

@@ -3,33 +3,33 @@ function PlotLine(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}, 
     return PlotLine(label_id, promote(x, y)..., args...)
 end
 
-function PlotLine(x::AbstractArray{T}, y::AbstractArray{T};
+function PlotLine(label_id, x::AbstractArray{T}, y::AbstractArray{T};
                   count::Integer=min(length(x), length(y)), offset::Integer=0,
-                  stride::Integer=1, label_id::String="") where {T<:ImPlotData}
+                  stride::Integer=1) where {T<:ImPlotData}
     return PlotLine(label_id, x, y, count, ImPlotLineFlags_None, offset, stride * sizeof(T))
 end
 
-function PlotLine(x::AbstractArray{T1}, y::AbstractArray{T2};
+function PlotLine(label_id, x::AbstractArray{T1}, y::AbstractArray{T2};
                   kwargs...) where {T1<:Real,T2<:Real}
-    return PlotLine(promote(x, y)...; kwargs...)
+    return PlotLine(label_id, promote(x, y)...; kwargs...)
 end
 
-function PlotLine(y::AbstractArray{T}; label_id::String="", count::Integer=length(y),
+function PlotLine(label_id, y::AbstractArray{T}; count::Integer=length(y),
                   xscale::Real=1.0, x0::Real=0.0, offset::Integer=0,
                   stride::Integer=1) where {T<:ImPlotData}
     return PlotLine(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
 end
 
-function PlotLine(x::UnitRange{<:Integer}, y::AbstractArray{T}; xscale::Real=1.0,
-                  x0::Real=0.0, label_id::String="") where {T<:ImPlotData}
+function PlotLine(label_id, x::UnitRange{<:Integer}, y::AbstractArray{T}; xscale::Real=1.0,
+                  x0::Real=0.0) where {T<:ImPlotData}
     count::Cint = length(x) <= length(y) ? length(x) : throw("Range out of bounds")
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
     stride::Cint = sizeof(T)
     return PlotLine(label_id, y, count, xscale, x0, offset, stride)
 end
 
-function PlotLine(x::StepRange, y::AbstractArray{T}; xscale::Real=1.0, x0::Real=0.0,
-                  label_id::String="") where {T<:ImPlotData}
+function PlotLine(label_id, x::StepRange, y::AbstractArray{T};
+                  xscale::Real=1.0, x0::Real=0.0) where {T<:ImPlotData}
     x.stop < 1 && throw("Range out of bounds")
     count::Cint = length(x) <= length(y) ? length(x) : throw("Range out of bounds")
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
@@ -38,9 +38,9 @@ function PlotLine(x::StepRange, y::AbstractArray{T}; xscale::Real=1.0, x0::Real=
 end
 
 # xfield, yfield should be propertynames of eltype(structvec)
-function PlotLine(structvec::Vector{T}, xfield::Symbol, yfield::Symbol;
+function PlotLine(label_id, structvec::Vector{T}, xfield::Symbol, yfield::Symbol;
                   count::Integer=length(structvec), offset::Integer=0, stride::Integer=1,
-                  label_id::String="") where {T}
+                  ) where {T}
     Tx = fieldtype(T, xfield)
     Ty = fieldtype(T, yfield)
     x_offset = fieldoffset(T, Base.fieldindex(T, xfield))

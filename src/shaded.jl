@@ -10,49 +10,48 @@ function PlotShaded(label_id, x::AbstractArray{<:Real}, y1::AbstractArray{<:Real
     return PlotShaded(label_id, promote(x, y1, y2)..., args...)
 end
 
-function PlotShaded(x::AbstractArray{T}, y1::AbstractArray{T}, y2::AbstractArray{T};
-                    label_id::String="",
+function PlotShaded(label_id, x::AbstractArray{T}, y1::AbstractArray{T}, y2::AbstractArray{T};
                     count::Integer=min(length(x), length(y2), length(y2)),
                     offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
     return PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
 end
 
-function PlotShaded(x::AbstractArray{T1}, y1::AbstractArray{T2}, y2::AbstractArray{T3};
+function PlotShaded(label_id, x::AbstractArray{T1}, y1::AbstractArray{T2}, y2::AbstractArray{T3};
                     kwargs...) where {T1<:Real,T2<:Real,T3<:Real}
-    return PlotShaded(promote(x, y1, y2)...; kwargs...)
+    return PlotShaded(label_id, promote(x, y1, y2)...; kwargs...)
 end
 
-function PlotShaded(x::AbstractArray{T}, y::AbstractArray{T}, y_ref::T;
+function PlotShaded(label_id, x::AbstractArray{T}, y::AbstractArray{T}, y_ref::T;
                     count::Integer=min(length(x), length(y)), offset::Integer=0,
-                    stride::Integer=1, label_id::String="") where {T<:ImPlotData}
+                    stride::Integer=1) where {T<:ImPlotData}
     return PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
 end
 
-function PlotShaded(x::AbstractArray{T1}, y::AbstractArray{T2}, y_ref::T3;
+function PlotShaded(label_id, x::AbstractArray{T1}, y::AbstractArray{T2}, y_ref::T3;
                     kwargs...) where {T1<:Real,T2<:Real,T3<:Real}
     (x, y) = promote(x, y)
     y_ref = eltype(x)(y_ref)
-    return PlotShaded(x, y, y_ref; kwargs...)
+    return PlotShaded(label_id, x, y, y_ref; kwargs...)
 end
 
-function PlotShaded(x::UnitRange{<:Integer}, y1::AbstractArray{T}, y2::AbstractArray{T};
-                    label_id::String="") where {T<:ImPlotData}
+function PlotShaded(label_id, x::UnitRange{<:Integer}, y1::AbstractArray{T}, y2::AbstractArray{T};
+                   ) where {T<:ImPlotData}
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Offset out of bounds")
     x = collect(T, x)
     return PlotShaded(label_id, x, y1, y2, count, offset, sizeof(T))
 end
 
-function PlotShaded(x::UnitRange{<:Integer}, y::AbstractArray{T}, y_ref::T;
-                    label_id::String="") where {T<:ImPlotData}
+function PlotShaded(label_id, x::UnitRange{<:Integer}, y::AbstractArray{T}, y_ref::T;
+                   ) where {T<:ImPlotData}
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Offset out of bounds")
     x = collect(T, x)
     return PlotShaded(label_id, x, y, count, y_ref, offset, sizeof(T))
 end
 
-function PlotShaded(x::StepRange, y1::AbstractArray{T}, y2::AbstractArray{T};
-                    label_id::String="") where {T<:ImPlotData}
+function PlotShaded(label_id, x::StepRange, y1::AbstractArray{T}, y2::AbstractArray{T};
+                   ) where {T<:ImPlotData}
     x.stop < 1 && throw("Range out of bounds")
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
@@ -61,8 +60,8 @@ function PlotShaded(x::StepRange, y1::AbstractArray{T}, y2::AbstractArray{T};
     return PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
 end
 
-function PlotShaded(x::StepRange, y::AbstractArray{T}, y_ref::T;
-                    label_id::String="") where {T<:ImPlotData}
+function PlotShaded(label_id, x::StepRange, y::AbstractArray{T}, y_ref::T;
+                   ) where {T<:ImPlotData}
     x.stop < 1 && throw("Range out of bounds")
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
@@ -72,21 +71,21 @@ function PlotShaded(x::StepRange, y::AbstractArray{T}, y_ref::T;
     return PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
 end
 
-function PlotShaded(x::OrdinalRange, y1::AbstractArray{T1}, y2::AbstractArray{T2};
+function PlotShaded(label_id, x::OrdinalRange, y1::AbstractArray{T1}, y2::AbstractArray{T2};
                     kwargs...) where {T1<:Real,T2<:Real}
-    return PlotShaded(x, promote(y1, y2)...; kwargs...)
+    return PlotShaded(label_id, x, promote(y1, y2)...; kwargs...)
 end
 
-function PlotShaded(x::OrdinalRange, y::AbstractArray{T1}, y_ref::T2;
+function PlotShaded(label_id, x::OrdinalRange, y::AbstractArray{T1}, y_ref::T2;
                     kwargs...) where {T1<:Real,T2<:Real}
     y_ref = eltype(y)(y_ref)
-    return PlotShaded(x, y, y_ref; kwargs...)
+    return PlotShaded(label_id, x, y, y_ref; kwargs...)
 end
 
 # xfield, yfield should be propertynames of eltype(structvec)
-function PlotShaded(structvec::Vector{T}, xfield::Symbol, yfield::Symbol, y_ref::Real;
+function PlotShaded(label_id, structvec::Vector{T}, xfield::Symbol, yfield::Symbol, y_ref::Real;
                     count::Integer=length(structvec), offset::Integer=0, stride::Integer=1,
-                    label_id::String="") where {T}
+                   ) where {T}
 
     Tx = fieldtype(T, xfield)
     Ty = fieldtype(T, yfield)
