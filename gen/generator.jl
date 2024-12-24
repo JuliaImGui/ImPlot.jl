@@ -1,24 +1,16 @@
 using Clang.Generators
-using ExprTools, MacroTools, JSON3, JuliaFormatter, LibGit2
+using ExprTools, MacroTools, JSON3
+import JuliaFormatter: format_file
+import CImGuiPack_jll
 
-if "cimgui-pack" ∉ readdir(@__DIR__)
-    cimgui_pack_repo = "https://github.com/JuliaImGui/cimgui-pack"
-    repo = LibGit2.clone(cimgui_pack_repo, joinpath(@__DIR__, "cimgui-pack"))
-    cd(joinpath(@__DIR__, "cimgui-pack")) do
-        run(`git submodule update --init --recursive`)
-    end
-end
-
-const CIMGUI_INCLUDE_DIR = joinpath(@__DIR__,"cimgui-pack","cimgui")
-const CIMPLOT_INCLUDE_DIR = joinpath(@__DIR__,"cimgui-pack", "cimplot")
-const CIMPLOT_H = normpath(CIMPLOT_INCLUDE_DIR, "cimplot.h")
+const CIMGUI_INCLUDE_DIR = joinpath(CImGuiPack_jll.artifact_dir, "include")
+const CIMPLOT_H = normpath(CIMGUI_INCLUDE_DIR, "cimplot.h")
 
 options = load_options(joinpath(@__DIR__, "generator.toml"))
 
 args = get_default_args()
 pushfirst!(args, "-DCIMGUI_DEFINE_ENUMS_AND_STRUCTS")
 pushfirst!(args, "-isystem$CIMGUI_INCLUDE_DIR")
-push!(args, "-I$CIMPLOT_INCLUDE_DIR")
 
 # add definitions
 @add_def ImVec2
@@ -65,8 +57,7 @@ const IMTOJL_LOOKUP = Dict(zip(IMDATATYPES, JLDATATYPES))
 const IMGUI_ISBITS_TYPES = [:ImPlotPoint, :ImPlotRange, :ImVec2, :ImVec4, :ImPlotRect]
 
 # Read in JSON metadata
-const METADATA_DIR = joinpath(@__DIR__, "cimgui-pack","cimplot","generator", "output")
-FUNCTION_METADATA, ENUMS = read_metadata(METADATA_DIR);
+FUNCTION_METADATA, ENUMS = read_metadata();
 
 # Find and extract metadata for specific cimplot function
 filter_internal_functions!(options, FUNCTION_METADATA)
@@ -76,6 +67,5 @@ cd(@__DIR__) do
     build!(ctx, BUILDSTAGE_NO_PRINTING)
     rewrite!(ctx.dag, FUNCTION_METADATA, options)
     build!(ctx, BUILDSTAGE_PRINTING_ONLY)
+    format_file(joinpath(@__DIR__,"..","src", "libcimplot.jl"); margin=120)
 end
-#format(normpath(@__DIR__,"..","src"), YASStyle())
-

@@ -1,4 +1,5 @@
 [deps]
+CImGuiPack_jll = "333409e9-af72-5310-9767-d6ad21a76a05"
 Clang = "40e3b903-d033-50b4-a0cc-940c62c95e31"
 ExprTools = "e2ba6199-217a-4e67-a87a-7c52f15ade04"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
