@@ -1,24 +1,15 @@
 name = "ImPlot"
 uuid = "e8efc688-5342-4ad4-b4ba-9025a731b363"
 authors = ["Wiktor Phillips <wsphillips@gmail.com>"]
-version = "0.4.0"
+version = "0.5.0"
 
 [deps]
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
-Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-LibCImGui = "9be01004-c4f5-478b-abeb-cb32b114cf5e"
-Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-Setfield = "efcf1570-3423-57d1-acb7-fd33fddbac46"
+CImGui = "5d785b6c-b76f-510e-a07c-3070796c7e87"
+CImGuiPack_jll = "333409e9-af72-5310-9767-d6ad21a76a05"
 
 [compat]
 CEnum = "0.4"
-LibCImGui = "~1.89"
-
-Setfield = "1"
+CImGui = "4.0.0"
+CImGuiPack_jll = "0.7.0"
 julia = "1.6"
-
-[extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[targets]
-test = ["Test"]

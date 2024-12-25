@@ -1,4 +1,5 @@
 # Histogram (Bar) plots
+
 # Vertical bars
 function PlotBars(label_id, xs::AbstractArray{T1}, ys::AbstractArray{T2},
                   args...) where {T1<:Real,T2<:Real}
@@ -6,8 +7,8 @@ function PlotBars(label_id, xs::AbstractArray{T1}, ys::AbstractArray{T2},
 end
 
 function PlotBars(label_id, values::AbstractArray{T}; count::Integer=length(values),
-                  bar_size=0.67, shift=0.0, flags::ImPlotBarsFlags = ImPlotBarsFlags_None,
-                  offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
+                  bar_size=0.67, shift=0.0, flags::ImPlotBarsFlags_ = ImPlotBarsFlags_None,
+                  offset::Integer=0, stride::Integer=1) where {T <: ImPlotData}
     return PlotBars(label_id, values, count, bar_size, shift, flags, offset, stride * sizeof(T))
 end
 

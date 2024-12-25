@@ -1,55 +1,17 @@
-using CImGui
-using CImGui.CSyntax
-using CImGui.CSyntax.CStatic
-using CImGui.GLFWBackend
-using CImGui.OpenGLBackend
-using CImGui.GLFWBackend.GLFW
-using CImGui.OpenGLBackend.ModernGL
+import CImGui as ig
+import GLFW, ModernGL
+import CSyntax: @c, @cstatic
 using Printf
 using ImPlot
-import CImGui.LibCImGui: ImGuiCond_Always, ImGuiCond_Once
 
-@static if Sys.isapple()
-    # OpenGL 3.2 + GLSL 150
-    const glsl_version = 150
-    GLFW.WindowHint(GLFW.CONTEXT_VERSION_MAJOR, 3)
-    GLFW.WindowHint(GLFW.CONTEXT_VERSION_MINOR, 2)
-    GLFW.WindowHint(GLFW.OPENGL_PROFILE, GLFW.OPENGL_CORE_PROFILE) # 3.2+ only
-    GLFW.WindowHint(GLFW.OPENGL_FORWARD_COMPAT, GL_TRUE) # required on Mac
-else
-    # OpenGL 3.0 + GLSL 130
-    const glsl_version = 130
-    GLFW.WindowHint(GLFW.CONTEXT_VERSION_MAJOR, 3)
-    GLFW.WindowHint(GLFW.CONTEXT_VERSION_MINOR, 0)
-    # GLFW.WindowHint(GLFW.OPENGL_PROFILE, GLFW.OPENGL_CORE_PROFILE) # 3.2+ only
-    # GLFW.WindowHint(GLFW.OPENGL_FORWARD_COMPAT, GL_TRUE) # 3.0+ only
-end
+ig.set_backend(:GlfwOpenGL3)
 
-error_callback(err::GLFW.GLFWError) = @error "GLFW ERROR: code $(err.code) msg: $(err.description)"
-GLFW.SetErrorCallback(error_callback)
+function simple_demo(; engine)
+    ctx = ig.CreateContext()
+    ctxp = ImPlot.CreateContext()
+    ImPlot.SetImGuiContext(ctx)
 
-window = GLFW.CreateWindow(1280, 720, "ImPlot Demo")
-@assert window != C_NULL
-GLFW.MakeContextCurrent(window)
-GLFW.SwapInterval(1)  # enable vsync; set to 0 to benchmark
-
-ctx = CImGui.CreateContext()
-ctxp = ImPlot.CreateContext()
-ImPlot.SetImGuiContext(ctx)
-
-CImGui.StyleColorsDark()
-
-fonts_dir = joinpath(@__DIR__, "..", "fonts")
-fonts = CImGui.GetIO().Fonts
-CImGui.AddFontFromFileTTF(fonts, joinpath(fonts_dir, "Roboto-Medium.ttf"), 16)
-
-ImGui_ImplGlfw_InitForOpenGL(window, true)
-ImGui_ImplOpenGL3_Init(glsl_version)
-
-try
-    show_another_window = false
-    clear_color = Cfloat[0.45, 0.55, 0.60, 1.00]
-
+    show_another_window = true
     # make up some data
     xs1 = Float64.(collect(1:100))
     ys1 = rand(6000)
@@ -65,50 +27,46 @@ try
     bar_max = maximum(bar_maxes)
     bar_min = minimum(bar_mins)
     bar_counter = 1
-    # main loop
-    while !GLFW.WindowShouldClose(window)
-        GLFW.PollEvents()
-        
-        ImGui_ImplOpenGL3_NewFrame()
-        ImGui_ImplGlfw_NewFrame()
-        CImGui.NewFrame()
 
-        CImGui.Begin("Example Plots")
-        
-        @c CImGui.Checkbox("Show Examples", &show_another_window)
-        CImGui.Text(@sprintf("Application average %.3f ms/frame (%.1f FPS)",
-                             1000 / CImGui.GetIO().Framerate, CImGui.GetIO().Framerate))
-        
-        CImGui.End()
+    ig.render(ctx; window_title="ImPlot Demo", engine, on_exit=() -> ImPlot.DestroyContext(ctxp)) do
+        ig.Begin("Example Plots")
+
+        @c ig.Checkbox("Show Examples", &show_another_window)
+        framerate = unsafe_load(ig.GetIO().Framerate)
+        ig.Text(@sprintf("Application average %.3f ms/frame (%.1f FPS)",
+                         1000 / framerate, framerate))
+
+        ig.End()
 
         if show_another_window
-            @c CImGui.Begin("Examples Window", &show_another_window)
-            if CImGui.CollapsingHeader("Line plots")
+            @c ig.Begin("Examples Window", &show_another_window)
 
+            if ig.CollapsingHeader("Line plots")
                 ys1 .= rand(6000)
-                ImPlot.SetNextPlotLimits(0.0, 6000, 0.0, 1.0, ImGuiCond_Always)
-                # Using '##' in the label name hides the plot label, but lets 
+                ImPlot.SetNextAxesLimits(0.0, 6000, 0.0, 1.0, ig.ImGuiCond_Always)
+                # Using '##' in the label name hides the plot label, but lets
                 # us keep the label ID unique for modifying styling etc.
-                if ImPlot.BeginPlot("##line", "x1", "y1", CImGui.ImVec2(-1,300))
-                    ImPlot.PlotLine(ys1)
+                if ImPlot.BeginPlot("##line", "x1", "y1", ig.ImVec2(-1,300))
+                    ImPlot.PlotLine("data", ys1)
                     ImPlot.EndPlot()
                 end
             end
-            if CImGui.CollapsingHeader("Scatter plot")
+
+            if ig.CollapsingHeader("Scatter plot")
                 noise .= xs1 .+ rand(-5.0:0.1:5.0, length(xs1))
-                ImPlot.SetNextPlotLimits(0,100,-5,105, ImGuiCond_Always)
-                if ImPlot.BeginPlot("##scatter", "x2", "y2", CImGui.ImVec2(-1,300))
-                    ImPlot.PlotScatter(xs1, noise)
+                ImPlot.SetNextAxesLimits(0,100,-5,105, ig.ImGuiCond_Always)
+                if ImPlot.BeginPlot("##scatter", "x2", "y2", ig.ImVec2(-1,300))
+                    ImPlot.PlotScatter("data", xs1, noise)
                     ImPlot.EndPlot()
                 end
             end
-            if CImGui.CollapsingHeader("Bar plot")
-                
+
+            if ig.CollapsingHeader("Bar plot")
                 bar_val_step = [bar_vals[j][bar_counter] for j in 1:length(bar_vals)]
-                
-                ImPlot.SetNextPlotLimits(-0.5,4.5,bar_min, bar_max, ImGuiCond_Always)
-                if ImPlot.BeginPlot("##bars", "", "", CImGui.ImVec2(-1,300))
-                    ImPlot.PlotBars(bar_val_step)
+
+                ImPlot.SetNextAxesLimits(-0.5,4.5,bar_min, bar_max, ig.ImGuiCond_Always)
+                if ImPlot.BeginPlot("##bars", "", "", ig.ImVec2(-1,300))
+                    ImPlot.PlotBars("data", bar_val_step)
                     ImPlot.EndPlot()
                 end
 
@@ -118,39 +76,23 @@ try
                     bar_counter += 1
                 end
             end
-            if CImGui.CollapsingHeader("Shaded plot")
+
+            if ig.CollapsingHeader("Shaded plot")
                 x = 1:1000
                 y1 = [sin(x) for x in range(0,2π, length = length(x))]
                 y_ref = -2.0
-                ImPlot.SetNextPlotLimits(0,1000,-2,1, ImGuiCond_Always)
-                if ImPlot.BeginPlot("##shaded", "", "", CImGui.ImVec2(-1,300))
-                    ImPlot.PlotShaded(x, y1, y_ref)
+                # ImPlot.SetNextAxesLimits(0,1000,-2,1, ig.ImGuiCond_Always)
+                if ImPlot.BeginPlot("##shaded", "", "", ig.ImVec2(-1,300))
+                    ImPlot.PlotShaded("data", x, y1, y_ref)
                     ImPlot.EndPlot()
                 end
             end
-            CImGui.End()
+            ig.End()
         end
-       
-
-        # rendering
-        CImGui.Render()
-        GLFW.MakeContextCurrent(window)
-        display_w, display_h = GLFW.GetFramebufferSize(window)
-        glViewport(0, 0, display_w, display_h)
-        glClearColor(clear_color...)
-        glClear(GL_COLOR_BUFFER_BIT)
-        ImGui_ImplOpenGL3_RenderDrawData(CImGui.GetDrawData())
-
-        GLFW.MakeContextCurrent(window)
-        GLFW.SwapBuffers(window)
     end
-catch e
-    @error "Error in renderloop!" exception=e
-    Base.show_backtrace(stderr, catch_backtrace())
-finally
-    ImGui_ImplOpenGL3_Shutdown()
-    ImGui_ImplGlfw_Shutdown()
-    ImPlot.DestroyContext(ctxp)
-    CImGui.DestroyContext(ctx)
-    GLFW.DestroyWindow(window)
+end
+
+# Run automatically if the script is launched from the command-line
+if !isempty(Base.PROGRAM_FILE)
+    simple_demo()
 end

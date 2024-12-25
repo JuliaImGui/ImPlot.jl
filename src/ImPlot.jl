@@ -1,9 +1,9 @@
 module ImPlot
-import LibCImGui
-for i in instances(LibCImGui.ImGuiCond_)
-    @eval import LibCImGui: $(Symbol(i))
+import CImGui as ig
+for i in instances(ig.ImGuiCond_)
+    @eval import CImGui: $(Symbol(i))
 end
-import LibCImGui: libcimgui
+import CImGui.lib: libcimgui
 
 const ImPlotData = Union{Float32,Float64,Int8,UInt8,Int16,UInt16,Int32,UInt32,Int64,UInt64}
 

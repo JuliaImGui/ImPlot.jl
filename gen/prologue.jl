@@ -1,6 +1,6 @@
-using LibCImGui.CImGuiPack_jll
+using CImGuiPack_jll
 
-import LibCImGui: 
+import CImGui:
     ImVec2, ImVec4,
     ImGuiMouseButton, ImGuiKey, ImGuiCond, ImGuiDragDropFlags,
     ImS8, ImU8, ImS16, ImU16, ImS32, ImU32, ImS64, ImU64,
@@ -21,7 +21,7 @@ import LibCImGui:
     ImVector_ImGuiColorMod,
     ImRect,
     ImPoolIdx
-            
+
 #Temporary patch; CImGui.jl v1.79.0 aliases ImS8 incorrectly; add to imports in new versions
 #const ImS8 = Int8
 const IMPLOT_AUTO = Cint(-1)

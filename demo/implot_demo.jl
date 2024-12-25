@@ -1,17 +1,14 @@
-
-include("Renderer.jl")
-using .Renderer
-
-using ImPlot
-import ImPlot: LibCImGui
-
 using Printf, Random, Setfield, Dates
 
-using CImGui
-using CImGui.CSyntax
-using CImGui.CSyntax.CStatic
+using ImPlot
+import CImGui
+import ModernGL
+import GLFW
+import CSyntax: @c, @cstatic
 
-import ImPlot.LibCImGui: ImVec2, ImVec4, ImGuiCond_Always, ImGuiCond_Appearing, ImGuiCond_FirstUseEver,
+CImGui.set_backend(:GlfwOpenGL3)
+
+import CImGui: ImVec2, ImVec4, ImDrawIdx, ImGuiCond_Always, ImGuiCond_Appearing, ImGuiCond_FirstUseEver,
             ImGuiCond_Once, ImGuiWindowFlags_MenuBar, ImGuiBackendFlags_RendererHasVtxOffset,
             ImGuiDragDropFlags_None,
             ImGuiTableFlags_BordersOuter,
@@ -20,10 +17,6 @@ import ImPlot.LibCImGui: ImVec2, ImVec4, ImGuiCond_Always, ImGuiCond_Appearing, 
             ImGuiTableColumnFlags_WidthFixed,
             ImGuiTableColumnFlags_WidthFixed
 
-import ImPlot.LibCImGui.ImDrawIdx
-
-
-
 
 const IMGUI_HAS_TABLE = true
 
@@ -31,8 +24,9 @@ const IMGUI_HAS_TABLE = true
 module MyImPlot
 
 using ImPlot, Setfield
-import ImPlot.LibCImGui
-import ImPlot.LibCImGui: ImVec4, ImVec2, ImGuiCond_Always
+import CImGui
+import CImGui: ImVec4, ImVec2, ImGuiCond_Always
+
 
 # Example for Custom Data and Getters section.
 struct Vector2f
@@ -87,7 +81,7 @@ function Sparkline(id::String, values::Vector{Float32}, count::Int, min_v, max_v
     ImPlot.SetNextAxesLimits(0, count - 1, min_v, max_v, ImGuiCond_Always)
 
     if ImPlot.BeginPlot(id, "", "", size;
-                        flags = ImPlotFlags_CanvasOnly|ImPlotFlags_NoChild,
+                        flags = ImPlotFlags_CanvasOnly,
                         x_flags = ImPlotAxisFlags_NoDecorations,
                         y_flags = ImPlotAxisFlags_NoDecorations)
 
@@ -371,7 +365,7 @@ function ShowDemoWindow()
     end) # cstatic
 
     #-------------------------------------------------------------------------
-    CImGui.Text("ImPlot says hello - v0.14")
+    CImGui.Text("ImPlot says hello - v0.17")
     CImGui.Spacing()
 
     if CImGui.CollapsingHeader("Help")
@@ -415,8 +409,8 @@ function ShowDemoWindow()
         indent = CImGui.CalcItemWidth() - CImGui.GetFrameHeight()
         CImGui.Indent(CImGui.CalcItemWidth() - CImGui.GetFrameHeight())
         # a hack -- works for now
-        aaidx = findfirst(x -> x == :AntiAliasedLines, fieldnames(LibCImGui.ImGuiStyle))
-        aaoffset = fieldoffset(LibCImGui.ImGuiStyle, aaidx)
+        aaidx = findfirst(x -> x == :AntiAliasedLines, fieldnames(CImGui.ImGuiStyle))
+        aaoffset = fieldoffset(CImGui.ImGuiStyle, aaidx)
         CImGui.Checkbox("Anti-Aliased Lines", CImGui.GetStyle() + aaoffset)
         CImGui.Unindent(indent)
     end
@@ -590,6 +584,7 @@ function ShowDemoWindow()
                                     ImVec2(-1,0), y_flags = horz ? ImPlotAxisFlags_Invert : 0)
                     if horz
                         ImPlot.SetupLegend(ImPlotLocation_West)
+                        ImPlot.SetupAxisTicksY(positions, 10, labels)
 
                         # Upstream ImPlot uses PlotBars() with
                         # ImPlotBarsFlags_Horizontal, but we use PlotBarsH()
@@ -597,15 +592,13 @@ function ShowDemoWindow()
                         ImPlot.PlotBarsH("Midterm Exam", midtm; bar_size=0.2, shift=-0.2)
                         ImPlot.PlotBarsH("Final Exam", final; bar_size=0.2, shift=0)
                         ImPlot.PlotBarsH("Course Grade", grade; bar_size=0.2, shift=0.2)
-
-                        ImPlot.SetupAxisTicksY(positions, 10, labels)
                     else
                         ImPlot.SetupLegend(ImPlotLocation_South, ImPlotLegendFlags_Horizontal)
+                        ImPlot.SetupAxisTicksX(positions, 10, labels)
+
                         ImPlot.PlotBars("Midterm Exam", midtm, 10, 0.2,  -0.2)
                         ImPlot.PlotBars("Final Exam",   final, 10, 0.2,     0)
                         ImPlot.PlotBars("Course Grade", grade, 10, 0.2,   0.2)
-
-                        ImPlot.SetupAxisTicksX(positions, 10, labels)
                     end
                     ImPlot.EndPlot()
                 end
@@ -1979,13 +1972,16 @@ closes =
 end
 
 # main functinon
-function show_demo()
+function full_demo(; engine=nothing)
+    ctx = CImGui.CreateContext()
+    pctx = ImPlot.CreateContext()
+    CImGui.render(ctx; engine, on_exit=() -> ImPlot.DestroyContext(pctx),
+                  window_size=(1360, 780), window_title="Demo plots") do
+        ShowDemoWindow()
+    end
+end
 
-    Renderer.render(
-        ()->ShowDemoWindow(),
-        width = 1360,
-        height = 780,
-        title = "Demo plots",
-        hotloading = false
-    )
+# Run automatically if the script is launched from the command-line
+if !isempty(Base.PROGRAM_FILE)
+    full_demo()
 end

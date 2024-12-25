@@ -13,9 +13,9 @@ hasdefault(metadata, sym) = hasproperty(metadata.defaults, sym)
 getdefault(metadata, sym) = getproperty(metadata.defaults, sym)
 get_jl_type(argtype) = argtype ∈ IMDATATYPES ? IMTOJL_LOOKUP[argtype] : argtype
 
-function read_metadata(METADATA_DIR)
-    json_enums = read(joinpath(METADATA_DIR, "structs_and_enums.json"), String);
-    json_defs = read(joinpath(METADATA_DIR, "definitions.json"), String);
+function read_metadata()
+    json_enums = read(CImGuiPack_jll.cimplot_structs_and_enums, String);
+    json_defs = read(CImGuiPack_jll.cimplot_definitions, String);
     #json_typedefs = read(joinpath(METADATA_DIR, "typedefs_dict.json"), String);
     enums = JSON3.read(json_enums);
     #types = JSON3.read(json_typedefs);
@@ -42,10 +42,10 @@ end
 
 function parse_default(jlsymtype, str, ptr_type = nothing)
     T = eval(jlsymtype)
-    if str == "((void*)0)" || str == "NULL"
+    if str == "((void*)0)" || str == "NULL" || str == "nullptr"
         return :C_NULL
     end
-    (T <: AbstractFloat || T <: Bool || T <: Cstring) && return Meta.parse(str) 
+    (T <: AbstractFloat || T <: Bool || T <: Cstring) && return Meta.parse(str)
     T <: Integer && return (startswith(str, "sizeof") ? :(sizeof($ptr_type)) : Meta.parse(str))
     T <: Symbol && return Symbol(str)
     return @warn "Not parsing default value of: $str"
@@ -58,7 +58,7 @@ function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing)
             val = parse_default(jltype, getdefault(metadata, sym), ptr_type)
             def[:args][i] = :($( Expr(:kw, :($sym::Integer), val)) )
         else
-            def[:args][i] = :($sym::Integer) 
+            def[:args][i] = :($sym::Integer)
         end
         return
     elseif jltype ∈ (:Cfloat, :Cdouble, :Float64, :Float32)
@@ -119,7 +119,7 @@ function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing)
         elseif ptrtype == :Cvoid
             return
         else
-           def[:args][i] = :($sym::Union{$ptrtype,AbstractArray{$ptrtype}}) 
+           def[:args][i] = :($sym::Union{$ptrtype,AbstractArray{$ptrtype}})
         end
         return
     end
@@ -129,26 +129,26 @@ end
 
 function generate_plotmethod(def, metadata)
     def[:name] = Symbol(metadata.funcname)
-    (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body]) 
+    (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
     datatype = :notparsed
     for (i, argtype) in enumerate(argtypes)
         sym = argnames[i]
         jltype = get_jl_type(argtype)
         if @capture(jltype, Ptr{ptrtype_}) && ptrtype ∈ IMDATATYPES
-            datatype = ptrtype 
+            datatype = ptrtype
             def[:args][i] = :($sym::Union{Ptr{$ptrtype},Ref{$ptrtype},AbstractArray{$ptrtype}})
         else
             revise_arg(def, metadata, i, sym, jltype, datatype)
         end
-    end 
-    def[:body] = Expr(:block, 
+    end
+    def[:body] = Expr(:block,
                       :(ccall(($funsymbol, libcimgui), $rettype, ($(argtypes...),), $(argnames...))))
     return ExprTools.combinedef(def)
-end             
+end
 
 function make_finalizer!(def, metadata)
     def[:name] = :(Base.finalizer)
-    (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body]) 
+    (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
     argtype, argname = only(argtypes), only(argnames)
     @capture(argtype, Ptr{ptrtype_})
     def[:args] = [:($argname::Union{$argtype,$ptrtype})]
@@ -166,21 +166,24 @@ end
 
 function parse_pointer_arg!(jltype, def, metadata, sym, i)
     if @capture(jltype, Ptr{ptrtype_})
-        ptrtype ∉ vcat(IMGUI_ISBITS_TYPES, IMDATATYPES) && return true
-        if ptrtype in (IMDATATYPES..., :Cstring)
-
+        if ptrtype in (IMDATATYPES..., :Cstring, :Bool)
             if ptrtype == :Cstring
-                def[:args][i] = :($sym::Union{Ptr{Nothing},String,AbstractArray{String}})
+                arg_type = :($sym::Union{Ptr{Nothing},String,AbstractArray{String}})
+            elseif ptrtype == :Bool
+                arg_type = def[:args][i] = :($sym)
             else
                 arg_type = :($sym::Union{Ptr{$ptrtype},Ref{$ptrtype},AbstractArray{$ptrtype}})
-
-                if hasdefault(metadata, sym)
-                    val = parse_default(jltype, getdefault(metadata, sym), ptrtype)
-                    def[:args][i] = :($(Expr(:kw, arg_type, val)))
-                else
-                    def[:args][i] = arg_type
-                end
             end
+
+            if hasdefault(metadata, sym)
+                val = parse_default(jltype, getdefault(metadata, sym), ptrtype)
+                def[:args][i] = :($(Expr(:kw, arg_type, val)))
+            else
+                def[:args][i] = arg_type
+            end
+
+            return true
+        elseif ptrtype ∉ vcat(IMGUI_ISBITS_TYPES, IMDATATYPES)
             return true
         end
     end
@@ -195,7 +198,7 @@ function make_objmethod!(def, metadata)
     firstsym, firstargtype = first(argnames), first(argtypes)
     @capture(firstargtype, Ptr{ptr_type_})
     def[:args][1] = :($firstsym::Union{$ptr_type,$firstargtype,Ref{$ptr_type}})
-    
+
     # parse remaining arguments
     for (i, argtype) in enumerate(argtypes)
         i == 1 && continue
@@ -204,20 +207,20 @@ function make_objmethod!(def, metadata)
         # Skip pointer types
         parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
         revise_arg(def, metadata, i, sym, jltype)
-     end  
+     end
 end
 
 function generate_allocating(def, metadata)
     def[:name] = Symbol(metadata.funcname)
     (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
-    sym = popfirst!(def[:args]) 
+    sym = popfirst!(def[:args])
     @capture(first(argtypes), Ptr{ptr_type_})
     argtypes[1] = :(Ref{$ptr_type})
     def[:body] = Expr(:block,
                       :($sym = Ref{$ptr_type}()),
                       :(ccall(($funsymbol, libcimgui), $rettype, ($(argtypes...),), $(argnames...))),
                       ptr_type in IMGUI_ISBITS_TYPES ? :($sym[]) : :($sym))
-    
+
    for (i, argtype) in enumerate(argtypes)
        i == 1 && continue
        sym = argnames[i]
@@ -225,7 +228,7 @@ function generate_allocating(def, metadata)
        # Skip pointer types
        parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
        revise_arg(def, metadata, i-1, sym, jltype) # offset bc we pop off first arg above
-    end  
+    end
     return ExprTools.combinedef(def)
 end
 
@@ -234,13 +237,14 @@ function generate_generic(def, metadata)
     (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
     def[:body] = Expr(:block,
                       :(ccall(($funsymbol, libcimgui), $rettype, ($(argtypes...),), $(argnames...))))
+
     for (i, argtype) in enumerate(argtypes)
         sym = argnames[i]
         jltype = get_jl_type(argtype)
 
         # Remove type annotations from functions labeled DESPECIALIZE
         if metadata.funcname in DESPECIALIZE
-            def[:args][i] = :($sym)  
+            def[:args][i] = :($sym)
             continue
         end
 
@@ -259,7 +263,7 @@ end
 
 function find_function_metadata(fun_name, metadata)
     for object_vector in values(metadata), fun_meta in object_vector
-        if fun_name == fun_meta.ov_cimguiname || fun_name == fun_meta.cimguiname        
+        if fun_name == fun_meta.ov_cimguiname || fun_name == fun_meta.cimguiname
             return fun_meta
         end
     end
@@ -305,14 +309,14 @@ function generate_struct_function(def, metadata, old_ex)
         end
 end
 
-function revise_function(ex::Expr, all_metadata, options) 
+function revise_function(ex::Expr, all_metadata, options)
     # Destructure the function definition
     def = ExprTools.splitdef(ex)
 
     # Get & validate function name
     fun_name = get_function_name(def)
     isnothing(fun_name) && return ex
-    
+
     metadata = find_function_metadata(fun_name, all_metadata)
 
     # Skip functions not in the JSON metadata
@@ -345,4 +349,3 @@ function rewrite!(dag::ExprDAG, metadata, options)
         end
     end
 end
-
