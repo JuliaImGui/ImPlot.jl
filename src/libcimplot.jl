@@ -44,6 +44,18 @@ export IMPLOT_AUTO, IMPLOT_AUTO_COL
 
 const __time_t = Clong
 
+struct ImVector_ImU8
+    Size::Cint
+    Capacity::Cint
+    Data::Ptr{ImU8}
+end
+
+struct ImVector_ImU16
+    Size::Cint
+    Capacity::Cint
+    Data::Ptr{ImU16}
+end
+
 struct ImVector_int
     Size::Cint
     Capacity::Cint
@@ -603,22 +615,10 @@ struct ImVector_ImS8
     Data::Ptr{ImS8}
 end
 
-struct ImVector_ImU16
-    Size::Cint
-    Capacity::Cint
-    Data::Ptr{ImU16}
-end
-
 struct ImVector_ImU64
     Size::Cint
     Capacity::Cint
     Data::Ptr{ImU64}
-end
-
-struct ImVector_ImU8
-    Size::Cint
-    Capacity::Cint
-    Data::Ptr{ImU8}
 end
 
 const ImPlotDragToolFlags = Cint
@@ -820,6 +820,7 @@ end
     ImPlotPieChartFlags_None = 0
     ImPlotPieChartFlags_Normalize = 1024
     ImPlotPieChartFlags_IgnoreHidden = 2048
+    ImPlotPieChartFlags_Exploding = 4096
 end
 
 @cenum ImPlotHeatmapFlags_::UInt32 begin
@@ -8024,96 +8025,6 @@ end
 
 function ShowDemoWindow(p_open = C_NULL)
     ccall((:ImPlot_ShowDemoWindow, libcimgui), Cvoid, (Ptr{Bool},), p_open)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotDateTimeSpec},ImPlotDateTimeSpec})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotDateTimeSpec_destroy, libcimgui), Cvoid, (Ptr{ImPlotDateTimeSpec},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotTime},ImPlotTime})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotTime_destroy, libcimgui), Cvoid, (Ptr{ImPlotTime},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotColormapData},ImPlotColormapData})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotColormapData_destroy, libcimgui), Cvoid, (Ptr{ImPlotColormapData},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotPointError},ImPlotPointError})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotPointError_destroy, libcimgui), Cvoid, (Ptr{ImPlotPointError},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotAnnotation},ImPlotAnnotation})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotAnnotation_destroy, libcimgui), Cvoid, (Ptr{ImPlotAnnotation},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotAnnotationCollection},ImPlotAnnotationCollection})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall(
-        (:ImPlotAnnotationCollection_destroy, libcimgui),
-        Cvoid,
-        (Ptr{ImPlotAnnotationCollection},),
-        self,
-    )
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotTagCollection},ImPlotTagCollection})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotTagCollection_destroy, libcimgui), Cvoid, (Ptr{ImPlotTagCollection},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotTick},ImPlotTick})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotTick_destroy, libcimgui), Cvoid, (Ptr{ImPlotTick},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotTicker},ImPlotTicker})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotTicker_destroy, libcimgui), Cvoid, (Ptr{ImPlotTicker},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotAxis},ImPlotAxis})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotAxis_destroy, libcimgui), Cvoid, (Ptr{ImPlotAxis},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotAlignmentData},ImPlotAlignmentData})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotAlignmentData_destroy, libcimgui), Cvoid, (Ptr{ImPlotAlignmentData},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotLegend},ImPlotLegend})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotLegend_destroy, libcimgui), Cvoid, (Ptr{ImPlotLegend},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotItemGroup},ImPlotItemGroup})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotItemGroup_destroy, libcimgui), Cvoid, (Ptr{ImPlotItemGroup},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotPlot},ImPlotPlot})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotPlot_destroy, libcimgui), Cvoid, (Ptr{ImPlotPlot},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotSubplot},ImPlotSubplot})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotSubplot_destroy, libcimgui), Cvoid, (Ptr{ImPlotSubplot},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotNextPlotData},ImPlotNextPlotData})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotNextPlotData_destroy, libcimgui), Cvoid, (Ptr{ImPlotNextPlotData},), self)
-end
-
-function Base.finalizer(self::Union{Ptr{ImPlotNextItemData},ImPlotNextItemData})
-    ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotNextItemData_destroy, libcimgui), Cvoid, (Ptr{ImPlotNextItemData},), self)
 end
 
 function Annotation(x::Real, y::Real, pix_offset::ImVec2, fmt::String)
