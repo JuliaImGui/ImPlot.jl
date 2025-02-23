@@ -1,16 +1,25 @@
 # Digital signal plots
+"""
+$(TYPEDSIGNATURES)
+"""
 function PlotDigital(label_id, x::AbstractArray{T}, y::AbstractArray{T};
                      count::Integer=min(length(x), length(y)), offset::Integer=0,
                      stride::Integer=1) where {T<:ImPlotData}
     return PlotDigital(label_id, x, y, count, offset, stride * sizeof(T))
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function PlotDigital(label_id, x::AbstractArray{T1}, y::AbstractArray{T2};
                      kwargs...) where {T1<:Real,T2<:Real}
     return PlotDigital(label_id, promote(x, y)...; kwargs...)
 end
 
 # xfield, yfield should be propertynames of eltype(structvec)
+"""
+$(TYPEDSIGNATURES)
+"""
 function PlotDigital(label_id, structvec::Vector{T}, xfield::Symbol, yfield::Symbol;
                      count::Integer=length(structvec), offset::Integer=0, stride::Integer=1
                      ) where {T}

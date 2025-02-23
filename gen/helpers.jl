@@ -112,19 +112,19 @@ function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing)
                 rx = match(r"\(.+\)",raw_val)
                 tupex = Meta.parse(rx.match)
                 def[:args][i] = :($(Expr(:kw,
-                :($sym::Union{$ptrtype,AbstractArray{$ptrtype}}), :($ptrtype($(tupex.args...))))))
+                                         :($sym::Union{$ptrtype,AbstractArray{$ptrtype}}), :($ptrtype($(tupex.args...))))))
             end
         elseif ptrtype == :Cstring
             def[:args][i] = :($sym::Union{Ptr{Nothing},String,AbstractArray{String}})
         elseif ptrtype == :Cvoid
             return
         else
-           def[:args][i] = :($sym::Union{$ptrtype,AbstractArray{$ptrtype}})
+            def[:args][i] = :($sym::Union{$ptrtype,AbstractArray{$ptrtype}})
         end
         return
     end
-        @info "Not processing argument: $sym::$jltype from $(def[:name])"
-        return
+    @info "Not processing argument: $sym::$jltype from $(def[:name])"
+    return
 end
 
 function generate_plotmethod(def, metadata)
@@ -207,7 +207,7 @@ function make_objmethod!(def, metadata)
         # Skip pointer types
         parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
         revise_arg(def, metadata, i, sym, jltype)
-     end
+    end
 end
 
 function generate_allocating(def, metadata)
@@ -221,13 +221,13 @@ function generate_allocating(def, metadata)
                       :(ccall(($funsymbol, libcimgui), $rettype, ($(argtypes...),), $(argnames...))),
                       ptr_type in IMGUI_ISBITS_TYPES ? :($sym[]) : :($sym))
 
-   for (i, argtype) in enumerate(argtypes)
-       i == 1 && continue
-       sym = argnames[i]
-       jltype = get_jl_type(argtype)
-       # Skip pointer types
-       parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
-       revise_arg(def, metadata, i-1, sym, jltype) # offset bc we pop off first arg above
+    for (i, argtype) in enumerate(argtypes)
+        i == 1 && continue
+        sym = argnames[i]
+        jltype = get_jl_type(argtype)
+        # Skip pointer types
+        parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
+        revise_arg(def, metadata, i-1, sym, jltype) # offset bc we pop off first arg above
     end
     return ExprTools.combinedef(def)
 end
@@ -250,8 +250,8 @@ function generate_generic(def, metadata)
 
         parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
         revise_arg(def, metadata, i, sym, jltype)
-   end
-   return ExprTools.combinedef(def)
+    end
+    return ExprTools.combinedef(def)
 end
 
 function get_function_name(def)
@@ -288,28 +288,51 @@ function filter_internal_enums!(options, enums)
 end
 
 function generate_struct_function(def, metadata, old_ex)
-        # Skip constructors/destructors for primitive types--we can handle these with Julia
-        if metadata.stname ∉ String.(IMGUI_ISBITS_TYPES)
-            if hasproperty(metadata, :destructor)
-                make_finalizer!(def, metadata)
-                return ExprTools.combinedef(def)
-            elseif hasproperty(metadata, :constructor)
-                # write contructor...
-                make_constructor!(def, metadata)
-                return ExprTools.combinedef(def)
-            end
-        end
-        # Fall through to object method; skip destructors
-        if !(isdestructor(metadata) || isconstructor(metadata))
-            make_objmethod!(def,metadata)
-            # Reconstitute function definition expression
+    # Skip constructors/destructors for primitive types--we can handle these with Julia
+    if metadata.stname ∉ String.(IMGUI_ISBITS_TYPES)
+        if hasproperty(metadata, :destructor)
+            make_finalizer!(def, metadata)
             return ExprTools.combinedef(def)
-        else
-            return old_ex
+        elseif hasproperty(metadata, :constructor)
+            # write contructor...
+            make_constructor!(def, metadata)
+            return ExprTools.combinedef(def)
         end
+    end
+    # Fall through to object method; skip destructors
+    if !(isdestructor(metadata) || isconstructor(metadata))
+        make_objmethod!(def,metadata)
+        # Reconstitute function definition expression
+        return ExprTools.combinedef(def)
+    else
+        return old_ex
+    end
 end
 
-function revise_function(ex::Expr, all_metadata, options)
+function create_docstring(func_name, metadata)
+    docstring = ""
+
+    comment = get(metadata, :comment, "")
+    if !isempty(comment)
+        comment = replace(comment, "\\0" => "\\\\0")
+        formatted_comment = chopprefix(comment, "//") |> strip |> uppercasefirst
+        if !isempty(formatted_comment) && formatted_comment[end] ∉ ('.', '!', '?')
+            formatted_comment *= "."
+        end
+
+        docstring *= "\n\n$(formatted_comment)"
+    end
+
+    header, line = split(metadata[:location], ':')
+    implot_version = "47522f47054d33178e7defa780042bd2a06b09f9"
+    link = "https://github.com/epezent/implot/blob/$(implot_version)/$(header).h#L$(line)"
+
+    docstring *= "[Upstream link]($link)."
+
+    return docstring
+end
+
+function revise_function(ex::Expr, all_metadata, options, docstrings)
     # Destructure the function definition
     def = ExprTools.splitdef(ex)
 
@@ -326,25 +349,30 @@ function revise_function(ex::Expr, all_metadata, options)
     end
 
     # Check if it's for a struct type
-    if is_imgui_struct(metadata)
-        return generate_struct_function(def, metadata, ex)
+    ex = if is_imgui_struct(metadata)
+        generate_struct_function(def, metadata, ex)
     elseif isplotfunction(metadata) # implot specific
-        return generate_plotmethod(def, metadata)
+        generate_plotmethod(def, metadata)
     elseif hasoutputarg(metadata) # generic
-        return generate_allocating(def, metadata)
+        generate_allocating(def, metadata)
     else
-        return generate_generic(def, metadata)
+        generate_generic(def, metadata)
     end
-    @warn "function $(def[:name]) not parsed"
-        return ex
+
+    # Generate docstrings for everything but internal functions and destructors
+    if !endswith(fun_name, "_destroy") && !internal_check(metadata)
+        docstrings[fun_name] = create_docstring(fun_name, metadata)
+    end
+
+    return ex
 end
 
-function rewrite!(dag::ExprDAG, metadata, options)
+function rewrite!(dag::ExprDAG, metadata, options, docstrings)
     for node in get_nodes(dag)
         expressions = get_exprs(node)
         for (i, expr) in enumerate(expressions)
             if Meta.isexpr(expr, :function)
-                    expressions[i] = revise_function(expr, metadata, options)
+                expressions[i] = revise_function(expr, metadata, options, docstrings)
             end
         end
     end

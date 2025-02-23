@@ -1,4 +1,7 @@
 #Heatmap plots
+"""
+$(TYPEDSIGNATURES)
+"""
 function PlotHeatmap(label_id, x::AbstractArray{T}, rows, cols, scale_min=0.0, scale_max=1.0;
                      label_fmt="%.1f",
                      bounds_min=ImPlotPoint(0.0, 0.0),

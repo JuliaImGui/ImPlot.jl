@@ -2,3 +2,5 @@ imgui.ini
 .vscode
 gen/cimguipack
 Manifest.toml
+docs/build
+docs/src/changelog.md

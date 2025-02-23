@@ -62,10 +62,24 @@ FUNCTION_METADATA, ENUMS = read_metadata();
 # Find and extract metadata for specific cimplot function
 filter_internal_functions!(options, FUNCTION_METADATA)
 
-cd(@__DIR__) do
-    ctx = create_context(CIMPLOT_H, args, options)
-    build!(ctx, BUILDSTAGE_NO_PRINTING)
-    rewrite!(ctx.dag, FUNCTION_METADATA, options)
-    build!(ctx, BUILDSTAGE_PRINTING_ONLY)
-    format_file(joinpath(@__DIR__,"..","src", "libcimplot.jl"); margin=120)
+function get_docstring(node, doc, docstrings)
+    id = string(node.id)
+    if haskey(docstrings, id)
+        push!(doc, docstrings[id])
+    end
+
+    return doc
+end
+
+function generate()
+    docstrings = Dict{String, String}()
+    options["general"]["callback_documentation"] = (node, doc) -> get_docstring(node, doc, docstrings)
+
+    cd(@__DIR__) do
+        ctx = create_context(CIMPLOT_H, args, options)
+        build!(ctx, BUILDSTAGE_NO_PRINTING)
+        rewrite!(ctx.dag, FUNCTION_METADATA, options, docstrings)
+        build!(ctx, BUILDSTAGE_PRINTING_ONLY)
+        format_file(joinpath(@__DIR__,"..","src", "libcimplot.jl"); margin=120)
+    end
 end
