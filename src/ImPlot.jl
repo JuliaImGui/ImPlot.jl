@@ -1,4 +1,7 @@
 module ImPlot
+
+import DocStringExtensions: TYPEDSIGNATURES
+
 import CImGui as ig
 for i in instances(ig.ImGuiCond_)
     @eval import CImGui: $(Symbol(i))
@@ -9,6 +12,9 @@ const ImPlotData = Union{Float32,Float64,Int8,UInt8,Int16,UInt16,Int32,UInt32,In
 
 include("libcimplot.jl")
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function BeginPlot(title_id::String, x_label::String = "", y_label::String = "", size::ImVec2 = ImVec2(-1,0);
                     flags = ImPlotFlags_None,
                     x_flags = ImPlotAxisFlags_None,
@@ -31,26 +37,44 @@ function BeginPlot(title_id::String, x_label::String = "", y_label::String = "",
     return ret
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function SetNextAxisLimitsX(x_min::Real, x_max::Real, cond = ImPlotCond_Once)
     SetNextAxisLimits(ImAxis_X1, x_min, x_max, cond)
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function SetNextAxisLimitsY(y_min::Real, y_max::Real, cond = ImPlotCond_Once)
     SetNextAxisLimits(ImAxis_Y1, y_min, y_max, cond)
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function SetupAxisTicksX(values, n_ticks, labels, keep_default = false)
     SetupAxisTicks(ImAxis_X1, values, n_ticks, labels, keep_default)
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function SetupAxisTicksX(v_min::Real, v_max::Real, n_ticks, labels, keep_default = false)
     SetupAxisTicks(ImAxis_X1, v_min, v_max, n_ticks, labels, keep_default)
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function SetupAxisTicksY(values, n_ticks, labels, keep_default = false)
     SetupAxisTicks(ImAxis_Y1, values, n_ticks, labels, keep_default)
 end
 
+"""
+$(TYPEDSIGNATURES)
+"""
 function SetupAxisTicksY(v_min::Real, v_max::Real, n_ticks, labels, keep_default = false)
     SetupAxisTicks(ImAxis_Y1, v_min, v_max, n_ticks, labels, keep_default)
 end

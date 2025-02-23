@@ -309,7 +309,30 @@ function generate_struct_function(def, metadata, old_ex)
     end
 end
 
-function revise_function(ex::Expr, all_metadata, options)
+function create_docstring(func_name, metadata)
+    docstring = ""
+
+    comment = get(metadata, :comment, "")
+    if !isempty(comment)
+        comment = replace(comment, "\\0" => "\\\\0")
+        formatted_comment = chopprefix(comment, "//") |> strip |> uppercasefirst
+        if !isempty(formatted_comment) && formatted_comment[end] ∉ ('.', '!', '?')
+            formatted_comment *= "."
+        end
+
+        docstring *= "\n\n$(formatted_comment)"
+    end
+
+    header, line = split(metadata[:location], ':')
+    implot_version = "47522f47054d33178e7defa780042bd2a06b09f9"
+    link = "https://github.com/epezent/implot/blob/$(implot_version)/$(header).h#L$(line)"
+
+    docstring *= "[Upstream link]($link)."
+
+    return docstring
+end
+
+function revise_function(ex::Expr, all_metadata, options, docstrings)
     # Destructure the function definition
     def = ExprTools.splitdef(ex)
 
@@ -326,25 +349,30 @@ function revise_function(ex::Expr, all_metadata, options)
     end
 
     # Check if it's for a struct type
-    if is_imgui_struct(metadata)
-        return generate_struct_function(def, metadata, ex)
+    ex = if is_imgui_struct(metadata)
+        generate_struct_function(def, metadata, ex)
     elseif isplotfunction(metadata) # implot specific
-        return generate_plotmethod(def, metadata)
+        generate_plotmethod(def, metadata)
     elseif hasoutputarg(metadata) # generic
-        return generate_allocating(def, metadata)
+        generate_allocating(def, metadata)
     else
-        return generate_generic(def, metadata)
+        generate_generic(def, metadata)
     end
-    @warn "function $(def[:name]) not parsed"
+
+    # Generate docstrings for everything but internal functions and destructors
+    if !endswith(fun_name, "_destroy") && !internal_check(metadata)
+        docstrings[fun_name] = create_docstring(fun_name, metadata)
+    end
+
     return ex
 end
 
-function rewrite!(dag::ExprDAG, metadata, options)
+function rewrite!(dag::ExprDAG, metadata, options, docstrings)
     for node in get_nodes(dag)
         expressions = get_exprs(node)
         for (i, expr) in enumerate(expressions)
             if Meta.isexpr(expr, :function)
-                expressions[i] = revise_function(expr, metadata, options)
+                expressions[i] = revise_function(expr, metadata, options, docstrings)
             end
         end
     end
