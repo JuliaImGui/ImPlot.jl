@@ -15,11 +15,13 @@ Simple installation via the package registry:
 ```
 
 ## Example Usage
-Use `demo/implot_demo.jl` to check if things are working via:
-
+Use `demo/implot_demo.jl` to check if things are working:
 ```julia
-include("implot_demo.jl")
-show_demo()
+$ julia --project=demo
+
+(demo) pkg> instantiate # Install the necessary packages
+julia> include("demo/implot_demo.jl")
+julia> full_demo()
 ```
 
 `implot_demo.jl` replicates all the plotting functionality visible in
