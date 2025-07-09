@@ -5,6 +5,7 @@ import CImGui:
     ImGuiMouseButton, ImGuiKey, ImGuiCond, ImGuiDragDropFlags,
     ImS8, ImU8, ImS16, ImU16, ImS32, ImU32, ImS64, ImU64,
     ImTextureID,
+    ImTextureRef,
     ImDrawList,
     ImGuiContext,
     ImGuiStyleVar,

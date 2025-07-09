@@ -786,7 +786,7 @@ function ShowDemoWindow()
             bmin, bmax, uv0, uv1, tint = bmin_ref[], bmax_ref[], uv0_ref[], uv1_ref[], tint_ref[]
 
             if ImPlot.BeginPlot("##image", "", "")
-                ImPlot.PlotImage("my image", unsafe_load(unsafe_load(CImGui.GetIO().Fonts).TexID),
+                ImPlot.PlotImage("my image", unsafe_load(unsafe_load(CImGui.GetIO().Fonts).TexRef),
                                  ImPlotPoint(bmin), ImPlotPoint(bmax), uv0, uv1, tint)
                 ImPlot.EndPlot()
             end
