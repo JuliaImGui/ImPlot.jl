@@ -324,7 +324,7 @@ function create_docstring(func_name, metadata)
     end
 
     header, line = split(metadata[:location], ':')
-    implot_version = "47522f47054d33178e7defa780042bd2a06b09f9"
+    implot_version = "3da8bd34299965d3b0ab124df743fe3e076fa222"
     link = "https://github.com/epezent/implot/blob/$(implot_version)/$(header).h#L$(line)"
 
     docstring *= "[Upstream link]($link)."

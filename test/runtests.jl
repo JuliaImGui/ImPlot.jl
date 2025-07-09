@@ -15,11 +15,11 @@ include(joinpath(@__DIR__, "..", "demo", "demo.jl"))
 @testset "Official demo" begin
     engine = te.CreateContext(; exit_on_completion=true)
 
-    @register_test(engine, "Official demo", "Hiding demo window") do ctx
-        @imcheck GetWindowByRef("ImPlot Demo") != nothing
+    @register_test(engine, "Official demo", "Hiding demo window") do
+        @imcheck GetWindowByRef("ImPlot Demo") != C_NULL
         SetRef("Hello, world!")
         ItemClick("Show ImPlot Demo") # This will hide the demo window
-        @imcheck GetWindowByRef("ImPlot Demo") == nothing
+        @imcheck GetWindowByRef("ImPlot Demo") == C_NULL
     end
 
     official_demo(; engine)
@@ -32,8 +32,8 @@ include(joinpath(@__DIR__, "..", "demo", "example_plots.jl"))
 @testset "Simple demo" begin
     engine = te.CreateContext(; exit_on_completion=true)
 
-    @register_test(engine, "Simple demo", "All plots") do ctx
-        @imcheck GetWindowByRef("Examples Window") != nothing
+    @register_test(engine, "Simple demo", "All plots") do
+        @imcheck GetWindowByRef("Examples Window") != C_NULL
 
         SetRef("Examples Window")
         ItemOpen("Line plots")
@@ -51,22 +51,22 @@ include(joinpath(@__DIR__, "..", "demo", "implot_demo.jl"))
 @testset "Full demo" begin
     engine = te.CreateContext(; exit_on_completion=true)
 
-    @register_test(engine, "Full demo", "Tools menu") do ctx
-        @imcheck GetWindowByRef("ImPlot Demo") != nothing
+    @register_test(engine, "Full demo", "Tools menu") do
+        @imcheck GetWindowByRef("ImPlot Demo") != C_NULL
 
         # Metrics window
         SetRef("ImPlot Demo")
         MenuClick("Tools/Metrics (ImPlot)")
         Yield()
-        @imcheck GetWindowByRef("//ImPlot Metrics") != nothing
+        @imcheck GetWindowByRef("//ImPlot Metrics") != C_NULL
 
         # Style window
         MenuClick("Tools/Style Editor (ImPlot)")
         Yield()
-        @imcheck GetWindowByRef("//Style Editor (ImPlot)") != nothing
+        @imcheck GetWindowByRef("//Style Editor (ImPlot)") != C_NULL
     end
 
-    @register_test(engine, "Full demo", "All plots") do ctx
+    @register_test(engine, "Full demo", "All plots") do
         SetRef("ImPlot Demo")
 
         OpenAndClose("Help")

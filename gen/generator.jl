@@ -26,6 +26,11 @@ pushfirst!(args, "-isystem$CIMGUI_INCLUDE_DIR")
 @add_def ImS64
 @add_def ImU64
 @add_def ImTextureID
+@add_def ImTextureRef
+@add_def ImTextureData
+@add_def ImTextureStatus
+@add_def ImTextureFormat
+@add_def ImTextureRect
 @add_def ImGuiCond
 @add_def ImGuiDragDropFlags
 @add_def ImDrawList
@@ -46,6 +51,7 @@ pushfirst!(args, "-isystem$CIMGUI_INCLUDE_DIR")
 @add_def ImRect
 @add_def ImPoolIdx
 @add_def ImVector_ImGuiColorMod
+@add_def ImVector_ImTextureRect
 
 include(joinpath(@__DIR__, "helpers.jl"))
 
