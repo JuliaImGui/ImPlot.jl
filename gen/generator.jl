@@ -1,6 +1,7 @@
 using Clang.Generators
 using ExprTools, MacroTools, JSON3
-import JuliaFormatter: format_file
+using MacroTools: postwalk
+using JuliaFormatter: format_file
 import CImGuiPack_jll
 
 const CIMGUI_INCLUDE_DIR = joinpath(CImGuiPack_jll.artifact_dir, "include")
@@ -14,7 +15,9 @@ pushfirst!(args, "-isystem$CIMGUI_INCLUDE_DIR")
 
 # add definitions
 @add_def ImVec2
+@add_def ImVec2_c
 @add_def ImVec4
+@add_def ImVec4_c
 @add_def ImGuiMouseButton
 @add_def ImGuiKeyModFlags
 @add_def ImS8 
@@ -26,7 +29,7 @@ pushfirst!(args, "-isystem$CIMGUI_INCLUDE_DIR")
 @add_def ImS64
 @add_def ImU64
 @add_def ImTextureID
-@add_def ImTextureRef
+@add_def ImTextureRef_c
 @add_def ImTextureData
 @add_def ImTextureStatus
 @add_def ImTextureFormat
@@ -49,6 +52,7 @@ pushfirst!(args, "-isystem$CIMGUI_INCLUDE_DIR")
 @add_def ImVector_ImU32
 @add_def ImVector_ImGuiStyleMod
 @add_def ImRect
+@add_def ImRect_c
 @add_def ImPoolIdx
 @add_def ImVector_ImGuiColorMod
 @add_def ImVector_ImTextureRect
@@ -60,7 +64,8 @@ const DESPECIALIZE = ["LinkNextPlotLimits"]
 const IMDATATYPES = [:Cfloat, :Cdouble, :ImS8, :ImU8, :ImS16, :ImU16, :ImS32, :ImU32, :ImS64, :ImU64]
 const JLDATATYPES = [:Float32, :Float64, :Int8, :UInt8, :Int16, :UInt16, :Int32, :UInt32, :Int64, :UInt64] 
 const IMTOJL_LOOKUP = Dict(zip(IMDATATYPES, JLDATATYPES))
-const IMGUI_ISBITS_TYPES = [:ImPlotPoint, :ImPlotRange, :ImVec2, :ImVec4, :ImPlotRect]
+const IMGUI_ISBITS_TYPES = [:ImPlotPoint, :ImPlotRange, :ImVec2, :ImVec4, :ImPlotRect,
+                            :ImPlotPoint_c, :ImPlotRange_c, :ImVec2_c, :ImVec4_c, :ImPlotRect_c]
 
 # Read in JSON metadata
 FUNCTION_METADATA, ENUMS = read_metadata();

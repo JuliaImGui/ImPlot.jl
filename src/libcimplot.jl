@@ -124,7 +124,7 @@ end
 # typedef int ( * ImPlotFormatter ) ( double value , char * buff , int size , void * user_data )
 const ImPlotFormatter = Ptr{Cvoid}
 
-# typedef void ( * ImPlotLocator ) ( ImPlotTicker * ticker , const ImPlotRange range , float pixels , bool vertical , ImPlotFormatter formatter , void * formatter_data )
+# typedef void ( * ImPlotLocator ) ( ImPlotTicker * ticker , const ImPlotRange_c range , float pixels , bool vertical , ImPlotFormatter formatter , void * formatter_data )
 const ImPlotLocator = Ptr{Cvoid}
 
 struct ImPlotTime
@@ -737,6 +737,7 @@ end
     ImPlotLegendFlags_Outside = 16
     ImPlotLegendFlags_Horizontal = 32
     ImPlotLegendFlags_Sort = 64
+    ImPlotLegendFlags_Reverse = 128
 end
 
 @cenum ImPlotMouseTextFlags_::UInt32 begin
@@ -987,7 +988,7 @@ struct ImPlotRect
     Y::ImPlotRange
 end
 
-# typedef ImPlotPoint ( * ImPlotGetter ) ( int idx , void * user_data )
+# typedef ImPlotPoint_c ( * ImPlotGetter ) ( int idx , void * user_data )
 const ImPlotGetter = Ptr{Cvoid}
 
 const ImPlotTimeUnit = Cint
@@ -1051,13 +1052,27 @@ struct Formatter_Time_Data
     UserFormatterData::Ptr{Cvoid}
 end
 
-# typedef void * ( * ImPlotPoint_getter ) ( void * data , int idx , ImPlotPoint * point )
+const ImPlotDateTimeSpec = ImPlotDateTimeSpec
+
+const ImPlotPoint = ImPlotPoint
+
+const ImPlotRange = ImPlotRange
+
+const ImPlotTime = ImPlotTime
+
+const ImPlotRect = ImPlotRect
+
+const ImPlotTick = ImPlotTick
+
+const ImPlotAxis = ImPlotAxis
+
+# typedef void * ( * ImPlotPoint_getter ) ( void * data , int idx , ImPlotPoint_c * point )
 const ImPlotPoint_getter = Ptr{Cvoid}
 
 """
     ImPlotPoint_ImPlotPoint_Nil()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L472).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L476).
 """
 function ImPlotPoint_ImPlotPoint_Nil()
     ccall((:ImPlotPoint_ImPlotPoint_Nil, libcimgui), Ptr{ImPlotPoint}, ())
@@ -1066,7 +1081,7 @@ end
 """
     ImPlotPoint_ImPlotPoint_double(_x::Cdouble, _y::Cdouble)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L473).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L477).
 """
 function ImPlotPoint_ImPlotPoint_double(_x::Cdouble, _y::Cdouble)
     ccall((:ImPlotPoint_ImPlotPoint_double, libcimgui), Ptr{ImPlotPoint}, (Cdouble, Cdouble), _x, _y)
@@ -1075,7 +1090,7 @@ end
 """
     ImPlotPoint_ImPlotPoint_Vec2(p::ImVec2)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L474).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L478).
 """
 function ImPlotPoint_ImPlotPoint_Vec2(p::ImVec2)
     ccall((:ImPlotPoint_ImPlotPoint_Vec2, libcimgui), Ptr{ImPlotPoint}, (ImVec2,), p)
@@ -1084,7 +1099,7 @@ end
 """
     ImPlotRange_ImPlotRange_Nil()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L487).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L491).
 """
 function ImPlotRange_ImPlotRange_Nil()
     ccall((:ImPlotRange_ImPlotRange_Nil, libcimgui), Ptr{ImPlotRange}, ())
@@ -1093,7 +1108,7 @@ end
 """
     ImPlotRange_ImPlotRange_double(_min::Cdouble, _max::Cdouble)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L488).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L492).
 """
 function ImPlotRange_ImPlotRange_double(_min::Cdouble, _max::Cdouble)
     ccall((:ImPlotRange_ImPlotRange_double, libcimgui), Ptr{ImPlotRange}, (Cdouble, Cdouble), _min, _max)
@@ -1102,7 +1117,7 @@ end
 """
     Contains(self::Union{ImPlotRange, Ptr{ImPlotRange}, Ref{ImPlotRange}}, value::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L489).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L493).
 """
 function Contains(self::Union{ImPlotRange,Ptr{ImPlotRange},Ref{ImPlotRange}}, value::Real)
     ccall((:ImPlotRange_Contains, libcimgui), Bool, (Ptr{ImPlotRange}, Cdouble), self, value)
@@ -1111,7 +1126,7 @@ end
 """
     Size(self::Union{ImPlotRange, Ptr{ImPlotRange}, Ref{ImPlotRange}})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L490).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L494).
 """
 function Size(self::Union{ImPlotRange,Ptr{ImPlotRange},Ref{ImPlotRange}})
     ccall((:ImPlotRange_Size, libcimgui), Cdouble, (Ptr{ImPlotRange},), self)
@@ -1120,7 +1135,7 @@ end
 """
     Clamp(self::Union{ImPlotRange, Ptr{ImPlotRange}, Ref{ImPlotRange}}, value::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L491).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L495).
 """
 function Clamp(self::Union{ImPlotRange,Ptr{ImPlotRange},Ref{ImPlotRange}}, value::Real)
     ccall((:ImPlotRange_Clamp, libcimgui), Cdouble, (Ptr{ImPlotRange}, Cdouble), self, value)
@@ -1129,7 +1144,7 @@ end
 """
     ImPlotRect_ImPlotRect_Nil()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L497).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L501).
 """
 function ImPlotRect_ImPlotRect_Nil()
     ccall((:ImPlotRect_ImPlotRect_Nil, libcimgui), Ptr{ImPlotRect}, ())
@@ -1142,7 +1157,7 @@ end
 """
     ImPlotRect_ImPlotRect_double(x_min::Cdouble, x_max::Cdouble, y_min::Cdouble, y_max::Cdouble)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L498).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L502).
 """
 function ImPlotRect_ImPlotRect_double(x_min::Cdouble, x_max::Cdouble, y_min::Cdouble, y_max::Cdouble)
     ccall(
@@ -1159,7 +1174,7 @@ end
 """
     Contains(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}}, p::ImPlotPoint)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L499).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L503).
 """
 function Contains(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, p::ImPlotPoint)
     ccall((:ImPlotRect_Contains_PlotPoInt, libcimgui), Bool, (Ptr{ImPlotRect}, ImPlotPoint), self, p)
@@ -1168,94 +1183,61 @@ end
 """
     Contains(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}}, x::Real, y::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L500).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L504).
 """
 function Contains(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, x::Real, y::Real)
     ccall((:ImPlotRect_Contains_double, libcimgui), Bool, (Ptr{ImPlotRect}, Cdouble, Cdouble), self, x, y)
 end
 
 """
-    Size(pOut::Union{ImPlotPoint, Ptr{ImPlotPoint}, Ref{ImPlotPoint}}, self::Union{ImPlotRect, AbstractArray{ImPlotRect}})
+    Size(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L501).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L505).
 """
-function Size(
-    pOut::Union{ImPlotPoint,Ptr{ImPlotPoint},Ref{ImPlotPoint}},
-    self::Union{ImPlotRect,AbstractArray{ImPlotRect}},
-)
-    ccall((:ImPlotRect_Size, libcimgui), Cvoid, (Ptr{ImPlotPoint}, Ptr{ImPlotRect}), pOut, self)
+function Size(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}})
+    ccall((:ImPlotRect_Size, libcimgui), ImPlotPoint, (Ptr{ImPlotRect},), self)
 end
 
 """
-    Clamp(pOut::Union{ImPlotPoint, Ptr{ImPlotPoint}, Ref{ImPlotPoint}}, self::Union{ImPlotRect, AbstractArray{ImPlotRect}}, p::ImPlotPoint)
+    Clamp(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}}, p::ImPlotPoint)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L502).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L506).
 """
-function Clamp(
-    pOut::Union{ImPlotPoint,Ptr{ImPlotPoint},Ref{ImPlotPoint}},
-    self::Union{ImPlotRect,AbstractArray{ImPlotRect}},
-    p::ImPlotPoint,
-)
-    ccall(
-        (:ImPlotRect_Clamp_PlotPoInt, libcimgui),
-        Cvoid,
-        (Ptr{ImPlotPoint}, Ptr{ImPlotRect}, ImPlotPoint),
-        pOut,
-        self,
-        p,
-    )
+function Clamp(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, p::ImPlotPoint)
+    ccall((:ImPlotRect_Clamp_PlotPoInt, libcimgui), ImPlotPoint, (Ptr{ImPlotRect}, ImPlotPoint), self, p)
 end
 
 """
-    Clamp(pOut::Union{ImPlotPoint, Ptr{ImPlotPoint}, Ref{ImPlotPoint}}, self::Union{ImPlotRect, AbstractArray{ImPlotRect}}, x::Real, y::Real)
+    Clamp(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}}, x::Real, y::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L503).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L507).
 """
-function Clamp(
-    pOut::Union{ImPlotPoint,Ptr{ImPlotPoint},Ref{ImPlotPoint}},
-    self::Union{ImPlotRect,AbstractArray{ImPlotRect}},
-    x::Real,
-    y::Real,
-)
-    ccall(
-        (:ImPlotRect_Clamp_double, libcimgui),
-        Cvoid,
-        (Ptr{ImPlotPoint}, Ptr{ImPlotRect}, Cdouble, Cdouble),
-        pOut,
-        self,
-        x,
-        y,
-    )
+function Clamp(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, x::Real, y::Real)
+    ccall((:ImPlotRect_Clamp_double, libcimgui), ImPlotPoint, (Ptr{ImPlotRect}, Cdouble, Cdouble), self, x, y)
 end
 
 """
-    Min(pOut::Union{ImPlotPoint, Ptr{ImPlotPoint}, Ref{ImPlotPoint}}, self::Union{ImPlotRect, AbstractArray{ImPlotRect}})
+    Min(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L504).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L508).
 """
-function Min(
-    pOut::Union{ImPlotPoint,Ptr{ImPlotPoint},Ref{ImPlotPoint}},
-    self::Union{ImPlotRect,AbstractArray{ImPlotRect}},
-)
-    ccall((:ImPlotRect_Min, libcimgui), Cvoid, (Ptr{ImPlotPoint}, Ptr{ImPlotRect}), pOut, self)
+function Min(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}})
+    ccall((:ImPlotRect_Min, libcimgui), ImPlotPoint, (Ptr{ImPlotRect},), self)
 end
 
 """
-    Max(pOut::Union{ImPlotPoint, Ptr{ImPlotPoint}, Ref{ImPlotPoint}}, self::Union{ImPlotRect, AbstractArray{ImPlotRect}})
+    Max(self::Union{ImPlotRect, Ptr{ImPlotRect}, Ref{ImPlotRect}})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L505).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L509).
 """
-function Max(
-    pOut::Union{ImPlotPoint,Ptr{ImPlotPoint},Ref{ImPlotPoint}},
-    self::Union{ImPlotRect,AbstractArray{ImPlotRect}},
-)
-    ccall((:ImPlotRect_Max, libcimgui), Cvoid, (Ptr{ImPlotPoint}, Ptr{ImPlotRect}), pOut, self)
+function Max(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}})
+    ccall((:ImPlotRect_Max, libcimgui), ImPlotPoint, (Ptr{ImPlotRect},), self)
 end
 
 """
     ImPlotStyle()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L547).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L551).
 """
 function ImPlotStyle()
     ccall((:ImPlotStyle_ImPlotStyle, libcimgui), Ptr{ImPlotStyle}, ())
@@ -1269,7 +1251,7 @@ end
 """
     ImPlotInputMap()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L579).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L583).
 """
 function ImPlotInputMap()
     ccall((:ImPlotInputMap_ImPlotInputMap, libcimgui), Ptr{ImPlotInputMap}, ())
@@ -1283,7 +1265,7 @@ end
 """
     CreateContext()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L602).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L606).
 """
 function CreateContext()
     ccall((:ImPlot_CreateContext, libcimgui), Ptr{ImPlotContext}, ())
@@ -1292,7 +1274,7 @@ end
 """
     DestroyContext(ctx)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L604).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L608).
 """
 function DestroyContext(ctx)
     ccall((:ImPlot_DestroyContext, libcimgui), Cvoid, (Ptr{ImPlotContext},), ctx)
@@ -1301,7 +1283,7 @@ end
 """
     GetCurrentContext()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L606).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L610).
 """
 function GetCurrentContext()
     ccall((:ImPlot_GetCurrentContext, libcimgui), Ptr{ImPlotContext}, ())
@@ -1310,7 +1292,7 @@ end
 """
     SetCurrentContext(ctx)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L608).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L612).
 """
 function SetCurrentContext(ctx)
     ccall((:ImPlot_SetCurrentContext, libcimgui), Cvoid, (Ptr{ImPlotContext},), ctx)
@@ -1319,7 +1301,7 @@ end
 """
     SetImGuiContext(ctx)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L614).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L618).
 """
 function SetImGuiContext(ctx)
     ccall((:ImPlot_SetImGuiContext, libcimgui), Cvoid, (Ptr{ImGuiContext},), ctx)
@@ -1328,7 +1310,7 @@ end
 """
     BeginPlot(title_id, size::ImVec2 = ImVec2(-1, 0), flags::Union{ImPlotFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L636).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L640).
 """
 function BeginPlot(title_id, size::ImVec2 = ImVec2(-1, 0), flags::Union{ImPlotFlags_,Integer} = 0)
     ccall((:ImPlot_BeginPlot, libcimgui), Bool, (Cstring, ImVec2, ImPlotFlags), title_id, size, flags)
@@ -1337,7 +1319,7 @@ end
 """
     EndPlot()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L640).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L644).
 """
 function EndPlot()
     ccall((:ImPlot_EndPlot, libcimgui), Cvoid, ())
@@ -1346,7 +1328,7 @@ end
 """
     BeginSubplots(title_id, rows::Integer, cols::Integer, size::ImVec2, flags::Union{ImPlotSubplotFlags_, Integer} = 0, row_ratios::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}} = C_NULL, col_ratios::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}} = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L692).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L696).
 """
 function BeginSubplots(
     title_id,
@@ -1374,7 +1356,7 @@ end
 """
     EndSubplots()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L702).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L706).
 """
 function EndSubplots()
     ccall((:ImPlot_EndSubplots, libcimgui), Cvoid, ())
@@ -1383,7 +1365,7 @@ end
 """
     SetupAxis(axis::Union{ImAxis_, Integer}, label = C_NULL, flags::Union{ImPlotAxisFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L734).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L738).
 """
 function SetupAxis(axis::Union{ImAxis_,Integer}, label = C_NULL, flags::Union{ImPlotAxisFlags_,Integer} = 0)
     ccall((:ImPlot_SetupAxis, libcimgui), Cvoid, (ImAxis, Cstring, ImPlotAxisFlags), axis, label, flags)
@@ -1392,7 +1374,7 @@ end
 """
     SetupAxisLimits(axis::Union{ImAxis_, Integer}, v_min::Real, v_max::Real, cond = ImPlotCond_Once)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L736).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L740).
 """
 function SetupAxisLimits(axis::Union{ImAxis_,Integer}, v_min::Real, v_max::Real, cond = ImPlotCond_Once)
     ccall((:ImPlot_SetupAxisLimits, libcimgui), Cvoid, (ImAxis, Cdouble, Cdouble, ImPlotCond), axis, v_min, v_max, cond)
@@ -1401,7 +1383,7 @@ end
 """
     SetupAxisLinks(axis::Union{ImAxis_, Integer}, link_min::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, link_max::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L738).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L742).
 """
 function SetupAxisLinks(
     axis::Union{ImAxis_,Integer},
@@ -1414,7 +1396,7 @@ end
 """
     SetupAxisFormat(axis::Union{ImAxis_, Integer}, fmt)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L740).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L744).
 """
 function SetupAxisFormat(axis::Union{ImAxis_,Integer}, fmt)
     ccall((:ImPlot_SetupAxisFormat_Str, libcimgui), Cvoid, (ImAxis, Cstring), axis, fmt)
@@ -1423,7 +1405,7 @@ end
 """
     SetupAxisFormat(axis::Union{ImAxis_, Integer}, formatter::ImPlotFormatter, data)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L742).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L746).
 """
 function SetupAxisFormat(axis::Union{ImAxis_,Integer}, formatter::ImPlotFormatter, data)
     ccall(
@@ -1439,7 +1421,7 @@ end
 """
     SetupAxisTicks(axis::Union{ImAxis_, Integer}, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, n_ticks::Integer, labels::Union{Ptr{Nothing}, String, AbstractArray{String}} = C_NULL, keep_default = false)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L744).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L748).
 """
 function SetupAxisTicks(
     axis::Union{ImAxis_,Integer},
@@ -1463,7 +1445,7 @@ end
 """
     SetupAxisTicks(axis::Union{ImAxis_, Integer}, v_min::Real, v_max::Real, n_ticks::Integer, labels::Union{Ptr{Nothing}, String, AbstractArray{String}} = C_NULL, keep_default = false)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L746).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L750).
 """
 function SetupAxisTicks(
     axis::Union{ImAxis_,Integer},
@@ -1489,7 +1471,7 @@ end
 """
     SetupAxisScale(axis::Union{ImAxis_, Integer}, scale::Union{ImPlotScale_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L748).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L752).
 """
 function SetupAxisScale(axis::Union{ImAxis_,Integer}, scale::Union{ImPlotScale_,Integer})
     ccall((:ImPlot_SetupAxisScale_PlotScale, libcimgui), Cvoid, (ImAxis, ImPlotScale), axis, scale)
@@ -1498,7 +1480,7 @@ end
 """
     SetupAxisScale(axis::Union{ImAxis_, Integer}, forward::ImPlotTransform, inverse::ImPlotTransform, data)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L750).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L754).
 """
 function SetupAxisScale(axis::Union{ImAxis_,Integer}, forward::ImPlotTransform, inverse::ImPlotTransform, data)
     ccall(
@@ -1515,7 +1497,7 @@ end
 """
     SetupAxisLimitsConstraints(axis::Union{ImAxis_, Integer}, v_min::Real, v_max::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L752).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L756).
 """
 function SetupAxisLimitsConstraints(axis::Union{ImAxis_,Integer}, v_min::Real, v_max::Real)
     ccall((:ImPlot_SetupAxisLimitsConstraints, libcimgui), Cvoid, (ImAxis, Cdouble, Cdouble), axis, v_min, v_max)
@@ -1524,7 +1506,7 @@ end
 """
     SetupAxisZoomConstraints(axis::Union{ImAxis_, Integer}, z_min::Real, z_max::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L754).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L758).
 """
 function SetupAxisZoomConstraints(axis::Union{ImAxis_,Integer}, z_min::Real, z_max::Real)
     ccall((:ImPlot_SetupAxisZoomConstraints, libcimgui), Cvoid, (ImAxis, Cdouble, Cdouble), axis, z_min, z_max)
@@ -1533,7 +1515,7 @@ end
 """
     SetupAxes(x_label, y_label, x_flags::Union{ImPlotAxisFlags_, Integer} = 0, y_flags::Union{ImPlotAxisFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L757).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L761).
 """
 function SetupAxes(
     x_label,
@@ -1555,7 +1537,7 @@ end
 """
     SetupAxesLimits(x_min::Real, x_max::Real, y_min::Real, y_max::Real, cond = ImPlotCond_Once)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L759).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L763).
 """
 function SetupAxesLimits(x_min::Real, x_max::Real, y_min::Real, y_max::Real, cond = ImPlotCond_Once)
     ccall(
@@ -1573,7 +1555,7 @@ end
 """
     SetupLegend(location::Union{ImPlotLocation_, Integer}, flags::Union{ImPlotLegendFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L762).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L766).
 """
 function SetupLegend(location::Union{ImPlotLocation_,Integer}, flags::Union{ImPlotLegendFlags_,Integer} = 0)
     ccall((:ImPlot_SetupLegend, libcimgui), Cvoid, (ImPlotLocation, ImPlotLegendFlags), location, flags)
@@ -1582,7 +1564,7 @@ end
 """
     SetupMouseText(location::Union{ImPlotLocation_, Integer}, flags::Union{ImPlotMouseTextFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L764).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L768).
 """
 function SetupMouseText(location::Union{ImPlotLocation_,Integer}, flags::Union{ImPlotMouseTextFlags_,Integer} = 0)
     ccall((:ImPlot_SetupMouseText, libcimgui), Cvoid, (ImPlotLocation, ImPlotMouseTextFlags), location, flags)
@@ -1591,7 +1573,7 @@ end
 """
     SetupFinish()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L768).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L772).
 """
 function SetupFinish()
     ccall((:ImPlot_SetupFinish, libcimgui), Cvoid, ())
@@ -1600,7 +1582,7 @@ end
 """
     SetNextAxisLimits(axis::Union{ImAxis_, Integer}, v_min::Real, v_max::Real, cond = ImPlotCond_Once)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L794).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L798).
 """
 function SetNextAxisLimits(axis::Union{ImAxis_,Integer}, v_min::Real, v_max::Real, cond = ImPlotCond_Once)
     ccall(
@@ -1617,7 +1599,7 @@ end
 """
     SetNextAxisLinks(axis::Union{ImAxis_, Integer}, link_min::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, link_max::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L796).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L800).
 """
 function SetNextAxisLinks(
     axis::Union{ImAxis_,Integer},
@@ -1630,7 +1612,7 @@ end
 """
     SetNextAxisToFit(axis::Union{ImAxis_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L798).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L802).
 """
 function SetNextAxisToFit(axis::Union{ImAxis_,Integer})
     ccall((:ImPlot_SetNextAxisToFit, libcimgui), Cvoid, (ImAxis,), axis)
@@ -1639,7 +1621,7 @@ end
 """
     SetNextAxesLimits(x_min::Real, x_max::Real, y_min::Real, y_max::Real, cond = ImPlotCond_Once)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L801).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L805).
 """
 function SetNextAxesLimits(x_min::Real, x_max::Real, y_min::Real, y_max::Real, cond = ImPlotCond_Once)
     ccall(
@@ -1657,7 +1639,7 @@ end
 """
     SetNextAxesToFit()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L803).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L807).
 """
 function SetNextAxesToFit()
     ccall((:ImPlot_SetNextAxesToFit, libcimgui), Cvoid, ())
@@ -1666,7 +1648,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1696,7 +1678,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1726,7 +1708,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1756,7 +1738,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1786,7 +1768,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1816,7 +1798,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1846,7 +1828,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1876,7 +1858,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1906,7 +1888,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1936,7 +1918,7 @@ end
 """
     PlotLine(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L858).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L862).
 """
 function PlotLine(
     label_id,
@@ -1966,7 +1948,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -1994,7 +1976,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2022,7 +2004,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2050,7 +2032,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2078,7 +2060,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2106,7 +2088,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2134,7 +2116,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2162,7 +2144,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2190,7 +2172,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2218,7 +2200,7 @@ end
 """
     PlotLine(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L859).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L863).
 """
 function PlotLine(
     label_id,
@@ -2246,7 +2228,7 @@ end
 """
     PlotLineG(label_id, getter::ImPlotPoint_getter, data, count::Integer, flags::Union{ImPlotLineFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L860).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L864).
 """
 function PlotLineG(
     label_id,
@@ -2270,7 +2252,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2300,7 +2282,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2330,7 +2312,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2360,7 +2342,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2390,7 +2372,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2420,7 +2402,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2450,7 +2432,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2480,7 +2462,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2510,7 +2492,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2540,7 +2522,7 @@ end
 """
     PlotScatter(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L863).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L867).
 """
 function PlotScatter(
     label_id,
@@ -2570,7 +2552,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2598,7 +2580,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2626,7 +2608,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2654,7 +2636,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2682,7 +2664,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2710,7 +2692,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2738,7 +2720,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2766,7 +2748,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2794,7 +2776,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2822,7 +2804,7 @@ end
 """
     PlotScatter(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L864).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L868).
 """
 function PlotScatter(
     label_id,
@@ -2850,7 +2832,7 @@ end
 """
     PlotScatterG(label_id, getter::ImPlotPoint_getter, data, count::Integer, flags::Union{ImPlotScatterFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L865).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L869).
 """
 function PlotScatterG(
     label_id,
@@ -2874,7 +2856,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -2904,7 +2886,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -2934,7 +2916,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -2964,7 +2946,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -2994,7 +2976,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -3024,7 +3006,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -3054,7 +3036,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -3084,7 +3066,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -3114,7 +3096,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -3144,7 +3126,7 @@ end
 """
     PlotStairs(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L868).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L872).
 """
 function PlotStairs(
     label_id,
@@ -3174,7 +3156,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3202,7 +3184,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3230,7 +3212,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3258,7 +3240,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3286,7 +3268,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3314,7 +3296,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3342,7 +3324,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3370,7 +3352,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3398,7 +3380,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3426,7 +3408,7 @@ end
 """
     PlotStairs(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L869).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L873).
 """
 function PlotStairs(
     label_id,
@@ -3454,7 +3436,7 @@ end
 """
     PlotStairsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, flags::Union{ImPlotStairsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L870).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L874).
 """
 function PlotStairsG(
     label_id,
@@ -3478,7 +3460,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3510,7 +3492,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3542,7 +3524,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3574,7 +3556,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3606,7 +3588,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3638,7 +3620,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3670,7 +3652,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3702,7 +3684,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3734,7 +3716,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3766,7 +3748,7 @@ end
 """
     PlotShaded(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, yref::Real = 0, xscale::Real = 1, xstart::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L873).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L877).
 """
 function PlotShaded(
     label_id,
@@ -3798,7 +3780,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -3828,7 +3810,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -3858,7 +3840,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -3888,7 +3870,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -3918,7 +3900,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -3948,7 +3930,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -3978,7 +3960,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -4008,7 +3990,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -4038,7 +4020,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -4068,7 +4050,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, yref::Real = 0, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L874).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L878).
 """
 function PlotShaded(
     label_id,
@@ -4098,7 +4080,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys1::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys2::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4128,7 +4110,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys1::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys2::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4158,7 +4140,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys1::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys2::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4188,7 +4170,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys1::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys2::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4218,7 +4200,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys1::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys2::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4248,7 +4230,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys1::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys2::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4278,7 +4260,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys1::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys2::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4308,7 +4290,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys1::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys2::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4338,7 +4320,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys1::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys2::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4368,7 +4350,7 @@ end
 """
     PlotShaded(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys1::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys2::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L875).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L879).
 """
 function PlotShaded(
     label_id,
@@ -4398,7 +4380,7 @@ end
 """
     PlotShadedG(label_id, getter1::ImPlotPoint_getter, data1, getter2::ImPlotPoint_getter, data2, count::Integer, flags::Union{ImPlotShadedFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L876).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L880).
 """
 function PlotShadedG(
     label_id,
@@ -4426,7 +4408,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4456,7 +4438,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4486,7 +4468,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4516,7 +4498,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4546,7 +4528,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4576,7 +4558,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4606,7 +4588,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4636,7 +4618,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4666,7 +4648,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4696,7 +4678,7 @@ end
 """
     PlotBars(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, bar_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L879).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L883).
 """
 function PlotBars(
     label_id,
@@ -4726,7 +4708,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4756,7 +4738,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4786,7 +4768,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4816,7 +4798,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4846,7 +4828,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4876,7 +4858,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4906,7 +4888,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4936,7 +4918,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4966,7 +4948,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -4996,7 +4978,7 @@ end
 """
     PlotBars(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L880).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L884).
 """
 function PlotBars(
     label_id,
@@ -5026,7 +5008,7 @@ end
 """
     PlotBarsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, bar_size::Real, flags::Union{ImPlotBarsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L881).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L885).
 """
 function PlotBarsG(
     label_id,
@@ -5052,7 +5034,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5080,7 +5062,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5108,7 +5090,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5136,7 +5118,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5164,7 +5146,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5192,7 +5174,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5220,7 +5202,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5248,7 +5230,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5276,7 +5258,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5304,7 +5286,7 @@ end
 """
     PlotBarGroups(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, item_count::Integer, group_count::Integer, group_size::Real = 0.67, shift::Real = 0, flags::Union{ImPlotBarGroupsFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L884).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L888).
 """
 function PlotBarGroups(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -5332,7 +5314,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, err::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5362,7 +5344,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, err::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5392,7 +5374,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, err::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5422,7 +5404,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, err::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5452,7 +5434,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, err::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5482,7 +5464,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, err::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5512,7 +5494,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, err::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5542,7 +5524,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, err::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5572,7 +5554,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, err::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5602,7 +5584,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, err::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L887).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L891).
 """
 function PlotErrorBars(
     label_id,
@@ -5632,7 +5614,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, neg::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, pos::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5664,7 +5646,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, neg::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, pos::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5696,7 +5678,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, neg::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, pos::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5728,7 +5710,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, neg::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, pos::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5760,7 +5742,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, neg::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, pos::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5792,7 +5774,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, neg::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, pos::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5824,7 +5806,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, neg::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, pos::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5856,7 +5838,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, neg::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, pos::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5888,7 +5870,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, neg::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, pos::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5920,7 +5902,7 @@ end
 """
     PlotErrorBars(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, neg::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, pos::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotErrorBarsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L888).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L892).
 """
 function PlotErrorBars(
     label_id,
@@ -5952,7 +5934,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -5984,7 +5966,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6016,7 +5998,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6048,7 +6030,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6080,7 +6062,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6112,7 +6094,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6144,7 +6126,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6176,7 +6158,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6208,7 +6190,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6240,7 +6222,7 @@ end
 """
     PlotStems(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, ref::Real = 0, scale::Real = 1, start::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L891).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L895).
 """
 function PlotStems(
     label_id,
@@ -6272,7 +6254,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6302,7 +6284,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6332,7 +6314,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6362,7 +6344,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6392,7 +6374,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6422,7 +6404,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6452,7 +6434,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6482,7 +6464,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6512,7 +6494,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6542,7 +6524,7 @@ end
 """
     PlotStems(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, ref::Real = 0, flags::Union{ImPlotStemsFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L892).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L896).
 """
 function PlotStems(
     label_id,
@@ -6572,7 +6554,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6598,7 +6580,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6624,7 +6606,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6650,7 +6632,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6676,7 +6658,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6702,7 +6684,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6728,7 +6710,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6754,7 +6736,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6780,7 +6762,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6806,7 +6788,7 @@ end
 """
     PlotInfLines(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotInfLinesFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L895).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L899).
 """
 function PlotInfLines(
     label_id,
@@ -6832,7 +6814,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -6877,7 +6859,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -6922,7 +6904,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -6967,7 +6949,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7012,7 +6994,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7057,7 +7039,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7102,7 +7084,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7147,7 +7129,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7192,7 +7174,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7237,7 +7219,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L898).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L902).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7282,7 +7264,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7314,7 +7296,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7346,7 +7328,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7378,7 +7360,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7410,7 +7392,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7442,7 +7424,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7474,7 +7456,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7506,7 +7488,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7538,7 +7520,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7570,7 +7552,7 @@ end
 """
     PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, x::Real, y::Real, radius::Real, label_fmt = "%.1f", angle0::Real = 90, flags::Union{ImPlotPieChartFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L899).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L903).
 """
 function PlotPieChart(
     label_ids::Union{Ptr{Nothing},String,AbstractArray{String}},
@@ -7602,7 +7584,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7636,7 +7618,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7670,7 +7652,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7704,7 +7686,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7738,7 +7720,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7772,7 +7754,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7806,7 +7788,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7840,7 +7822,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7874,7 +7856,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7908,7 +7890,7 @@ end
 """
     PlotHeatmap(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, rows::Integer, cols::Integer, scale_min::Real = 0, scale_max::Real = 0, label_fmt = "%.1f", bounds_min::ImPlotPoint = ImPlotPoint(0, 0), bounds_max::ImPlotPoint = ImPlotPoint(1, 1), flags::Union{ImPlotHeatmapFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L902).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L906).
 """
 function PlotHeatmap(
     label_id,
@@ -7942,7 +7924,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -7970,7 +7952,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -7998,7 +7980,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8026,7 +8008,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8054,7 +8036,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8082,7 +8064,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8110,7 +8092,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8138,7 +8120,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8166,7 +8148,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8194,7 +8176,7 @@ end
 """
     PlotHistogram(label_id, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, bins::Integer = ImPlotBin_Sturges, bar_scale::Real = 1.0, range::ImPlotRange = ImPlotRange(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L906).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L910).
 """
 function PlotHistogram(
     label_id,
@@ -8222,7 +8204,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8252,7 +8234,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8282,7 +8264,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8312,7 +8294,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8342,7 +8324,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8372,7 +8354,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8402,7 +8384,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8432,7 +8414,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8462,7 +8444,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8492,7 +8474,7 @@ end
 """
     PlotHistogram2D(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, x_bins::Integer = ImPlotBin_Sturges, y_bins::Integer = ImPlotBin_Sturges, range::ImPlotRect = ImPlotRect(), flags::Union{ImPlotHistogramFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L910).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L914).
 """
 function PlotHistogram2D(
     label_id,
@@ -8522,7 +8504,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, ys::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cfloat))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8550,7 +8532,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, ys::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(Cdouble))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8578,7 +8560,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, ys::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8606,7 +8588,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, ys::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU8))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8634,7 +8616,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, ys::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8662,7 +8644,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, ys::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU16))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8690,7 +8672,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, ys::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8718,7 +8700,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, ys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU32))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8746,7 +8728,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, ys::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImS64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8774,7 +8756,7 @@ end
 """
     PlotDigital(label_id, xs::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, ys::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0, offset::Integer = 0, stride::Integer = sizeof(ImU64))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L913).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L917).
 """
 function PlotDigital(
     label_id,
@@ -8802,7 +8784,7 @@ end
 """
     PlotDigitalG(label_id, getter::ImPlotPoint_getter, data, count::Integer, flags::Union{ImPlotDigitalFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L914).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L918).
 """
 function PlotDigitalG(
     label_id,
@@ -8826,7 +8808,7 @@ end
 """
     PlotImage(label_id, tex_ref::ImTextureRef, bounds_min::ImPlotPoint, bounds_max::ImPlotPoint, uv0::ImVec2 = ImVec2(0, 0), uv1::ImVec2 = ImVec2(1, 1), tint_col::ImVec4 = ImVec4(1, 1, 1, 1), flags::Union{ImPlotImageFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L918).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L922).
 """
 function PlotImage(
     label_id,
@@ -8856,7 +8838,7 @@ end
 """
     PlotText(text, x::Real, y::Real, pix_offset::ImVec2 = ImVec2(0, 0), flags::Union{ImPlotTextFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L924).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L928).
 """
 function PlotText(text, x::Real, y::Real, pix_offset::ImVec2 = ImVec2(0, 0), flags::Union{ImPlotTextFlags_,Integer} = 0)
     ccall(
@@ -8874,16 +8856,16 @@ end
 """
     PlotDummy(label_id, flags::Union{ImPlotDummyFlags_, Integer} = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L927).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L931).
 """
 function PlotDummy(label_id, flags::Union{ImPlotDummyFlags_,Integer} = 0)
     ccall((:ImPlot_PlotDummy, libcimgui), Cvoid, (Cstring, ImPlotDummyFlags), label_id, flags)
 end
 
 """
-    DragPoint(id::Integer, x::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, y::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, size::Real = 4, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, held = C_NULL)
+    DragPoint(id::Integer, x::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, y::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, size::Real = 4, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, out_held = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L940).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L944).
 """
 function DragPoint(
     id::Integer,
@@ -8894,7 +8876,7 @@ function DragPoint(
     flags::Union{ImPlotDragToolFlags_,Integer} = 0,
     out_clicked = C_NULL,
     out_hovered = C_NULL,
-    held = C_NULL,
+    out_held = C_NULL,
 )
     ccall(
         (:ImPlot_DragPoint, libcimgui),
@@ -8908,14 +8890,14 @@ function DragPoint(
         flags,
         out_clicked,
         out_hovered,
-        held,
+        out_held,
     )
 end
 
 """
-    DragLineX(id::Integer, x::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, thickness::Real = 1, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, held = C_NULL)
+    DragLineX(id::Integer, x::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, thickness::Real = 1, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, out_held = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L942).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L946).
 """
 function DragLineX(
     id::Integer,
@@ -8925,7 +8907,7 @@ function DragLineX(
     flags::Union{ImPlotDragToolFlags_,Integer} = 0,
     out_clicked = C_NULL,
     out_hovered = C_NULL,
-    held = C_NULL,
+    out_held = C_NULL,
 )
     ccall(
         (:ImPlot_DragLineX, libcimgui),
@@ -8938,14 +8920,14 @@ function DragLineX(
         flags,
         out_clicked,
         out_hovered,
-        held,
+        out_held,
     )
 end
 
 """
-    DragLineY(id::Integer, y::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, thickness::Real = 1, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, held = C_NULL)
+    DragLineY(id::Integer, y::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, thickness::Real = 1, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, out_held = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L944).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L948).
 """
 function DragLineY(
     id::Integer,
@@ -8955,7 +8937,7 @@ function DragLineY(
     flags::Union{ImPlotDragToolFlags_,Integer} = 0,
     out_clicked = C_NULL,
     out_hovered = C_NULL,
-    held = C_NULL,
+    out_held = C_NULL,
 )
     ccall(
         (:ImPlot_DragLineY, libcimgui),
@@ -8968,14 +8950,14 @@ function DragLineY(
         flags,
         out_clicked,
         out_hovered,
-        held,
+        out_held,
     )
 end
 
 """
-    DragRect(id::Integer, x1::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, y1::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, x2::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, y2::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, held = C_NULL)
+    DragRect(id::Integer, x1::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, y1::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, x2::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, y2::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, col::ImVec4, flags::Union{ImPlotDragToolFlags_, Integer} = 0, out_clicked = C_NULL, out_hovered = C_NULL, out_held = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L946).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L950).
 """
 function DragRect(
     id::Integer,
@@ -8987,7 +8969,7 @@ function DragRect(
     flags::Union{ImPlotDragToolFlags_,Integer} = 0,
     out_clicked = C_NULL,
     out_hovered = C_NULL,
-    held = C_NULL,
+    out_held = C_NULL,
 )
     ccall(
         (:ImPlot_DragRect, libcimgui),
@@ -9013,14 +8995,14 @@ function DragRect(
         flags,
         out_clicked,
         out_hovered,
-        held,
+        out_held,
     )
 end
 
 """
     Annotation(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, clamp::Bool, round = false)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L949).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L953).
 """
 function Annotation(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, clamp::Bool, round = false)
     ccall(
@@ -9039,7 +9021,7 @@ end
 """
     TagX(x::Real, col::ImVec4, round = false)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L954).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L958).
 """
 function TagX(x::Real, col::ImVec4, round = false)
     ccall((:ImPlot_TagX_Bool, libcimgui), Cvoid, (Cdouble, ImVec4, Bool), x, col, round)
@@ -9048,7 +9030,7 @@ end
 """
     TagY(y::Real, col::ImVec4, round = false)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L959).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L963).
 """
 function TagY(y::Real, col::ImVec4, round = false)
     ccall((:ImPlot_TagY_Bool, libcimgui), Cvoid, (Cdouble, ImVec4, Bool), y, col, round)
@@ -9057,7 +9039,7 @@ end
 """
     SetAxis(axis::Union{ImAxis_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L968).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L972).
 """
 function SetAxis(axis::Union{ImAxis_,Integer})
     ccall((:ImPlot_SetAxis, libcimgui), Cvoid, (ImAxis,), axis)
@@ -9066,7 +9048,7 @@ end
 """
     SetAxes(x_axis::Union{ImAxis_, Integer}, y_axis::Union{ImAxis_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L969).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L973).
 """
 function SetAxes(x_axis::Union{ImAxis_,Integer}, y_axis::Union{ImAxis_,Integer})
     ccall((:ImPlot_SetAxes, libcimgui), Cvoid, (ImAxis, ImAxis), x_axis, y_axis)
@@ -9075,129 +9057,79 @@ end
 """
     PixelsToPlot(pix::ImVec2, x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L972).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L976).
 """
 function PixelsToPlot(pix::ImVec2, x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImPlotPoint}()
-    ccall(
-        (:ImPlot_PixelsToPlot_Vec2, libcimgui),
-        Cvoid,
-        (Ref{ImPlotPoint}, ImVec2, ImAxis, ImAxis),
-        pOut,
-        pix,
-        x_axis,
-        y_axis,
-    )
-    pOut[]
+    ccall((:ImPlot_PixelsToPlot_Vec2, libcimgui), ImPlotPoint, (ImVec2, ImAxis, ImAxis), pix, x_axis, y_axis)
 end
 
 """
     PixelsToPlot(x::Real, y::Real, x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L973).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L977).
 """
 function PixelsToPlot(x::Real, y::Real, x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImPlotPoint}()
-    ccall(
-        (:ImPlot_PixelsToPlot_Float, libcimgui),
-        Cvoid,
-        (Ref{ImPlotPoint}, Cfloat, Cfloat, ImAxis, ImAxis),
-        pOut,
-        x,
-        y,
-        x_axis,
-        y_axis,
-    )
-    pOut[]
+    ccall((:ImPlot_PixelsToPlot_Float, libcimgui), ImPlotPoint, (Cfloat, Cfloat, ImAxis, ImAxis), x, y, x_axis, y_axis)
 end
 
 """
     PlotToPixels(plt::ImPlotPoint, x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L976).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L980).
 """
 function PlotToPixels(plt::ImPlotPoint, x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImVec2}()
-    ccall(
-        (:ImPlot_PlotToPixels_PlotPoInt, libcimgui),
-        Cvoid,
-        (Ref{ImVec2}, ImPlotPoint, ImAxis, ImAxis),
-        pOut,
-        plt,
-        x_axis,
-        y_axis,
-    )
-    pOut[]
+    ccall((:ImPlot_PlotToPixels_PlotPoInt, libcimgui), ImVec2, (ImPlotPoint, ImAxis, ImAxis), plt, x_axis, y_axis)
 end
 
 """
     PlotToPixels(x::Real, y::Real, x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L977).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L981).
 """
 function PlotToPixels(x::Real, y::Real, x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImVec2}()
-    ccall(
-        (:ImPlot_PlotToPixels_double, libcimgui),
-        Cvoid,
-        (Ref{ImVec2}, Cdouble, Cdouble, ImAxis, ImAxis),
-        pOut,
-        x,
-        y,
-        x_axis,
-        y_axis,
-    )
-    pOut[]
+    ccall((:ImPlot_PlotToPixels_double, libcimgui), ImVec2, (Cdouble, Cdouble, ImAxis, ImAxis), x, y, x_axis, y_axis)
 end
 
 """
     GetPlotPos()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L980).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L984).
 """
 function GetPlotPos()
-    pOut = Ref{ImVec2}()
-    ccall((:ImPlot_GetPlotPos, libcimgui), Cvoid, (Ref{ImVec2},), pOut)
-    pOut[]
+    ccall((:ImPlot_GetPlotPos, libcimgui), ImVec2, ())
 end
 
 """
     GetPlotSize()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L982).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L986).
 """
 function GetPlotSize()
-    pOut = Ref{ImVec2}()
-    ccall((:ImPlot_GetPlotSize, libcimgui), Cvoid, (Ref{ImVec2},), pOut)
-    pOut[]
+    ccall((:ImPlot_GetPlotSize, libcimgui), ImVec2, ())
 end
 
 """
     GetPlotMousePos(x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L985).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L989).
 """
 function GetPlotMousePos(x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImPlotPoint}()
-    ccall((:ImPlot_GetPlotMousePos, libcimgui), Cvoid, (Ref{ImPlotPoint}, ImAxis, ImAxis), pOut, x_axis, y_axis)
-    pOut[]
+    ccall((:ImPlot_GetPlotMousePos, libcimgui), ImPlotPoint, (ImAxis, ImAxis), x_axis, y_axis)
 end
 
 """
     GetPlotLimits(x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L987).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L991).
 """
 function GetPlotLimits(x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImPlotRect}()
-    ccall((:ImPlot_GetPlotLimits, libcimgui), Cvoid, (Ref{ImPlotRect}, ImAxis, ImAxis), pOut, x_axis, y_axis)
-    pOut[]
+    ccall((:ImPlot_GetPlotLimits, libcimgui), ImPlotRect, (ImAxis, ImAxis), x_axis, y_axis)
 end
 
 """
     IsPlotHovered()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L990).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L994).
 """
 function IsPlotHovered()
     ccall((:ImPlot_IsPlotHovered, libcimgui), Bool, ())
@@ -9206,7 +9138,7 @@ end
 """
     IsAxisHovered(axis::Union{ImAxis_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L992).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L996).
 """
 function IsAxisHovered(axis::Union{ImAxis_,Integer})
     ccall((:ImPlot_IsAxisHovered, libcimgui), Bool, (ImAxis,), axis)
@@ -9215,7 +9147,7 @@ end
 """
     IsSubplotsHovered()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L994).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L998).
 """
 function IsSubplotsHovered()
     ccall((:ImPlot_IsSubplotsHovered, libcimgui), Bool, ())
@@ -9224,7 +9156,7 @@ end
 """
     IsPlotSelected()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L997).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1001).
 """
 function IsPlotSelected()
     ccall((:ImPlot_IsPlotSelected, libcimgui), Bool, ())
@@ -9233,18 +9165,16 @@ end
 """
     GetPlotSelection(x_axis::Union{ImAxis_, Integer} = -1, y_axis::Union{ImAxis_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L999).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1003).
 """
 function GetPlotSelection(x_axis::Union{ImAxis_,Integer} = -1, y_axis::Union{ImAxis_,Integer} = -1)
-    pOut = Ref{ImPlotRect}()
-    ccall((:ImPlot_GetPlotSelection, libcimgui), Cvoid, (Ref{ImPlotRect}, ImAxis, ImAxis), pOut, x_axis, y_axis)
-    pOut[]
+    ccall((:ImPlot_GetPlotSelection, libcimgui), ImPlotRect, (ImAxis, ImAxis), x_axis, y_axis)
 end
 
 """
     CancelPlotSelection()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1001).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1005).
 """
 function CancelPlotSelection()
     ccall((:ImPlot_CancelPlotSelection, libcimgui), Cvoid, ())
@@ -9253,7 +9183,7 @@ end
 """
     HideNextItem(hidden = true, cond = ImPlotCond_Once)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1005).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1009).
 """
 function HideNextItem(hidden = true, cond = ImPlotCond_Once)
     ccall((:ImPlot_HideNextItem, libcimgui), Cvoid, (Bool, ImPlotCond), hidden, cond)
@@ -9262,7 +9192,7 @@ end
 """
     BeginAlignedPlots(group_id, vertical = true)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1014).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1018).
 """
 function BeginAlignedPlots(group_id, vertical = true)
     ccall((:ImPlot_BeginAlignedPlots, libcimgui), Bool, (Cstring, Bool), group_id, vertical)
@@ -9271,7 +9201,7 @@ end
 """
     EndAlignedPlots()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1016).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1020).
 """
 function EndAlignedPlots()
     ccall((:ImPlot_EndAlignedPlots, libcimgui), Cvoid, ())
@@ -9280,7 +9210,7 @@ end
 """
     BeginLegendPopup(label_id, mouse_button = 1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1023).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1027).
 """
 function BeginLegendPopup(label_id, mouse_button = 1)
     ccall((:ImPlot_BeginLegendPopup, libcimgui), Bool, (Cstring, ImGuiMouseButton), label_id, mouse_button)
@@ -9289,7 +9219,7 @@ end
 """
     EndLegendPopup()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1025).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1029).
 """
 function EndLegendPopup()
     ccall((:ImPlot_EndLegendPopup, libcimgui), Cvoid, ())
@@ -9298,7 +9228,7 @@ end
 """
     IsLegendEntryHovered(label_id)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1027).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1031).
 """
 function IsLegendEntryHovered(label_id)
     ccall((:ImPlot_IsLegendEntryHovered, libcimgui), Bool, (Cstring,), label_id)
@@ -9307,7 +9237,7 @@ end
 """
     BeginDragDropTargetPlot()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1034).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1038).
 """
 function BeginDragDropTargetPlot()
     ccall((:ImPlot_BeginDragDropTargetPlot, libcimgui), Bool, ())
@@ -9316,7 +9246,7 @@ end
 """
     BeginDragDropTargetAxis(axis::Union{ImAxis_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1036).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1040).
 """
 function BeginDragDropTargetAxis(axis::Union{ImAxis_,Integer})
     ccall((:ImPlot_BeginDragDropTargetAxis, libcimgui), Bool, (ImAxis,), axis)
@@ -9325,7 +9255,7 @@ end
 """
     BeginDragDropTargetLegend()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1038).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1042).
 """
 function BeginDragDropTargetLegend()
     ccall((:ImPlot_BeginDragDropTargetLegend, libcimgui), Bool, ())
@@ -9334,7 +9264,7 @@ end
 """
     EndDragDropTarget()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1040).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1044).
 """
 function EndDragDropTarget()
     ccall((:ImPlot_EndDragDropTarget, libcimgui), Cvoid, ())
@@ -9343,7 +9273,7 @@ end
 """
     BeginDragDropSourcePlot(flags = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1046).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1050).
 """
 function BeginDragDropSourcePlot(flags = 0)
     ccall((:ImPlot_BeginDragDropSourcePlot, libcimgui), Bool, (ImGuiDragDropFlags,), flags)
@@ -9352,7 +9282,7 @@ end
 """
     BeginDragDropSourceAxis(axis::Union{ImAxis_, Integer}, flags = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1048).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1052).
 """
 function BeginDragDropSourceAxis(axis::Union{ImAxis_,Integer}, flags = 0)
     ccall((:ImPlot_BeginDragDropSourceAxis, libcimgui), Bool, (ImAxis, ImGuiDragDropFlags), axis, flags)
@@ -9361,7 +9291,7 @@ end
 """
     BeginDragDropSourceItem(label_id, flags = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1050).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1054).
 """
 function BeginDragDropSourceItem(label_id, flags = 0)
     ccall((:ImPlot_BeginDragDropSourceItem, libcimgui), Bool, (Cstring, ImGuiDragDropFlags), label_id, flags)
@@ -9370,7 +9300,7 @@ end
 """
     EndDragDropSource()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1052).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1056).
 """
 function EndDragDropSource()
     ccall((:ImPlot_EndDragDropSource, libcimgui), Cvoid, ())
@@ -9379,7 +9309,7 @@ end
 """
     GetStyle()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1088).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1092).
 """
 function GetStyle()
     ccall((:ImPlot_GetStyle, libcimgui), Ptr{ImPlotStyle}, ())
@@ -9388,7 +9318,7 @@ end
 """
     StyleColorsAuto(dst)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1091).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1095).
 """
 function StyleColorsAuto(dst)
     ccall((:ImPlot_StyleColorsAuto, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
@@ -9397,7 +9327,7 @@ end
 """
     StyleColorsClassic(dst)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1093).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1097).
 """
 function StyleColorsClassic(dst)
     ccall((:ImPlot_StyleColorsClassic, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
@@ -9406,7 +9336,7 @@ end
 """
     StyleColorsDark(dst)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1095).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1099).
 """
 function StyleColorsDark(dst)
     ccall((:ImPlot_StyleColorsDark, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
@@ -9415,7 +9345,7 @@ end
 """
     StyleColorsLight(dst)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1097).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1101).
 """
 function StyleColorsLight(dst)
     ccall((:ImPlot_StyleColorsLight, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
@@ -9424,7 +9354,7 @@ end
 """
     PushStyleColor(idx::Union{ImPlotCol_, Integer}, col::Integer)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1104).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1108).
 """
 function PushStyleColor(idx::Union{ImPlotCol_,Integer}, col::Integer)
     ccall((:ImPlot_PushStyleColor_U32, libcimgui), Cvoid, (ImPlotCol, ImU32), idx, col)
@@ -9433,7 +9363,7 @@ end
 """
     PushStyleColor(idx::Union{ImPlotCol_, Integer}, col::ImVec4)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1105).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1109).
 """
 function PushStyleColor(idx::Union{ImPlotCol_,Integer}, col::ImVec4)
     ccall((:ImPlot_PushStyleColor_Vec4, libcimgui), Cvoid, (ImPlotCol, ImVec4), idx, col)
@@ -9442,7 +9372,7 @@ end
 """
     PopStyleColor(count::Integer = 1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1107).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1111).
 """
 function PopStyleColor(count::Integer = 1)
     ccall((:ImPlot_PopStyleColor, libcimgui), Cvoid, (Cint,), count)
@@ -9451,7 +9381,7 @@ end
 """
     PushStyleVar(idx::Union{ImPlotStyleVar_, Integer}, val::Real)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1110).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1114).
 """
 function PushStyleVar(idx::Union{ImPlotStyleVar_,Integer}, val::Real)
     ccall((:ImPlot_PushStyleVar_Float, libcimgui), Cvoid, (ImPlotStyleVar, Cfloat), idx, val)
@@ -9460,7 +9390,7 @@ end
 """
     PushStyleVar(idx::Union{ImPlotStyleVar_, Integer}, val::Integer)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1112).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1116).
 """
 function PushStyleVar(idx::Union{ImPlotStyleVar_,Integer}, val::Integer)
     ccall((:ImPlot_PushStyleVar_Int, libcimgui), Cvoid, (ImPlotStyleVar, Cint), idx, val)
@@ -9469,7 +9399,7 @@ end
 """
     PushStyleVar(idx::Union{ImPlotStyleVar_, Integer}, val::ImVec2)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1114).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1118).
 """
 function PushStyleVar(idx::Union{ImPlotStyleVar_,Integer}, val::ImVec2)
     ccall((:ImPlot_PushStyleVar_Vec2, libcimgui), Cvoid, (ImPlotStyleVar, ImVec2), idx, val)
@@ -9478,7 +9408,7 @@ end
 """
     PopStyleVar(count::Integer = 1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1116).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1120).
 """
 function PopStyleVar(count::Integer = 1)
     ccall((:ImPlot_PopStyleVar, libcimgui), Cvoid, (Cint,), count)
@@ -9487,7 +9417,7 @@ end
 """
     SetNextLineStyle(col::ImVec4 = ImVec4(0, 0, 0, -1), weight::Real = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1124).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1128).
 """
 function SetNextLineStyle(col::ImVec4 = ImVec4(0, 0, 0, -1), weight::Real = -1)
     ccall((:ImPlot_SetNextLineStyle, libcimgui), Cvoid, (ImVec4, Cfloat), col, weight)
@@ -9496,7 +9426,7 @@ end
 """
     SetNextFillStyle(col::ImVec4 = ImVec4(0, 0, 0, -1), alpha_mod::Real = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1126).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1130).
 """
 function SetNextFillStyle(col::ImVec4 = ImVec4(0, 0, 0, -1), alpha_mod::Real = -1)
     ccall((:ImPlot_SetNextFillStyle, libcimgui), Cvoid, (ImVec4, Cfloat), col, alpha_mod)
@@ -9505,7 +9435,7 @@ end
 """
     SetNextMarkerStyle(marker::Union{ImPlotMarker_, Integer} = -1, size::Real = -1, fill::ImVec4 = ImVec4(0, 0, 0, -1), weight::Real = -1, outline::ImVec4 = ImVec4(0, 0, 0, -1))
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1128).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1132).
 """
 function SetNextMarkerStyle(
     marker::Union{ImPlotMarker_,Integer} = -1,
@@ -9529,7 +9459,7 @@ end
 """
     SetNextErrorBarStyle(col::ImVec4 = ImVec4(0, 0, 0, -1), size::Real = -1, weight::Real = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1130).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1134).
 """
 function SetNextErrorBarStyle(col::ImVec4 = ImVec4(0, 0, 0, -1), size::Real = -1, weight::Real = -1)
     ccall((:ImPlot_SetNextErrorBarStyle, libcimgui), Cvoid, (ImVec4, Cfloat, Cfloat), col, size, weight)
@@ -9538,18 +9468,16 @@ end
 """
     GetLastItemColor()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1133).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1137).
 """
 function GetLastItemColor()
-    pOut = Ref{ImVec4}()
-    ccall((:ImPlot_GetLastItemColor, libcimgui), Cvoid, (Ref{ImVec4},), pOut)
-    pOut[]
+    ccall((:ImPlot_GetLastItemColor, libcimgui), ImVec4, ())
 end
 
 """
     GetStyleColorName(idx::Union{ImPlotCol_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1136).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1140).
 """
 function GetStyleColorName(idx::Union{ImPlotCol_,Integer})
     ccall((:ImPlot_GetStyleColorName, libcimgui), Cstring, (ImPlotCol,), idx)
@@ -9558,7 +9486,7 @@ end
 """
     GetMarkerName(idx::Union{ImPlotMarker_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1138).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1142).
 """
 function GetMarkerName(idx::Union{ImPlotMarker_,Integer})
     ccall((:ImPlot_GetMarkerName, libcimgui), Cstring, (ImPlotMarker,), idx)
@@ -9567,7 +9495,7 @@ end
 """
     AddColormap(name, cols::Union{ImVec4, AbstractArray{ImVec4}}, size::Integer, qual = true)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1159).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1163).
 """
 function AddColormap(name, cols::Union{ImVec4,AbstractArray{ImVec4}}, size::Integer, qual = true)
     ccall(
@@ -9584,7 +9512,7 @@ end
 """
     AddColormap(name, cols::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, size::Integer, qual = true)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1160).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1164).
 """
 function AddColormap(name, cols::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, size::Integer, qual = true)
     ccall(
@@ -9601,7 +9529,7 @@ end
 """
     GetColormapCount()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1163).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1167).
 """
 function GetColormapCount()
     ccall((:ImPlot_GetColormapCount, libcimgui), Cint, ())
@@ -9610,7 +9538,7 @@ end
 """
     GetColormapName(cmap::Union{ImPlotColormap_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1165).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1169).
 """
 function GetColormapName(cmap::Union{ImPlotColormap_,Integer})
     ccall((:ImPlot_GetColormapName, libcimgui), Cstring, (ImPlotColormap,), cmap)
@@ -9619,7 +9547,7 @@ end
 """
     GetColormapIndex(name)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1167).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1171).
 """
 function GetColormapIndex(name)
     ccall((:ImPlot_GetColormapIndex, libcimgui), ImPlotColormap, (Cstring,), name)
@@ -9628,7 +9556,7 @@ end
 """
     PushColormap(cmap::Union{ImPlotColormap_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1170).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1174).
 """
 function PushColormap(cmap::Union{ImPlotColormap_,Integer})
     ccall((:ImPlot_PushColormap_PlotColormap, libcimgui), Cvoid, (ImPlotColormap,), cmap)
@@ -9637,7 +9565,7 @@ end
 """
     PushColormap(name)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1172).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1176).
 """
 function PushColormap(name)
     ccall((:ImPlot_PushColormap_Str, libcimgui), Cvoid, (Cstring,), name)
@@ -9646,7 +9574,7 @@ end
 """
     PopColormap(count::Integer = 1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1174).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1178).
 """
 function PopColormap(count::Integer = 1)
     ccall((:ImPlot_PopColormap, libcimgui), Cvoid, (Cint,), count)
@@ -9655,18 +9583,16 @@ end
 """
     NextColormapColor()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1178).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1182).
 """
 function NextColormapColor()
-    pOut = Ref{ImVec4}()
-    ccall((:ImPlot_NextColormapColor, libcimgui), Cvoid, (Ref{ImVec4},), pOut)
-    pOut[]
+    ccall((:ImPlot_NextColormapColor, libcimgui), ImVec4, ())
 end
 
 """
     GetColormapSize(cmap::Union{ImPlotColormap_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1184).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1188).
 """
 function GetColormapSize(cmap::Union{ImPlotColormap_,Integer} = -1)
     ccall((:ImPlot_GetColormapSize, libcimgui), Cint, (ImPlotColormap,), cmap)
@@ -9675,29 +9601,25 @@ end
 """
     GetColormapColor(idx::Integer, cmap::Union{ImPlotColormap_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1186).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1190).
 """
 function GetColormapColor(idx::Integer, cmap::Union{ImPlotColormap_,Integer} = -1)
-    pOut = Ref{ImVec4}()
-    ccall((:ImPlot_GetColormapColor, libcimgui), Cvoid, (Ref{ImVec4}, Cint, ImPlotColormap), pOut, idx, cmap)
-    pOut[]
+    ccall((:ImPlot_GetColormapColor, libcimgui), ImVec4, (Cint, ImPlotColormap), idx, cmap)
 end
 
 """
     SampleColormap(t::Real, cmap::Union{ImPlotColormap_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1188).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1192).
 """
 function SampleColormap(t::Real, cmap::Union{ImPlotColormap_,Integer} = -1)
-    pOut = Ref{ImVec4}()
-    ccall((:ImPlot_SampleColormap, libcimgui), Cvoid, (Ref{ImVec4}, Cfloat, ImPlotColormap), pOut, t, cmap)
-    pOut[]
+    ccall((:ImPlot_SampleColormap, libcimgui), ImVec4, (Cfloat, ImPlotColormap), t, cmap)
 end
 
 """
     ColormapScale(label, scale_min::Real, scale_max::Real, size::ImVec2 = ImVec2(0, 0), format = "%g", flags::Union{ImPlotColormapScaleFlags_, Integer} = 0, cmap::Union{ImPlotColormap_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1191).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1195).
 """
 function ColormapScale(
     label,
@@ -9725,7 +9647,7 @@ end
 """
     ColormapSlider(label, t::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, out, format = "", cmap::Union{ImPlotColormap_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1193).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1197).
 """
 function ColormapSlider(
     label,
@@ -9749,7 +9671,7 @@ end
 """
     ColormapButton(label, size::ImVec2 = ImVec2(0, 0), cmap::Union{ImPlotColormap_, Integer} = -1)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1195).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1199).
 """
 function ColormapButton(label, size::ImVec2 = ImVec2(0, 0), cmap::Union{ImPlotColormap_,Integer} = -1)
     ccall((:ImPlot_ColormapButton, libcimgui), Bool, (Cstring, ImVec2, ImPlotColormap), label, size, cmap)
@@ -9758,7 +9680,7 @@ end
 """
     BustColorCache(plot_title_id = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1204).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1208).
 """
 function BustColorCache(plot_title_id = C_NULL)
     ccall((:ImPlot_BustColorCache, libcimgui), Cvoid, (Cstring,), plot_title_id)
@@ -9767,7 +9689,7 @@ end
 """
     GetInputMap()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1211).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1215).
 """
 function GetInputMap()
     ccall((:ImPlot_GetInputMap, libcimgui), Ptr{ImPlotInputMap}, ())
@@ -9776,7 +9698,7 @@ end
 """
     MapInputDefault(dst)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1214).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1218).
 """
 function MapInputDefault(dst)
     ccall((:ImPlot_MapInputDefault, libcimgui), Cvoid, (Ptr{ImPlotInputMap},), dst)
@@ -9785,7 +9707,7 @@ end
 """
     MapInputReverse(dst)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1216).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1220).
 """
 function MapInputReverse(dst)
     ccall((:ImPlot_MapInputReverse, libcimgui), Cvoid, (Ptr{ImPlotInputMap},), dst)
@@ -9794,7 +9716,7 @@ end
 """
     ItemIcon(col::ImVec4)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1223).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1227).
 """
 function ItemIcon(col::ImVec4)
     ccall((:ImPlot_ItemIcon_Vec4, libcimgui), Cvoid, (ImVec4,), col)
@@ -9803,7 +9725,7 @@ end
 """
     ItemIcon(col::Integer)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1224).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1228).
 """
 function ItemIcon(col::Integer)
     ccall((:ImPlot_ItemIcon_U32, libcimgui), Cvoid, (ImU32,), col)
@@ -9812,7 +9734,7 @@ end
 """
     ColormapIcon(cmap::Union{ImPlotColormap_, Integer})
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1225).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1229).
 """
 function ColormapIcon(cmap::Union{ImPlotColormap_,Integer})
     ccall((:ImPlot_ColormapIcon, libcimgui), Cvoid, (ImPlotColormap,), cmap)
@@ -9821,7 +9743,7 @@ end
 """
     GetPlotDrawList()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1228).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1232).
 """
 function GetPlotDrawList()
     ccall((:ImPlot_GetPlotDrawList, libcimgui), Ptr{ImDrawList}, ())
@@ -9830,7 +9752,7 @@ end
 """
     PushPlotClipRect(expand::Real = 0)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1230).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1234).
 """
 function PushPlotClipRect(expand::Real = 0)
     ccall((:ImPlot_PushPlotClipRect, libcimgui), Cvoid, (Cfloat,), expand)
@@ -9839,7 +9761,7 @@ end
 """
     PopPlotClipRect()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1232).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1236).
 """
 function PopPlotClipRect()
     ccall((:ImPlot_PopPlotClipRect, libcimgui), Cvoid, ())
@@ -9848,7 +9770,7 @@ end
 """
     ShowStyleSelector(label)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1235).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1239).
 """
 function ShowStyleSelector(label)
     ccall((:ImPlot_ShowStyleSelector, libcimgui), Bool, (Cstring,), label)
@@ -9857,7 +9779,7 @@ end
 """
     ShowColormapSelector(label)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1237).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1241).
 """
 function ShowColormapSelector(label)
     ccall((:ImPlot_ShowColormapSelector, libcimgui), Bool, (Cstring,), label)
@@ -9866,7 +9788,7 @@ end
 """
     ShowInputMapSelector(label)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1239).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1243).
 """
 function ShowInputMapSelector(label)
     ccall((:ImPlot_ShowInputMapSelector, libcimgui), Bool, (Cstring,), label)
@@ -9875,7 +9797,7 @@ end
 """
     ShowStyleEditor(ref)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1241).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1245).
 """
 function ShowStyleEditor(ref)
     ccall((:ImPlot_ShowStyleEditor, libcimgui), Cvoid, (Ptr{ImPlotStyle},), ref)
@@ -9884,7 +9806,7 @@ end
 """
     ShowUserGuide()
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1243).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1247).
 """
 function ShowUserGuide()
     ccall((:ImPlot_ShowUserGuide, libcimgui), Cvoid, ())
@@ -9893,7 +9815,7 @@ end
 """
     ShowMetricsWindow(p_popen = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1245).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1249).
 """
 function ShowMetricsWindow(p_popen = C_NULL)
     ccall((:ImPlot_ShowMetricsWindow, libcimgui), Cvoid, (Ptr{Bool},), p_popen)
@@ -9902,7 +9824,7 @@ end
 """
     ShowDemoWindow(p_open = C_NULL)
 
-[Upstream link](https://github.com/epezent/implot/blob/3da8bd34299965d3b0ab124df743fe3e076fa222/implot.h#L1252).
+[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1256).
 """
 function ShowDemoWindow(p_open = C_NULL)
     ccall((:ImPlot_ShowDemoWindow, libcimgui), Cvoid, (Ptr{Bool},), p_open)

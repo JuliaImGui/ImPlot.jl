@@ -90,9 +90,5 @@ include("barchart.jl")
 include("piechart.jl")
 include("errorbars.jl")
 include("stems.jl")
-#include("other.jl")
-include("util.jl")
-#include("color.jl")
-#include("styling.jl")
 
 end # module

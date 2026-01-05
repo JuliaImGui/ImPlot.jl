@@ -3,9 +3,6 @@ is_imgui_struct(x) = x.stname !== ""
 isdestructor(x) = hasproperty(x, :destructor)
 isconstructor(x) = hasproperty(x, :constructor)
 
-# Functions with pointer as first argument return
-hasoutputarg(x) = hasproperty(x, :nonUDT)
-
 #ImPlot specific
 isplotfunction(x) = startswith(x.funcname, "Plot") && !startswith(x.funcname, "PlotToPixels")
 
@@ -210,28 +207,6 @@ function make_objmethod!(def, metadata)
     end
 end
 
-function generate_allocating(def, metadata)
-    def[:name] = Symbol(metadata.funcname)
-    (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
-    sym = popfirst!(def[:args])
-    @capture(first(argtypes), Ptr{ptr_type_})
-    argtypes[1] = :(Ref{$ptr_type})
-    def[:body] = Expr(:block,
-                      :($sym = Ref{$ptr_type}()),
-                      :(ccall(($funsymbol, libcimgui), $rettype, ($(argtypes...),), $(argnames...))),
-                      ptr_type in IMGUI_ISBITS_TYPES ? :($sym[]) : :($sym))
-
-    for (i, argtype) in enumerate(argtypes)
-        i == 1 && continue
-        sym = argnames[i]
-        jltype = get_jl_type(argtype)
-        # Skip pointer types
-        parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
-        revise_arg(def, metadata, i-1, sym, jltype) # offset bc we pop off first arg above
-    end
-    return ExprTools.combinedef(def)
-end
-
 function generate_generic(def, metadata)
     def[:name] = Symbol(metadata.funcname)
     (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
@@ -324,7 +299,7 @@ function create_docstring(func_name, metadata)
     end
 
     header, line = split(metadata[:location], ':')
-    implot_version = "3da8bd34299965d3b0ab124df743fe3e076fa222"
+    implot_version = "0.17"
     link = "https://github.com/epezent/implot/blob/$(implot_version)/$(header).h#L$(line)"
 
     docstring *= "[Upstream link]($link)."
@@ -349,14 +324,17 @@ function revise_function(ex::Expr, all_metadata, options, docstrings)
     end
 
     # Check if it's for a struct type
-    ex = if is_imgui_struct(metadata)
-        generate_struct_function(def, metadata, ex)
-    elseif isplotfunction(metadata) # implot specific
-        generate_plotmethod(def, metadata)
-    elseif hasoutputarg(metadata) # generic
-        generate_allocating(def, metadata)
-    else
-        generate_generic(def, metadata)
+    try
+        ex = if is_imgui_struct(metadata)
+            generate_struct_function(def, metadata, ex)
+        elseif isplotfunction(metadata) # implot specific
+            generate_plotmethod(def, metadata)
+        else
+            generate_generic(def, metadata)
+        end
+    catch
+        @error "Failed to wrap $(fun_name)"
+        rethrow()
     end
 
     # Generate docstrings for everything but internal functions and destructors
@@ -368,11 +346,27 @@ function revise_function(ex::Expr, all_metadata, options, docstrings)
 end
 
 function rewrite!(dag::ExprDAG, metadata, options, docstrings)
+    # In newer versions of the cimgui bindings non-POD-types-that-look-like-POD-types-but-actually-aren't
+    # are renamed to have a '_c' underscore. In the generated Julia bindings we
+    # rename these back to their old names for the sake of convenience.
+    # See: https://github.com/cimgui/cimgui/issues/309
+    structs_and_enums = JSON3.read(getproperty(CImGuiPack_jll, :cimplot_structs_and_enums))
+    nonpod_used = structs_and_enums[:nonPOD_used]
+    new2old_names = Dict([Symbol(x, "_c") => x for x in keys(nonpod_used)])
+
     for node in get_nodes(dag)
         expressions = get_exprs(node)
         for (i, expr) in enumerate(expressions)
             if Meta.isexpr(expr, :function)
                 expressions[i] = revise_function(expr, metadata, options, docstrings)
+            end
+
+            expressions[i] = postwalk(expressions[i]) do x
+                if x isa Symbol && x in keys(new2old_names)
+                    new2old_names[x]
+                else
+                    x
+                end
             end
         end
     end
