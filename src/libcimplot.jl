@@ -1,4 +1,4 @@
-using CEnum
+using CEnum: CEnum, @cenum
 
 using CImGuiPack_jll
 
