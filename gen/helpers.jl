@@ -48,22 +48,46 @@ function parse_default(jlsymtype, str, ptr_type = nothing)
     return @warn "Not parsing default value of: $str"
 end
 
-function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing)
-    if jltype ∈ (:Cint, :Clong, :Cshort, :Cushort, :Culong, :Cuchar, :Cchar,
-                 :Int8, :UInt8, :Int16, :UInt16, :Int32, :UInt32, :Int64, :UInt64)
+const INTEGER_JLTYPES = (:Cint, :Clong, :Cshort, :Cushort, :Culong, :Cuchar, :Cchar,
+                         :Int8, :UInt8, :Int16, :UInt16, :Int32, :UInt32, :Int64, :UInt64)
+const REAL_JLTYPES = (:Cfloat, :Cdouble, :Float64, :Float32)
+
+# Check if there is a width-only collision: ≥ 2 distinct numeric jltypes at this
+# (funcname, position) across all C overloads. When such a collision exists we must
+# emit a concrete numeric type at this argument so the generated Julia methods
+# remain distinguishable.
+function has_numeric_collision(overload_types_at, funcname, i, jltype)
+    overload_types_at === nothing && return false
+    types_here = get(overload_types_at, (String(funcname), i), nothing)
+    types_here === nothing && return false
+    if jltype ∈ INTEGER_JLTYPES
+        return count(t -> t ∈ INTEGER_JLTYPES, types_here) > 1
+    elseif jltype ∈ REAL_JLTYPES
+        return count(t -> t ∈ REAL_JLTYPES, types_here) > 1
+    end
+    return false
+end
+
+function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing; overload_types_at = nothing)
+    funcname_for_collision = hasproperty(metadata, :funcname) ? metadata.funcname : nothing
+    if jltype ∈ INTEGER_JLTYPES
+        target = (funcname_for_collision !== nothing &&
+                  has_numeric_collision(overload_types_at, funcname_for_collision, i, jltype)) ? jltype : :Integer
         if hasdefault(metadata, sym)
             val = parse_default(jltype, getdefault(metadata, sym), ptr_type)
-            def[:args][i] = :($( Expr(:kw, :($sym::Integer), val)) )
+            def[:args][i] = :($( Expr(:kw, :($sym::$target), val)) )
         else
-            def[:args][i] = :($sym::Integer)
+            def[:args][i] = :($sym::$target)
         end
         return
-    elseif jltype ∈ (:Cfloat, :Cdouble, :Float64, :Float32)
+    elseif jltype ∈ REAL_JLTYPES
+        target = (funcname_for_collision !== nothing &&
+                  has_numeric_collision(overload_types_at, funcname_for_collision, i, jltype)) ? jltype : :Real
         if hasdefault(metadata, sym)
             val = parse_default(jltype, getdefault(metadata,sym), ptr_type)
-            def[:args][i] = :($( Expr(:kw, :($sym::Real), val)) )
+            def[:args][i] = :($( Expr(:kw, :($sym::$target), val)) )
         else
-            def[:args][i] = :($sym::Real)
+            def[:args][i] = :($sym::$target)
         end
         return
     elseif jltype ∈ (:Cstring,:Bool)
@@ -124,7 +148,7 @@ function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing)
     return
 end
 
-function generate_plotmethod(def, metadata)
+function generate_plotmethod(def, metadata; overload_types_at = nothing)
     def[:name] = Symbol(metadata.funcname)
     (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
     datatype = :notparsed
@@ -135,7 +159,7 @@ function generate_plotmethod(def, metadata)
             datatype = ptrtype
             def[:args][i] = :($sym::Union{Ptr{$ptrtype},Ref{$ptrtype},AbstractArray{$ptrtype}})
         else
-            revise_arg(def, metadata, i, sym, jltype, datatype)
+            revise_arg(def, metadata, i, sym, jltype, datatype; overload_types_at)
         end
     end
     def[:body] = Expr(:block,
@@ -187,7 +211,7 @@ function parse_pointer_arg!(jltype, def, metadata, sym, i)
     return false
 end
 
-function make_objmethod!(def, metadata)
+function make_objmethod!(def, metadata; overload_types_at = nothing)
     def[:name] = Symbol(metadata.funcname)
     (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
 
@@ -203,11 +227,11 @@ function make_objmethod!(def, metadata)
         jltype = get_jl_type(argtype)
         # Skip pointer types
         parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
-        revise_arg(def, metadata, i, sym, jltype)
+        revise_arg(def, metadata, i, sym, jltype; overload_types_at)
     end
 end
 
-function generate_generic(def, metadata)
+function generate_generic(def, metadata; overload_types_at = nothing)
     def[:name] = Symbol(metadata.funcname)
     (funsymbol, rettype, argtypes, argnames) = split_ccall(def[:body])
     def[:body] = Expr(:block,
@@ -224,7 +248,7 @@ function generate_generic(def, metadata)
         end
 
         parse_pointer_arg!(jltype, def, metadata, sym, i) && continue
-        revise_arg(def, metadata, i, sym, jltype)
+        revise_arg(def, metadata, i, sym, jltype; overload_types_at)
     end
     return ExprTools.combinedef(def)
 end
@@ -262,7 +286,7 @@ function filter_internal_enums!(options, enums)
     end
 end
 
-function generate_struct_function(def, metadata, old_ex)
+function generate_struct_function(def, metadata, old_ex; overload_types_at = nothing)
     # Skip constructors/destructors for primitive types--we can handle these with Julia
     if metadata.stname ∉ String.(IMGUI_ISBITS_TYPES)
         if hasproperty(metadata, :destructor)
@@ -276,7 +300,7 @@ function generate_struct_function(def, metadata, old_ex)
     end
     # Fall through to object method; skip destructors
     if !(isdestructor(metadata) || isconstructor(metadata))
-        make_objmethod!(def,metadata)
+        make_objmethod!(def, metadata; overload_types_at)
         # Reconstitute function definition expression
         return ExprTools.combinedef(def)
     else
@@ -307,7 +331,7 @@ function create_docstring(func_name, metadata)
     return docstring
 end
 
-function revise_function(ex::Expr, all_metadata, options, docstrings)
+function revise_function(ex::Expr, all_metadata, options, docstrings; overload_types_at = nothing)
     # Destructure the function definition
     def = ExprTools.splitdef(ex)
 
@@ -326,11 +350,11 @@ function revise_function(ex::Expr, all_metadata, options, docstrings)
     # Check if it's for a struct type
     try
         ex = if is_imgui_struct(metadata)
-            generate_struct_function(def, metadata, ex)
+            generate_struct_function(def, metadata, ex; overload_types_at)
         elseif isplotfunction(metadata) # implot specific
-            generate_plotmethod(def, metadata)
+            generate_plotmethod(def, metadata; overload_types_at)
         else
-            generate_generic(def, metadata)
+            generate_generic(def, metadata; overload_types_at)
         end
     catch
         @error "Failed to wrap $(fun_name)"
@@ -354,11 +378,47 @@ function rewrite!(dag::ExprDAG, metadata, options, docstrings)
     nonpod_used = structs_and_enums[:nonPOD_used]
     new2old_names = Dict([Symbol(x, "_c") => x for x in keys(nonpod_used)])
 
+    # Pass 1: collect, for each (funcname, arg_position), the set of jltypes that
+    # `revise_arg` would see across all C overloads. Used downstream to detect
+    # width-only collisions (e.g. ImPlotSpec_SetProp_{Float,double,S8,...,U64}),
+    # which require concrete numeric types in the generated signatures.
+    overload_types_at = Dict{Tuple{String,Int},Set{Symbol}}()
+    for node in get_nodes(dag)
+        for expr in get_exprs(node)
+            Meta.isexpr(expr, :function) || continue
+            local def
+            try
+                def = ExprTools.splitdef(expr)
+            catch
+                continue
+            end
+            fun_name = get_function_name(def)
+            isnothing(fun_name) && continue
+            fun_meta = find_function_metadata(fun_name, metadata)
+            isnothing(fun_meta) && continue
+            # Destructors and a handful of other metadata entries lack `funcname`.
+            # Such functions are not routed through `revise_arg`, so we can skip them.
+            hasproperty(fun_meta, :funcname) || continue
+            (_, _, argtypes, _) = split_ccall(def[:body])
+            argtypes === nothing && continue
+            funcname = String(fun_meta.funcname)
+            for (i, at) in enumerate(argtypes)
+                jl = get_jl_type(at)
+                # Only track jltypes as a Symbol; pointer/structured types are
+                # not numeric-collision candidates so we still collect them but
+                # they will simply never match the INTEGER/REAL numeric sets.
+                jl_sym = jl isa Symbol ? jl : Symbol(string(jl))
+                push!(get!(overload_types_at, (funcname, i), Set{Symbol}()), jl_sym)
+            end
+        end
+    end
+
+    # Pass 2: actual rewrite with collision info threaded through.
     for node in get_nodes(dag)
         expressions = get_exprs(node)
         for (i, expr) in enumerate(expressions)
             if Meta.isexpr(expr, :function)
-                expressions[i] = revise_function(expr, metadata, options, docstrings)
+                expressions[i] = revise_function(expr, metadata, options, docstrings; overload_types_at)
             end
 
             expressions[i] = postwalk(expressions[i]) do x

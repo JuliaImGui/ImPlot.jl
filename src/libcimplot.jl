@@ -1117,92 +1117,92 @@ function Base.finalizer(self::Union{Ptr{ImPlotSpec},ImPlotSpec})
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Real)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Float32)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Real)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Float32)
     ccall((:ImPlotSpec_SetProp_Float, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, Cfloat), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Real)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Float64)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Real)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Float64)
     ccall((:ImPlotSpec_SetProp_double, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, Cdouble), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Int8)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Int8)
     ccall((:ImPlotSpec_SetProp_S8, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImS8), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::UInt8)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::UInt8)
     ccall((:ImPlotSpec_SetProp_U8, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImU8), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Int16)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Int16)
     ccall((:ImPlotSpec_SetProp_S16, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImS16), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::UInt16)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::UInt16)
     ccall((:ImPlotSpec_SetProp_U16, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImU16), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Int32)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Int32)
     ccall((:ImPlotSpec_SetProp_S32, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImS32), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::UInt32)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::UInt32)
     ccall((:ImPlotSpec_SetProp_U32, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImU32), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Int64)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Int64)
     ccall((:ImPlotSpec_SetProp_S64, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImS64), self, prop, v)
 end
 
 """
-    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::Integer)
+    SetProp(self::Union{ImPlotSpec, Ptr{ImPlotSpec}, Ref{ImPlotSpec}}, prop::Union{ImPlotProp_, Integer}, v::UInt64)
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L552).
 """
-function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::Integer)
+function SetProp(self::Union{ImPlotSpec,Ptr{ImPlotSpec},Ref{ImPlotSpec}}, prop::Union{ImPlotProp_,Integer}, v::UInt64)
     ccall((:ImPlotSpec_SetProp_U64, libcimgui), Cvoid, (Ptr{ImPlotSpec}, ImPlotProp, ImU64), self, prop, v)
 end
 
