@@ -277,6 +277,20 @@ function filter_internal_functions!(options, metadata)
     end
 end
 
+# Drop _LJ-suffixed overloads: these are LuaJIT-compatibility variants whose
+# callback typedef (ImPlotPoint_getter) collapses to Ptr{Cvoid} in Julia, the
+# same as the standard variant's ImPlotGetter. They produce duplicate Julia
+# method signatures with no way to disambiguate at dispatch time. The standard
+# (non-LJ) variant is always available; Julia users use @cfunction directly,
+# so the LJ workaround is not needed here.
+function filter_lj_variants!(options, metadata)
+    for object_vector in values(metadata), object in object_vector
+        if hasproperty(object, :ov_cimguiname) && endswith(String(object.ov_cimguiname), "_LJ")
+            push!(options["general"]["output_ignorelist"], object.ov_cimguiname)
+        end
+    end
+end
+
 # unused and untest--may need more work
 function filter_internal_enums!(options, enums)
     for (obj, location) in enums.locations

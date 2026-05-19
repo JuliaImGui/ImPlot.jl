@@ -72,6 +72,7 @@ FUNCTION_METADATA, ENUMS = read_metadata();
 
 # Find and extract metadata for specific cimplot function
 filter_internal_functions!(options, FUNCTION_METADATA)
+filter_lj_variants!(options, FUNCTION_METADATA)
 
 function get_docstring(node, doc, docstrings)
     id = string(node.id)

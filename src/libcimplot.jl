@@ -2318,24 +2318,6 @@ function PlotLine(
 end
 
 """
-    PlotLineG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-
-[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L991).
-"""
-function PlotLineG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotLineG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        spec,
-    )
-end
-
-"""
     PlotLineG(label_id, getter::ImPlotGetter, data, count::Integer, spec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L991).
@@ -2848,24 +2830,6 @@ function PlotScatter(
         label_id,
         xs,
         ys,
-        count,
-        spec,
-    )
-end
-
-"""
-    PlotScatterG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-
-[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L996).
-"""
-function PlotScatterG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotScatterG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
         count,
         spec,
     )
@@ -4170,24 +4134,6 @@ function PlotStairs(
 end
 
 """
-    PlotStairsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-
-[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1008).
-"""
-function PlotStairsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotStairsG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        spec,
-    )
-end
-
-"""
     PlotStairsG(label_id, getter::ImPlotGetter, data, count::Integer, spec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1008).
@@ -5006,34 +4952,6 @@ function PlotShaded(
 end
 
 """
-    PlotShadedG(label_id, getter1::ImPlotPoint_getter, data1, getter2::ImPlotPoint_getter, data2, count::Integer, spec = ImPlotSpec())
-
-[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1014).
-"""
-function PlotShadedG(
-    label_id,
-    getter1::ImPlotPoint_getter,
-    data1,
-    getter2::ImPlotPoint_getter,
-    data2,
-    count::Integer,
-    spec = ImPlotSpec(),
-)
-    ccall(
-        (:ImPlot_PlotShadedG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter1,
-        data1,
-        getter2,
-        data2,
-        count,
-        spec,
-    )
-end
-
-"""
     PlotShadedG(label_id, getter1::ImPlotGetter, data1, getter2::ImPlotGetter, data2, count::Integer, spec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1014).
@@ -5575,25 +5493,6 @@ function PlotBars(
         label_id,
         xs,
         ys,
-        count,
-        bar_size,
-        spec,
-    )
-end
-
-"""
-    PlotBarsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, bar_size::Real, spec = ImPlotSpec())
-
-[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1019).
-"""
-function PlotBarsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, bar_size::Real, spec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotBarsG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        getter,
-        data,
         count,
         bar_size,
         spec,
@@ -9014,24 +8913,6 @@ function PlotDigital(
         label_id,
         xs,
         ys,
-        count,
-        spec,
-    )
-end
-
-"""
-    PlotDigitalG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-
-[Upstream link](https://github.com/epezent/implot/blob/0.17/implot.h#L1052).
-"""
-function PlotDigitalG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotDigitalG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
         count,
         spec,
     )
