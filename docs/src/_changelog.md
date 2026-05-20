@@ -6,6 +6,12 @@ CurrentModule = ImPlot
 This documents notable changes in ImPlot.jl. The format is based on [Keep a
 Changelog](https://keepachangelog.com).
 
+## [v0.7.3] - 2026-05-20
+
+### Fixed
+- Fixed calls to low-level `PlotShaded` functions, which were missing arguments
+  that caused visual artifacts ([#45]).
+
 ## [v0.7.2] - 2026-01-05
 
 ### Changed
