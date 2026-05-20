@@ -20,9 +20,9 @@ end
 $(TYPEDSIGNATURES)
 """
 function PlotShaded(label_id, x::AbstractArray{T}, y1::AbstractArray{T}, y2::AbstractArray{T};
-                    count::Integer=min(length(x), length(y2), length(y2)),
+                    count::Integer=min(length(x), length(y1), length(y2)),
                     offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    return PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
+    return PlotShaded(label_id, x, y1, y2, count, ImPlotShadedFlags_None, offset, stride * sizeof(T))
 end
 
 """
@@ -39,7 +39,7 @@ $(TYPEDSIGNATURES)
 function PlotShaded(label_id, x::AbstractArray{T}, y::AbstractArray{T}, y_ref::T;
                     count::Integer=min(length(x), length(y)), offset::Integer=0,
                     stride::Integer=1) where {T<:ImPlotData}
-    return PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
+    return PlotShaded(label_id, x, y, count, y_ref, ImPlotShadedFlags_None, offset, stride * sizeof(T))
 end
 
 """
@@ -60,7 +60,7 @@ function PlotShaded(label_id, x::UnitRange{<:Integer}, y1::AbstractArray{T}, y2:
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Offset out of bounds")
     x = collect(T, x)
-    return PlotShaded(label_id, x, y1, y2, count, offset, sizeof(T))
+    return PlotShaded(label_id, x, y1, y2, count, ImPlotShadedFlags_None, offset, sizeof(T))
 end
 
 """
@@ -71,7 +71,7 @@ function PlotShaded(label_id, x::UnitRange{<:Integer}, y::AbstractArray{T}, y_re
     count = length(x)
     offset = x.start >= 1 ? x.start - 1 : throw("Offset out of bounds")
     x = collect(T, x)
-    return PlotShaded(label_id, x, y, count, y_ref, offset, sizeof(T))
+    return PlotShaded(label_id, x, y, count, y_ref, ImPlotShadedFlags_None, offset, sizeof(T))
 end
 
 """
@@ -84,7 +84,7 @@ function PlotShaded(label_id, x::StepRange, y1::AbstractArray{T}, y2::AbstractAr
     offset = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
     stride = x.step >= 1 ? x.step : throw("Stride must be greater than zero.")
     x = collect(T, x)
-    return PlotShaded(label_id, x, y1, y2, count, offset, stride * sizeof(T))
+    return PlotShaded(label_id, x, y1, y2, count, ImPlotShadedFlags_None, offset, stride * sizeof(T))
 end
 
 """
@@ -98,7 +98,7 @@ function PlotShaded(label_id, x::StepRange, y::AbstractArray{T}, y_ref::T;
     stride = x.step >= 1 ? x.step : throw("Stride must be greater than zero.")
 
     x = collect(T, x)
-    return PlotShaded(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
+    return PlotShaded(label_id, x, y, count, y_ref, ImPlotShadedFlags_None, offset, stride * sizeof(T))
 end
 
 """
