@@ -6,6 +6,11 @@ CurrentModule = ImPlot
 This documents notable changes in ImPlot.jl. The format is based on [Keep a
 Changelog](https://keepachangelog.com).
 
+## [v0.7.4] - 2026-05-21
+
+### Fixed
+- Fixed calls to low-level `PlotBars` functions ([#47]).
+
 ## [v0.7.3] - 2026-05-20
 
 ### Fixed

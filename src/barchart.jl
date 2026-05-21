@@ -23,8 +23,8 @@ $(TYPEDSIGNATURES)
 """
 function PlotBars(label_id, x::AbstractArray{T}, y::AbstractArray{T};
                   count::Integer=min(length(x), length(y)), bar_size=0.67,
-                  shift=0.0, offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    return PlotBars(label_id, x, y, count, bar_size, offset, shift, ImPlotBarsFlags_None, stride * sizeof(T))
+                  offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
+    return PlotBars(label_id, x, y, count, bar_size, ImPlotBarsFlags_None, offset, stride * sizeof(T))
 end
 
 """
@@ -32,7 +32,7 @@ $(TYPEDSIGNATURES)
 """
 function PlotBars(label_id, x::AbstractArray{T1}, y::AbstractArray{T2};
                   kwargs...) where {T1<:Real,T2<:Real}
-    return PlotBars(label_id, promote(x, y)..., kwargs...)
+    return PlotBars(label_id, promote(x, y)...; kwargs...)
 end
 
 # Horizontal bars
@@ -40,9 +40,9 @@ end
 $(TYPEDSIGNATURES)
 """
 function PlotBarsH(label_id, x::AbstractArray{T1}, y::AbstractArray{T2},
-                   count::Integer, bar_size::Real, shift::Real,
+                   count::Integer, bar_size::Real,
                    offset::Integer, stride::Integer) where {T1<:Real,T2<:Real}
-    return PlotBars(label_id, promote(x, y)..., count, bar_size, shift, ImPlotBarsFlags_Horizontal, offset, stride)
+    return PlotBars(label_id, promote(x, y)..., count, bar_size, ImPlotBarsFlags_Horizontal, offset, stride)
 end
 
 """
@@ -59,8 +59,8 @@ $(TYPEDSIGNATURES)
 """
 function PlotBarsH(label_id, x::AbstractArray{T}, y::AbstractArray{T};
                    count::Integer=min(length(x), length(y)),
-                   bar_size=0.67, shift=0.0, offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    return PlotBars(label_id, x, y, count, bar_size, shift, ImPlotBarsFlags_Horizontal, offset, stride * sizeof(T))
+                   bar_size=0.67, offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
+    return PlotBars(label_id, x, y, count, bar_size, ImPlotBarsFlags_Horizontal, offset, stride * sizeof(T))
 end
 
 """
