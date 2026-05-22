@@ -29,18 +29,18 @@ $(TYPEDSIGNATURES)
 function PlotLine(label_id, y::AbstractArray{T}; count::Integer=length(y),
                   xscale::Real=1.0, x0::Real=0.0, offset::Integer=0,
                   stride::Integer=1) where {T<:ImPlotData}
-    return PlotLine(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
+    return PlotLine(label_id, y, count, xscale, x0, ImPlotLineFlags_None, offset, stride * sizeof(T))
 end
 
 """
 $(TYPEDSIGNATURES)
 """
-function PlotLine(label_id, x::UnitRange{<:Integer}, y::AbstractArray{T}; xscale::Real=1.0,
-                  x0::Real=0.0) where {T<:ImPlotData}
+function PlotLine(label_id, x::UnitRange{<:Integer}, y::AbstractArray{T};
+                  xscale::Real=1.0, x0::Real=Float64(x.start)) where {T<:ImPlotData}
     count::Cint = length(x) <= length(y) ? length(x) : throw("Range out of bounds")
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
     stride::Cint = sizeof(T)
-    return PlotLine(label_id, y, count, xscale, x0, offset, stride)
+    return PlotLine(label_id, y, count, xscale, x0, ImPlotLineFlags_None, offset, stride)
 end
 
 """
@@ -52,7 +52,7 @@ function PlotLine(label_id, x::StepRange, y::AbstractArray{T};
     count::Cint = length(x) <= length(y) ? length(x) : throw("Range out of bounds")
     offset::Cint = x.start >= 1 ? x.start - 1 : throw("Range out of bounds")
     stride = Cint(x.step * sizeof(T))
-    return PlotLine(label_id, y, count, xscale, x0, offset, stride)
+    return PlotLine(label_id, y, count, xscale, x0, ImPlotLineFlags_None, offset, stride)
 end
 
 # xfield, yfield should be propertynames of eltype(structvec)

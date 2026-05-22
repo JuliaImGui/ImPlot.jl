@@ -6,6 +6,11 @@ CurrentModule = ImPlot
 This documents notable changes in ImPlot.jl. The format is based on [Keep a
 Changelog](https://keepachangelog.com).
 
+## [v0.7.5] - 2026-05-23
+
+### Fixed
+- Fixed various internal calls to `PlotLines` ([#48]).
+
 ## [v0.7.4] - 2026-05-21
 
 ### Fixed
