@@ -40,6 +40,8 @@ include(joinpath(@__DIR__, "..", "demo", "example_plots.jl"))
         ItemOpen("Scatter plot")
         ItemOpen("Bar plot")
         ItemOpen("Shaded plot")
+        ItemOpen("Subplots")
+        ItemOpen("Histogram")
     end
 
     simple_demo(; engine)

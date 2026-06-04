@@ -1,6 +1,7 @@
 module ImPlot
 
 import DocStringExtensions: TYPEDSIGNATURES
+using ConstructionBase: setproperties
 
 import CImGui as ig
 for i in instances(ig.ImGuiCond_)
@@ -90,5 +91,10 @@ include("barchart.jl")
 include("piechart.jl")
 include("errorbars.jl")
 include("stems.jl")
+include("inflines.jl")
+include("tags.jl")
+include("polygon.jl")
+include("bubbles.jl")
+include("bargroups.jl")
 
 end # module

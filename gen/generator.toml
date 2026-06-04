@@ -8,13 +8,25 @@ jll_pkg_extra = []
 export_symbol_prefixes = ["ImPlot", "IMPLOT"]
 prologue_file_path = "./prologue.jl"
 epilogue_file_path = "./epilogue.jl"
+# Entries are full-match regexes (see Clang's should_exclude_node).
+# ImPlotSpec_SetProp_*: implot 1.0's runtime property setters. Their C type variants
+# (Float/double -> v::Real; S8..U64 -> v::Integer) collapse to duplicate Julia method
+# signatures, which breaks precompilation. We never use them (ImPlotSpec is built
+# immutably via the keyword constructor + setproperties), so exclude the whole family.
 output_ignorelist = ["ImPlotPoint_ImPlotPointNil",
                      "ImPlotPoint_destroy",
                      "ImPlotPoint_ImPlotPointdouble",
                      "ImPlotPoint_ImPlotPointVec2",
                      "ImPlotRange_ImPlotRangeNil",
                      "ImPlotRange_destroy",
-                     "ImPlotRange_ImPlotRangedouble"]
+                     "ImPlotRange_ImPlotRangedouble",
+                     "ImPlotSpec_SetProp_.*",
+                     # PlotXG getter-callback functions ship two C variants whose getter
+                     # typedefs both become Ptr{Cvoid} in Julia, so they collide. Keep the
+                     # _LJ out-pointer variant (ImPlotPoint_getter: (data,idx,point) -> writes
+                     # point; the only style used by the package/demo) and drop the non-suffixed
+                     # by-value variant (ImPlotGetter: (idx,data) -> returns ImPlotPoint).
+                     "ImPlot_Plot(Line|Scatter|Stairs|Shaded|Bars|Digital)G"]
 use_julia_native_enum_type = false
 print_using_CEnum = true
 print_enum_as_integer = false

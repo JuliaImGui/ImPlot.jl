@@ -1,31 +1,26 @@
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStairs(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}, args...)
-    return PlotStairs(label_id, promote(x, y)..., args...)
+# Stair-step plots
+"""$(TYPEDSIGNATURES)"""
+function PlotStairs(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}; spec::ImPlotSpec=ImPlotSpec())
+    if length(x) != length(y)
+        throw(DimensionMismatch("PlotStairs: x ($(length(x))) and y ($(length(y))) lengths differ"))
+    end
+    xc, yc = _coerce(x, y)
+    return PlotStairs(label_id, xc, yc, length(xc), spec)
 end
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStairs(label_id, y::AbstractArray{T}; count::Integer=length(y),
-                    xscale::Real=1.0, x0::Real=0.0, offset::Integer=0,
-                    stride::Integer=1) where {T<:ImPlotData}
-    return PlotStairs(label_id, y, count, xscale, x0, offset, stride * sizeof(T))
+"""$(TYPEDSIGNATURES)"""
+function PlotStairs(label_id, x::AbstractRange, y::AbstractArray{<:Real}; spec::ImPlotSpec=ImPlotSpec())
+    if length(x) != length(y)
+        throw(DimensionMismatch("PlotStairs: x ($(length(x))) and y ($(length(y))) lengths differ"))
+    end
+    yc = _coerce(y)
+    return PlotStairs(label_id, yc, length(yc), Float64(step(x)), Float64(first(x)), spec)
 end
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStairs(label_id, x::AbstractArray{T}, y::AbstractArray{T};
-                    count::Integer=min(length(x), length(y)), offset::Integer=0,
-                    stride::Integer=1) where {T<:ImPlotData}
-    return PlotStairs(label_id, x, y, count, offset, stride * sizeof(T))
-end
+"""$(TYPEDSIGNATURES)"""
+PlotStairs(label_id, y::AbstractArray{<:Real}; spec::ImPlotSpec=ImPlotSpec()) =
+    PlotStairs(label_id, 0:length(y)-1, y; spec)
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStairs(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}; kwargs...)
-    return PlotStairs(label_id, promote(x, y)..., kwargs...)
-end
+"""$(TYPEDSIGNATURES)"""
+PlotStairs(label_id, data::AbstractVector, xfield::Symbol, yfield::Symbol; spec::ImPlotSpec=ImPlotSpec()) =
+    _plot_structfields(PlotStairs, label_id, data, xfield, yfield, spec)

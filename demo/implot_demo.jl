@@ -85,16 +85,9 @@ function Sparkline(id::String, values::Vector{Float32}, count::Int, min_v, max_v
                         x_flags = ImPlotAxisFlags_NoDecorations,
                         y_flags = ImPlotAxisFlags_NoDecorations)
 
-        ImPlot.PushStyleColor(ImPlotCol_Line, col)
+        ImPlot.PlotLine(id, values, count, 1, 0, ImPlotSpec(Offset=offset, LineColor=col))
 
-        ImPlot.PlotLine(id, values, count, 1, 0, ImPlotLineFlags_None, offset)
-
-        ImPlot.PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25)
-
-        ImPlot.PlotShaded(id, values, count, 0, 1, 0, ImPlotShadedFlags_None, offset)
-
-        ImPlot.PopStyleVar()
-        ImPlot.PopStyleColor()
+        ImPlot.PlotShaded(id, values, count, 0, 1, 0, ImPlotSpec(Offset=offset, FillColor=col, FillAlpha=0.25))
         ImPlot.EndPlot()
     end
 
@@ -189,11 +182,6 @@ function StyleSeaborn()
     style  = ImPlot.GetStyle()
     colors = unsafe_load(style.Colors)
 
-    @set colors[1 + Int(ImPlotCol_Line)]          = IMPLOT_AUTO_COL
-    @set colors[1 + Int(ImPlotCol_Fill)]          = IMPLOT_AUTO_COL
-    @set colors[1 + Int(ImPlotCol_MarkerOutline)] = IMPLOT_AUTO_COL
-    @set colors[1 + Int(ImPlotCol_MarkerFill)]    = IMPLOT_AUTO_COL
-    @set colors[1 + Int(ImPlotCol_ErrorBar)]      = ImVec4(0.00, 0.00, 0.00, 1.00)
     @set colors[1 + Int(ImPlotCol_FrameBg)]       = ImVec4(1.00, 1.00, 1.00, 1.00)
     @set colors[1 + Int(ImPlotCol_PlotBg)]        = ImVec4(0.92, 0.92, 0.95, 1.00)
     @set colors[1 + Int(ImPlotCol_PlotBorder)]    = ImVec4(0.00, 0.00, 0.00, 0.00)
@@ -207,15 +195,6 @@ function StyleSeaborn()
     @set colors[1 + Int(ImPlotCol_Selection)]     = ImVec4(1.00, 0.65, 0.00, 1.00)
     @set colors[1 + Int(ImPlotCol_Crosshairs)]    = ImVec4(0.23, 0.10, 0.64, 0.50)
 
-    style.LineWeight       = 1.5
-    style.Marker           = ImPlotMarker_None
-    style.MarkerSize       = 4
-    style.MarkerWeight     = 1
-    style.FillAlpha        = 1.0
-    style.ErrorBarSize     = 5
-    style.ErrorBarWeight   = 1.5
-    style.DigitalBitHeight = 8
-    style.DigitalBitGap    = 4
     style.PlotBorderSize   = 0
     style.MinorAlpha       = 1.0
     style.MajorTickLen     = ImVec2(0,0)
@@ -433,9 +412,8 @@ function ShowDemoWindow()
             end
             CImGui.BulletText("Anti-aliasing can be enabled from the Configuration header above.")
             if ImPlot.BeginPlot("Line Plot", "x", "f(x)")
-                ImPlot.PlotLine("sin(x)", xs1, ys1, 1001)
-                ImPlot.SetNextMarkerStyle(ImPlotMarker_Circle)
-                ImPlot.PlotLine("x^2", xs2, ys2, 11)
+                ImPlot.PlotLine("sin(x)", xs1, ys1)
+                ImPlot.PlotLine("x^2", xs2, ys2; spec=ImPlotSpec(Marker=ImPlotMarker_Circle))
                 ImPlot.EndPlot()
             end
         end) # cstatic
@@ -468,16 +446,14 @@ function ShowDemoWindow()
             ImPlot.SetNextAxesLimits(0, 100, 0, 500)
             if ImPlot.BeginPlot("Stock Prices", "Days", "Price")
                 if show_fills
-                    ImPlot.PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25)
-                    ImPlot.PlotShaded("Stock 1", xs1, ys1, 101, fill_ref)
-                    ImPlot.PlotShaded("Stock 2", xs1, ys2, 101, fill_ref)
-                    ImPlot.PlotShaded("Stock 3", xs1, ys3, 101, fill_ref)
-                    ImPlot.PopStyleVar()
+                    ImPlot.PlotShaded("Stock 1", xs1, ys1; y_ref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
+                    ImPlot.PlotShaded("Stock 2", xs1, ys2; y_ref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
+                    ImPlot.PlotShaded("Stock 3", xs1, ys3; y_ref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
                 end
                 if show_lines
-                    ImPlot.PlotLine("Stock 1", xs1, ys1, 101)
-                    ImPlot.PlotLine("Stock 2", xs1, ys2, 101)
-                    ImPlot.PlotLine("Stock 3", xs1, ys3, 101)
+                    ImPlot.PlotLine("Stock 1", xs1, ys1)
+                    ImPlot.PlotLine("Stock 2", xs1, ys2)
+                    ImPlot.PlotLine("Stock 3", xs1, ys3)
                 end
                 ImPlot.EndPlot()
             end
@@ -506,13 +482,11 @@ function ShowDemoWindow()
             @c CImGui.DragFloat("Alpha", &alpha, 0.01, 0, 1)
 
             if ImPlot.BeginPlot("Shaded Plots", "X-Axis", "Y-Axis")
-                ImPlot.PushStyleVar(ImPlotStyleVar_FillAlpha, alpha)
-                ImPlot.PlotShaded("Uncertain Data",xs,ys1,ys2,1001)
-                ImPlot.PlotLine("Uncertain Data",xs,ys,1001)
-                ImPlot.PlotShaded("Overlapping",xs,ys3,ys4,1001)
-                ImPlot.PlotLine("Overlapping",xs,ys3,1001)
-                ImPlot.PlotLine("Overlapping",xs,ys4,1001)
-                ImPlot.PopStyleVar()
+                ImPlot.PlotShaded("Uncertain Data",xs,ys1,ys2; spec=ImPlotSpec(FillAlpha=alpha))
+                ImPlot.PlotLine("Uncertain Data",xs,ys)
+                ImPlot.PlotShaded("Overlapping",xs,ys3,ys4; spec=ImPlotSpec(FillAlpha=alpha))
+                ImPlot.PlotLine("Overlapping",xs,ys3)
+                ImPlot.PlotLine("Overlapping",xs,ys4)
                 ImPlot.EndPlot()
             end
         end) # cstatic
@@ -536,11 +510,8 @@ function ShowDemoWindow()
             end
 
             if ImPlot.BeginPlot("Scatter Plot")
-                ImPlot.PlotScatter("Data 1", xs1, ys1, 100)
-                ImPlot.PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25)
-                ImPlot.SetNextMarkerStyle(ImPlotMarker_Square, 6, ImVec4(0,1,0,0.5), IMPLOT_AUTO, ImVec4(0,1,0,1))
-                ImPlot.PlotScatter("Data 2", xs2, ys2, 50)
-                ImPlot.PopStyleVar()
+                ImPlot.PlotScatter("Data 1", xs1, ys1)
+                ImPlot.PlotScatter("Data 2", xs2, ys2; spec=ImPlotSpec(Marker=ImPlotMarker_Square, MarkerSize=6, MarkerFillColor=ImVec4(0,1,0,0.5), LineWeight=IMPLOT_AUTO, MarkerLineColor=ImVec4(0,1,0,1), FillAlpha=0.25))
                 ImPlot.EndPlot()
             end
         end) # cstatic
@@ -553,9 +524,8 @@ function ShowDemoWindow()
                 ys2[i] = 0.5 + 0.2 * sin(25 * (i - 1) * 0.01)
             end
             if ImPlot.BeginPlot("Stairstep Plot", "x", "f(x)")
-                ImPlot.PlotStairs("Signal 1", ys1, 101, 0.01)
-                ImPlot.SetNextMarkerStyle(ImPlotMarker_Square, 2.0)
-                ImPlot.PlotStairs("Signal 2", ys2, 101, 0.01)
+                ImPlot.PlotStairs("Signal 1", range(0; step=0.01, length=length(ys1)), ys1)
+                ImPlot.PlotStairs("Signal 2", range(0; step=0.01, length=length(ys2)), ys2; spec=ImPlotSpec(Marker=ImPlotMarker_Square, MarkerSize=2.0))
                 ImPlot.EndPlot()
             end
         end # cstatic
@@ -586,19 +556,17 @@ function ShowDemoWindow()
                         ImPlot.SetupLegend(ImPlotLocation_West)
                         ImPlot.SetupAxisTicksY(positions, 10, labels)
 
-                        # Upstream ImPlot uses PlotBars() with
-                        # ImPlotBarsFlags_Horizontal, but we use PlotBarsH()
-                        # here to test our implementation.
-                        ImPlot.PlotBarsH("Midterm Exam", midtm; bar_size=0.2, shift=-0.2)
-                        ImPlot.PlotBarsH("Final Exam", final; bar_size=0.2, shift=0)
-                        ImPlot.PlotBarsH("Course Grade", grade; bar_size=0.2, shift=0.2)
+                        # Horizontal bars via ImPlotBarsFlags_Horizontal; group offset baked into x.
+                        ImPlot.PlotBars("Midterm Exam", positions .- 0.2, midtm; bar_size=0.2, spec=ImPlotSpec(Flags=ImPlotBarsFlags_Horizontal))
+                        ImPlot.PlotBars("Final Exam", positions, final; bar_size=0.2, spec=ImPlotSpec(Flags=ImPlotBarsFlags_Horizontal))
+                        ImPlot.PlotBars("Course Grade", positions .+ 0.2, grade; bar_size=0.2, spec=ImPlotSpec(Flags=ImPlotBarsFlags_Horizontal))
                     else
                         ImPlot.SetupLegend(ImPlotLocation_South, ImPlotLegendFlags_Horizontal)
                         ImPlot.SetupAxisTicksX(positions, 10, labels)
 
-                        ImPlot.PlotBars("Midterm Exam", midtm, 10, 0.2,  -0.2)
-                        ImPlot.PlotBars("Final Exam",   final, 10, 0.2,     0)
-                        ImPlot.PlotBars("Course Grade", grade, 10, 0.2,   0.2)
+                        ImPlot.PlotBars("Midterm Exam", positions .- 0.2, midtm; bar_size=0.2)
+                        ImPlot.PlotBars("Final Exam", positions, final; bar_size=0.2)
+                        ImPlot.PlotBars("Course Grade", positions .+ 0.2, grade; bar_size=0.2)
                     end
                     ImPlot.EndPlot()
                 end
@@ -620,19 +588,15 @@ function ShowDemoWindow()
          ImPlot.SetNextAxesLimits(0, 6, 0, 10)
          if ImPlot.BeginPlot("##ErrorBars")
 
-             ImPlot.PlotBars("Bar", xs, bar, 5, 0.5)
-             ImPlot.PlotErrorBars("Bar", xs, bar, err1, 5)
+             ImPlot.PlotBars("Bar", xs, bar; bar_size=0.5)
+             ImPlot.PlotErrorBars("Bar", xs, bar, err1)
 
-             ImPlot.SetNextErrorBarStyle(ImPlot.GetColormapColor(1), 0)
-             ImPlot.PlotErrorBars("Line", xs, lin1, err1, err2, 5)
-             ImPlot.SetNextMarkerStyle(ImPlotMarker_Circle)
-             ImPlot.PlotLine("Line", xs, lin1, 5)
+             ImPlot.PlotErrorBars("Line", xs, lin1, err1, err2; spec=ImPlotSpec(LineColor=ImPlot.GetColormapColor(1), Size=0))
+             ImPlot.PlotLine("Line", xs, lin1; spec=ImPlotSpec(Marker=ImPlotMarker_Circle))
 
-             ImPlot.PushStyleColor(ImPlotCol_ErrorBar, ImPlot.GetColormapColor(2))
-             ImPlot.PlotErrorBars("Scatter", xs, lin2, err2, 5)
-             ImPlot.PlotErrorBars("Scatter", xs, lin2,  err3, err4, 5, ImPlotErrorBarsFlags_Horizontal)
-             ImPlot.PopStyleColor()
-             ImPlot.PlotScatter("Scatter", xs, lin2, 5)
+             ImPlot.PlotErrorBars("Scatter", xs, lin2, err2; spec=ImPlotSpec(LineColor=ImPlot.GetColormapColor(2)))
+             ImPlot.PlotErrorBars("Scatter", xs, lin2, err3, err4; spec=ImPlotSpec(LineColor=ImPlot.GetColormapColor(2), Flags=ImPlotErrorBarsFlags_Horizontal))
+             ImPlot.PlotScatter("Scatter", xs, lin2)
 
              ImPlot.EndPlot()
          end
@@ -648,11 +612,9 @@ function ShowDemoWindow()
          ImPlot.SetNextAxesLimits(0,1,0,1.6)
          if ImPlot.BeginPlot("Stem Plots")
 
-             ImPlot.PlotStems("Stems 1", xs, ys1, 50)
+             ImPlot.PlotStems("Stems 1", xs, ys1)
 
-             ImPlot.SetNextLineStyle(ImVec4(1,0.5,0,0.75))
-             ImPlot.SetNextMarkerStyle(ImPlotMarker_Square,5,ImVec4(1,0.5,0,0.25))
-             ImPlot.PlotStems("Stems 2", xs, ys2, 50)
+             ImPlot.PlotStems("Stems 2", xs, ys2; spec=ImPlotSpec(LineColor=ImVec4(1,0.5,0,0.75), Marker=ImPlotMarker_Square, MarkerSize=5, MarkerFillColor=ImVec4(1,0.5,0,0.25)))
 
              ImPlot.EndPlot()
          end
@@ -681,7 +643,7 @@ function ShowDemoWindow()
                                     y2_flags = ImPlotAxisFlags_NoDecorations)
 
                     piechart_normalize = normalize ? ImPlotPieChartFlags_Normalize : ImPlotPieChartFlags_None
-                    ImPlot.PlotPieChart(labels1, data1, 4, 0.5, 0.5, 0.4, "%.2f", 90, piechart_normalize)
+                    ImPlot.PlotPieChart(labels1, data1, 0.5, 0.5, 0.4; label_fmt="%.2f", angle0=90, spec=ImPlotSpec(Flags=piechart_normalize))
                     ImPlot.EndPlot()
                 end
 
@@ -694,7 +656,7 @@ function ShowDemoWindow()
                                     y_flags = ImPlotAxisFlags_NoDecorations,
                                     y2_flags = ImPlotAxisFlags_NoDecorations)
 
-                    ImPlot.PlotPieChart(labels2, data2, 5, 0.5, 0.5, 0.4, "%.0f", 180, ImPlotPieChartFlags_Normalize)
+                    ImPlot.PlotPieChart(labels2, data2, 0.5, 0.5, 0.4; label_fmt="%.0f", angle0=180, spec=ImPlotSpec(Flags=ImPlotPieChartFlags_Normalize))
                     ImPlot.EndPlot()
                 end
                 ImPlot.PopColormap()
@@ -819,7 +781,7 @@ function ShowDemoWindow()
             ImPlot.SetNextAxisLimitsX(t - history, t, ImGuiCond_Always)
             if ImPlot.BeginPlot("##Scrolling", "", "", ImVec2(-1,150);
                 flags = 0, x_flags = rt_axis, y_flags = rt_axis | ImPlotAxisFlags_LockMin)
-                ImPlot.PlotShaded("Data 1", sdata1.data, :x, :y, 0)
+                ImPlot.PlotShaded("Data 1", sdata1.data, :x, :y; y_ref=0)
                 ImPlot.PlotLine("Data 2", sdata2.data, :x, :y;)
                 ImPlot.EndPlot()
             end
@@ -834,14 +796,13 @@ function ShowDemoWindow()
     end
 #     #-------------------------------------------------------------------------
     if CImGui.CollapsingHeader("Markers and Text")
-            mk_size_ptr = ImPlot.GetStyle().MarkerSize
-            mk_weight_ptr = ImPlot.GetStyle().MarkerWeight
-
-            CImGui.DragFloat("Marker Size", mk_size_ptr, 0.1,2.0,10.0,"%.2f px")
-            CImGui.DragFloat("Marker Weight", mk_weight_ptr, 0.05,0.5,3.0,"%.2f px")
-
-            mk_size = unsafe_load(mk_size_ptr)
-            mk_weight = unsafe_load(mk_weight_ptr)
+        @cstatic(
+            mk_size = Cfloat(4.0),
+            mk_weight = Cfloat(1.0),
+        begin
+            # marker size/weight are per-item in implot 1.0 (ImPlotSpec), not global style
+            @c CImGui.DragFloat("Marker Size", &mk_size, 0.1,2.0,10.0,"%.2f px")
+            @c CImGui.DragFloat("Marker Weight", &mk_weight, 0.05,0.5,3.0,"%.2f px")
 
             ImPlot.SetNextAxesLimits(0, 10, 0, 12)
             if ImPlot.BeginPlot("##MarkerStyles", "", "", ImVec2(-1,0);
@@ -855,8 +816,7 @@ function ShowDemoWindow()
                 # filled markers
                 for m = 0:(ImPlotMarker_COUNT - 1)
                     CImGui.PushID(m)
-                    ImPlot.SetNextMarkerStyle(m, mk_size, IMPLOT_AUTO_COL, mk_weight)
-                    ImPlot.PlotLine("##Filled", xs, ys, 2)
+                    ImPlot.PlotLine("##Filled", xs, ys; spec=ImPlotSpec(Marker=m, MarkerSize=mk_size, MarkerFillColor=IMPLOT_AUTO_COL, LineWeight=mk_weight))
                     CImGui.PopID()
                     ys[1]-=1; ys[2]-=1
                 end
@@ -864,8 +824,7 @@ function ShowDemoWindow()
                 # open markers
                 for m in 0:(ImPlotMarker_COUNT - 1)
                     CImGui.PushID(m)
-                    ImPlot.SetNextMarkerStyle(m, mk_size, ImVec4(0,0,0,0), mk_weight)
-                    ImPlot.PlotLine("##Open", xs, ys, 2)
+                    ImPlot.PlotLine("##Open", xs, ys; spec=ImPlotSpec(Marker=m, MarkerSize=mk_size, MarkerFillColor=ImVec4(0,0,0,0), LineWeight=mk_weight))
                     CImGui.PopID()
                     ys[1]-=1; ys[2]-=1
                 end
@@ -874,11 +833,12 @@ function ShowDemoWindow()
                 ImPlot.PlotText("Open Markers",   7.5, 6.0)
 
                 ImPlot.PushStyleColor(ImPlotCol_InlayText, ImVec4(1,0,1,1))
-                ImPlot.PlotText("Vertical Text", 5.0, 6.0, ImVec2(0, 0), ImPlotTextFlags_Vertical)
+                ImPlot.PlotText("Vertical Text", 5.0, 6.0, ImVec2(0, 0), ImPlotSpec(Flags=ImPlotTextFlags_Vertical))
                 ImPlot.PopStyleColor()
 
                 ImPlot.EndPlot()
             end
+        end) # @cstatic
     end
     #-------------------------------------------------------------------------
     if CImGui.CollapsingHeader("Log Scale")
@@ -899,10 +859,10 @@ function ShowDemoWindow()
             ImPlot.SetNextAxesLimits(0.1, 100, 0, 10)
             if ImPlot.BeginPlot("Log Plot")
                 ImPlot.SetupAxisScale(ImPlot.ImAxis_X1, ImPlot.ImPlotScale_Log10)
-                ImPlot.PlotLine("f(x) = x", xs, xs, 1001)
-                ImPlot.PlotLine("f(x) = sin(x)+1", xs, ys1, 1001)
-                ImPlot.PlotLine("f(x) = log(x)", xs, ys2, 1001)
-                ImPlot.PlotLine("f(x) = 10^x", xs, ys3, 21)
+                ImPlot.PlotLine("f(x) = x", xs, xs)
+                ImPlot.PlotLine("f(x) = sin(x)+1", xs, ys1)
+                ImPlot.PlotLine("f(x) = log(x)", xs, ys2)
+                ImPlot.PlotLine("f(x) = 10^x", xs, ys3)
                 ImPlot.EndPlot()
             end
         end)
@@ -955,7 +915,8 @@ function ShowDemoWindow()
                     size = (end_ - start) ÷ downsample
                     # plot it
                     #! why `offset = start` is not working properly (always plots from first element?)
-                    ImPlot.PlotLine("Time Series", data.ts, data.ys, count = size, offset = start, stride = downsample)
+                    idx = range(start+1; step=downsample, length=size)
+                    ImPlot.PlotLine("Time Series", @view(data.ts[idx]), @view(data.ys[idx]))
                 end
                 # plot time now
                 t_now = now() |> datetime2unix
@@ -1045,7 +1006,7 @@ function ShowDemoWindow()
             end
 
             if ImPlot.BeginPlot("##Plot A")
-                ImPlot.PlotLine("Line", data)
+                ImPlot.PlotLine("Line", 1:length(data), data)
                 ImPlot.EndPlot()
             end
 
@@ -1057,7 +1018,7 @@ function ShowDemoWindow()
             end
 
             if ImPlot.BeginPlot("##Plot B")
-                ImPlot.PlotLine("Line", data)
+                ImPlot.PlotLine("Line", 1:length(data), data)
                 ImPlot.EndPlot()
             end
         end) # cstatic
@@ -1120,8 +1081,7 @@ function ShowDemoWindow()
                     end
 
                     if cnt > 0
-                        ImPlot.SetNextMarkerStyle(ImPlotMarker_Square)
-                        ImPlot.PlotScatter("Average", [sum_x / cnt], [sum_y / cnt])
+                        ImPlot.PlotScatter("Average", [sum_x / cnt], [sum_y / cnt]; spec=ImPlotSpec(Marker=ImPlotMarker_Square))
                     end
                 end
 
@@ -1264,7 +1224,7 @@ function ShowDemoWindow()
                  ys[i] = (y1 + y2)/2 + abs(y2 - y1)/2 * sin(f * i/10)
              end
 
-             ImPlot.PlotLine("Interactive Data", xs, ys, 1000)
+             ImPlot.PlotLine("Interactive Data", xs, ys)
              ImPlot.SetAxis(ImPlot.ImAxis_Y2)
              @c ImPlot.DragLineY(0, &f, ImVec4(1,0.5,1,1))
              ImPlot.EndPlot()
@@ -1287,12 +1247,9 @@ function ShowDemoWindow()
              end
              yoff = fieldoffset(ImPlotPoint, 2)
 
-             ImPlot.SetNextLineStyle(ImVec4(0,0.9,0,1), 2)
-             ImPlot.PlotLine("##bez", Ptr{Float64}(pointer(B)), Ptr{Float64}(pointer(B) + yoff), 100, 0, 0, sizeof(ImPlotPoint))
-             ImPlot.SetNextLineStyle(ImVec4(1,0.5,1,1))
-             ImPlot.PlotLine("##h1", Ptr{Float64}(pointer(P)), Ptr{Float64}(pointer(P) + yoff), 2, 0, 0, sizeof(ImPlotPoint))
-             ImPlot.SetNextLineStyle(ImVec4(0,0.5,1,1))
-             ImPlot.PlotLine("##h2", Ptr{Float64}(pointer(P,3)), Ptr{Float64}(pointer(P,3) + yoff), 2, 0, 0, sizeof(ImPlotPoint))
+             ImPlot.PlotLine("##bez", Ptr{Float64}(pointer(B)), Ptr{Float64}(pointer(B) + yoff), 100, ImPlotSpec(LineColor=ImVec4(0,0.9,0,1), LineWeight=2, Stride=sizeof(ImPlotPoint)))
+             ImPlot.PlotLine("##h1", Ptr{Float64}(pointer(P)), Ptr{Float64}(pointer(P) + yoff), 2, ImPlotSpec(LineColor=ImVec4(1,0.5,1,1), Stride=sizeof(ImPlotPoint)))
+             ImPlot.PlotLine("##h2", Ptr{Float64}(pointer(P,3)), Ptr{Float64}(pointer(P,3) + yoff), 2, ImPlotSpec(LineColor=ImVec4(0,0.5,1,1), Stride=sizeof(ImPlotPoint)))
 
              ImPlot.DragPoint(0, Ptr{Float64}(pointer(P)), Ptr{Float64}(pointer(P) + yoff), ImVec4(0,0.9,0,1))
              ImPlot.DragPoint(1, Ptr{Float64}(pointer(P, 2)), Ptr{Float64}(pointer(P,2) + yoff), ImVec4(1,0.5,1,1))
@@ -1327,7 +1284,7 @@ function ShowDemoWindow()
              bx = Float32[1.2, 1.5, 1.8]
              by = Float32[0.25, 0.5, 0.75]
 
-             ImPlot.PlotBars("##Bars",bx,by,3,0.2)
+             ImPlot.PlotBars("##Bars", bx, by; bar_size=0.2)
              for i = 1:3
                  ImPlot.Annotation(bx[i],by[i],ImVec2(0,-5),@sprintf("B[%d]=%.2f",i,by[i]))
              end
@@ -1395,14 +1352,15 @@ function ShowDemoWindow()
 
             ImPlot.SetNextAxisLimitsX(t - 10, t, paused ? ImGuiCond_Once : ImGuiCond_Always)
             if ImPlot.BeginPlot("##DND", "", "", ImVec2(-1,0);
-                                flags = ImPlotFlags_YAxis2 | ImPlotFlags_YAxis3,
+                                y2_flags = ImPlotAxisFlags_AuxDefault,
+                                y3_flags = ImPlotAxisFlags_AuxDefault,
                                 x_flags = ImPlotAxisFlags_NoTickLabels)
 
                 for i = 1:K_CHANNELS
                     if show[i] && length(data[i].data) > 0
                         label = "data_$i"
-                        ImPlot.SetPlotYAxis(yAxis[i])
-                        ImPlot.PlotLine(data[i].data, :x, :y, offset = data[i].offset)
+                        ImPlot.SetAxes(ImPlot.ImAxis_X1, ImPlot.ImAxis_Y1 + yAxis[i])
+                        ImPlot.PlotLine(label, data[i].data, :x, :y; spec=ImPlotSpec(Offset=data[i].offset))
 
                         # allow legend labels to be dragged and dropped
                         if ImPlot.BeginDragDropSourceItem(label, ImGuiDragDropFlags_None) #! no dafults
@@ -1540,20 +1498,20 @@ function ShowDemoWindow()
                     AddPoint(dataAnalog[i], t, sin(2*t) - cos(2*t))
                 end
             end
-            ImPlot.SetNextPlotLimitsY(-1, 1, ImGuiCond_Once, ImPlotYAxis_1) #! no defaults for last 2 args
+            ImPlot.SetNextAxisLimitsY(-1, 1, ImGuiCond_Once)
             ImPlot.SetNextAxisLimitsX(t - 10.0, t, paused ? ImGuiCond_Once : ImGuiCond_Always)
             if ImPlot.BeginPlot("##Digital")
                 for i = 1:K_PLOT_DIGITAL_CH_COUNT
                     if showDigital[i] && length(dataDigital[i].data) > 0
                         label = "digital_$i"
-                        ImPlot.PlotDigital(label, dataDigital[i].data, :x, :y, offset = dataDigital[i].offset)
+                        ImPlot.PlotDigital(label, dataDigital[i].data, :x, :y; spec=ImPlotSpec(Offset=dataDigital[i].offset))
                     end
                 end
                 for i = 1:K_PLOT_ANALOG_CH_COUNT
                     if showAnalog[i]
                         label = "analog_$i"
                         if length(dataAnalog[i].data) > 0
-                            ImPlot.PlotLine(label, dataAnalog[i].data, :x, :y, offset = dataAnalog[i].offset)
+                            ImPlot.PlotLine(label, dataAnalog[i].data, :x, :y; spec=ImPlotSpec(Offset=dataAnalog[i].offset))
                         end
                     end
                 end
@@ -1659,7 +1617,7 @@ if CImGui.CollapsingHeader("Offset and Stride")
             ImPlot.PushColormap(ImPlotColormap_Jet)
             for c = 0:k_circles-1
                 buff = "Circle $c"
-                ImPlot.PlotLine(buff, Ref(interleaved_data, c*2 + 1), Ref(interleaved_data, c*2 + 2), k_points_per, ImPlotLineFlags_None, offset, 2*k_circles*sizeof(Float64))
+                ImPlot.PlotLine(buff, Ref(interleaved_data, c*2 + 1), Ref(interleaved_data, c*2 + 2), k_points_per, ImPlotSpec(Offset=offset, Stride=2*k_circles*sizeof(Float64)))
             end
             ImPlot.EndPlot()
             ImPlot.PopColormap()
@@ -1683,7 +1641,7 @@ end
              # custom structs using stride example:
              vecyoffset = fieldoffset(MyImPlot.Vector2f, 2) # offset of :y field
              vec_ptr = Ptr{typeof(vec2_data[1].x)}(pointer(vec2_data))
-             ImPlot.PlotLine("Vector2f", vec_ptr, vec_ptr + vecyoffset, 2, ImPlotLineFlags_None, 0, sizeof(MyImPlot.Vector2f))
+             ImPlot.PlotLine("Vector2f", vec_ptr, vec_ptr + vecyoffset, 2, ImPlotSpec(Stride=sizeof(MyImPlot.Vector2f)))
 
              # custom getter example 1:
              spiral_c = @cfunction(MyImPlot.Spiral, Cvoid, (Ptr{Cvoid}, Cint,
@@ -1703,9 +1661,7 @@ end
              GC.@preserve sinewave_c sawwave_c begin
                  ImPlot.PlotLineG("Waves", sinewave_c, data1, 1000)
                  ImPlot.PlotLineG("Waves", sawwave_c, data2, 1000)
-                 ImPlot.PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25)
-                 ImPlot.PlotShadedG("Waves", sinewave_c, data1, sawwave_c, data2, 1000)
-                 ImPlot.PopStyleVar()
+                 ImPlot.PlotShadedG("Waves", sinewave_c, data1, sawwave_c, data2, 1000, ImPlotSpec(FillAlpha=0.25))
              end
 
              ImPlot.EndPlot()
@@ -1756,10 +1712,10 @@ end
              lin = UInt32[8,8,9,7,8,8,8,9,7,8]
              bar = UInt32[1,2,5,3,4,1,2,5,3,4]
              dot = UInt32[7,6,6,7,8,5,6,5,8,7]
-             ImPlot.PlotBars("Bars", bar, 10, 0.5)
-             ImPlot.PlotLine("Line", lin, 10)
+             ImPlot.PlotBars("Bars", 1:length(bar), bar; bar_size=0.5, spec=ImPlotSpec(LineWeight=1.5))
+             ImPlot.PlotLine("Line", 1:length(lin), lin; spec=ImPlotSpec(LineWeight=1.5))
              ImPlot.NextColormapColor() # skip green
-             ImPlot.PlotScatter("Scatter", dot, 10)
+             ImPlot.PlotScatter("Scatter", 1:length(dot), dot; spec=ImPlotSpec(MarkerSize=4, LineWeight=1))
              ImPlot.EndPlot()
          end
          unsafe_store!(ImPlot.GetStyle(), backup)
@@ -1809,17 +1765,12 @@ end
         if ImPlot.BeginPlot("Right Click the Legend")
 
             # rendering logic
-            ImPlot.PushStyleVar(ImPlotStyleVar_FillAlpha, alpha)
             if !line
-                ImPlot.SetNextFillStyle(color[])
-                ImPlot.PlotBars("Right Click Me", vals, 101)
+                ImPlot.PlotBars("Right Click Me", 1:length(vals), vals; spec=ImPlotSpec(FillColor=color[], FillAlpha=alpha))
             else
-                markers && ImPlot.SetNextMarkerStyle(ImPlotMarker_Circle)
-                ImPlot.SetNextLineStyle(color[], thickness)
-                ImPlot.PlotLine("Right Click Me", vals, 101)
-                shaded && ImPlot.PlotShaded("Right Click Me",vals,101)
+                ImPlot.PlotLine("Right Click Me", 1:length(vals), vals; spec=ImPlotSpec(LineColor=color[], LineWeight=thickness, Marker = markers ? ImPlotMarker_Circle : ImPlotMarker_None))
+                shaded && ImPlot.PlotShaded("Right Click Me", 1:length(vals), vals; spec=ImPlotSpec(FillAlpha=alpha))
             end
-            ImPlot.PopStyleVar()
 
             # custom legend context menu
             if ImPlot.BeginLegendPopup("Right Click Me")
@@ -1959,7 +1910,7 @@ closes =
          CImGui.SameLine() CImGui.ColorEdit4("##Bull", &bullCol.x, ImGuiColorEditFlags_NoInputs)
          CImGui.SameLine() CImGui.ColorEdit4("##Bear", &bearCol.x, ImGuiColorEditFlags_NoInputs)
          ImPlot.GetStyle().UseLocalTime = false
-         ImPlot.SetNextPlotLimits(1546300800, 1571961600, 1250, 1600)
+         ImPlot.SetNextAxesLimits(1546300800, 1571961600, 1250, 1600)
          if ImPlot.BeginPlot("Candlestick Chart","Day","USD",ImVec2(-1,0),0,ImPlotAxisFlags_Time))
              MyImPlot.PlotCandlestick("GOOGL",dates, opens, closes, lows, highs, 218, tooltip, 0.25, bullCol, bearCol)
              ImPlot.EndPlot()

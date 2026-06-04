@@ -6,7 +6,7 @@ using ImPlot
 
 ig.set_backend(:GlfwOpenGL3)
 
-function simple_demo(; engine)
+function simple_demo(; engine=nothing)
     ctx = ig.CreateContext()
     ctxp = ImPlot.CreateContext()
     ImPlot.SetImGuiContext(ctx)
@@ -47,7 +47,7 @@ function simple_demo(; engine)
                 # Using '##' in the label name hides the plot label, but lets
                 # us keep the label ID unique for modifying styling etc.
                 if ImPlot.BeginPlot("##line", "x1", "y1", ig.ImVec2(-1,300))
-                    ImPlot.PlotLine("data", ys1)
+                    ImPlot.PlotLine("data", 1:length(ys1), ys1)
                     ImPlot.EndPlot()
                 end
             end
@@ -66,7 +66,7 @@ function simple_demo(; engine)
 
                 ImPlot.SetNextAxesLimits(-0.5,4.5,bar_min, bar_max, ig.ImGuiCond_Always)
                 if ImPlot.BeginPlot("##bars", "", "", ig.ImVec2(-1,300))
-                    ImPlot.PlotBars("data", bar_val_step)
+                    ImPlot.PlotBars("data", 1:length(bar_val_step), bar_val_step)
                     ImPlot.EndPlot()
                 end
 
@@ -83,7 +83,27 @@ function simple_demo(; engine)
                 y_ref = -2.0
                 # ImPlot.SetNextAxesLimits(0,1000,-2,1, ig.ImGuiCond_Always)
                 if ImPlot.BeginPlot("##shaded", "", "", ig.ImVec2(-1,300))
-                    ImPlot.PlotShaded("data", x, y1, y_ref)
+                    ImPlot.PlotShaded("data", x, y1; y_ref=y_ref)
+                    ImPlot.EndPlot()
+                end
+            end
+
+            if ig.CollapsingHeader("Subplots")
+                # default row/col ratios (equal spacing)
+                if ImPlot.BeginSubplots("##subplots", 2, 2, ig.ImVec2(-1,400))
+                    for i in 1:4
+                        if ImPlot.BeginPlot("##sub$i")
+                            ImPlot.PlotLine("data", 1:length(ys1), ys1)
+                            ImPlot.EndPlot()
+                        end
+                    end
+                    ImPlot.EndSubplots()
+                end
+            end
+
+            if ig.CollapsingHeader("Histogram")
+                if ImPlot.BeginPlot("##hist")
+                    ImPlot.PlotHistogram("data", ys1, length(ys1))  # default bins (ImPlotBin_Sturges)
                     ImPlot.EndPlot()
                 end
             end

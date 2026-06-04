@@ -64,11 +64,11 @@ const DESPECIALIZE = ["LinkNextPlotLimits"]
 const IMDATATYPES = [:Cfloat, :Cdouble, :ImS8, :ImU8, :ImS16, :ImU16, :ImS32, :ImU32, :ImS64, :ImU64]
 const JLDATATYPES = [:Float32, :Float64, :Int8, :UInt8, :Int16, :UInt16, :Int32, :UInt32, :Int64, :UInt64] 
 const IMTOJL_LOOKUP = Dict(zip(IMDATATYPES, JLDATATYPES))
-const IMGUI_ISBITS_TYPES = [:ImPlotPoint, :ImPlotRange, :ImVec2, :ImVec4, :ImPlotRect,
-                            :ImPlotPoint_c, :ImPlotRange_c, :ImVec2_c, :ImVec4_c, :ImPlotRect_c]
+const IMGUI_ISBITS_TYPES = [:ImPlotPoint, :ImPlotRange, :ImVec2, :ImVec4, :ImPlotRect, :ImPlotSpec,
+                            :ImPlotPoint_c, :ImPlotRange_c, :ImVec2_c, :ImVec4_c, :ImPlotRect_c, :ImPlotSpec_c]
 
 # Read in JSON metadata
-FUNCTION_METADATA, ENUMS = read_metadata();
+FUNCTION_METADATA, ENUMS, ENUM_CONSTANTS = read_metadata();
 
 # Find and extract metadata for specific cimplot function
 filter_internal_functions!(options, FUNCTION_METADATA)

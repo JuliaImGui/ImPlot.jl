@@ -18,7 +18,11 @@ function read_metadata()
     #types = JSON3.read(json_typedefs);
     FUNCTION_METADATA = JSON3.read(json_defs);
     ENUMS = Symbol.(chop.(string.(propertynames(enums.enums))))
-    return FUNCTION_METADATA, ENUMS
+    # enum constant name (e.g. "ImPlotBin_Sturges") -> enum type symbol (e.g. :ImPlotBin_)
+    ENUM_CONSTANTS = Dict(String(c.name) => etype
+                          for etype in propertynames(enums.enums)
+                          for c in enums.enums[etype])
+    return FUNCTION_METADATA, ENUMS, ENUM_CONSTANTS
 end
 
 # Check if originally from implot_internal.h; this filters most internal functions
@@ -37,11 +41,11 @@ function split_ccall(body)
     return (funsymbol, rettype, argtypes, argnames)
 end
 
+is_null_default(str) = str in ("((void*)0)", "NULL", "nullptr")
+
 function parse_default(jlsymtype, str, ptr_type = nothing)
     T = eval(jlsymtype)
-    if str == "((void*)0)" || str == "NULL" || str == "nullptr"
-        return :C_NULL
-    end
+    is_null_default(str) && return :C_NULL
     (T <: AbstractFloat || T <: Bool || T <: Cstring) && return Meta.parse(str)
     T <: Integer && return (startswith(str, "sizeof") ? :(sizeof($ptr_type)) : Meta.parse(str))
     T <: Symbol && return Symbol(str)
@@ -52,8 +56,13 @@ function revise_arg(def, metadata, i, sym, jltype, ptr_type = nothing)
     if jltype ∈ (:Cint, :Clong, :Cshort, :Cushort, :Culong, :Cuchar, :Cchar,
                  :Int8, :UInt8, :Int16, :UInt16, :Int32, :UInt32, :Int64, :UInt64)
         if hasdefault(metadata, sym)
-            val = parse_default(jltype, getdefault(metadata, sym), ptr_type)
-            def[:args][i] = :($( Expr(:kw, :($sym::Integer), val)) )
+            raw = getdefault(metadata, sym)
+            val = parse_default(jltype, raw, ptr_type)
+            # an enum-constant default (e.g. ImPlotBin_Sturges) means this C `int` param also
+            # accepts that enum (like flag params) -> widen the annotation to admit both.
+            enumT = get(ENUM_CONSTANTS, String(raw), nothing)
+            argann = isnothing(enumT) ? :($sym::Integer) : :($sym::Union{$enumT,Integer})
+            def[:args][i] = :($(Expr(:kw, argann, val)))
         else
             def[:args][i] = :($sym::Integer)
         end
@@ -166,14 +175,18 @@ function parse_pointer_arg!(jltype, def, metadata, sym, i)
         if ptrtype in (IMDATATYPES..., :Cstring, :Bool)
             if ptrtype == :Cstring
                 arg_type = :($sym::Union{Ptr{Nothing},String,AbstractArray{String}})
+                null_default = :C_NULL                       # member of the Ptr{Nothing} union
             elseif ptrtype == :Bool
                 arg_type = def[:args][i] = :($sym)
+                null_default = :C_NULL                       # unannotated
             else
                 arg_type = :($sym::Union{Ptr{$ptrtype},Ref{$ptrtype},AbstractArray{$ptrtype}})
+                null_default = :(Ptr{$ptrtype}())            # typed null: Ptr{T} <: Ref{T} ∈ the union
             end
 
             if hasdefault(metadata, sym)
-                val = parse_default(jltype, getdefault(metadata, sym), ptrtype)
+                raw = getdefault(metadata, sym)
+                val = is_null_default(raw) ? null_default : parse_default(jltype, raw, ptrtype)
                 def[:args][i] = :($(Expr(:kw, arg_type, val)))
             else
                 def[:args][i] = arg_type
@@ -299,7 +312,7 @@ function create_docstring(func_name, metadata)
     end
 
     header, line = split(metadata[:location], ':')
-    implot_version = "0.17"
+    implot_version = "v1.0"
     link = "https://github.com/epezent/implot/blob/$(implot_version)/$(header).h#L$(line)"
 
     docstring *= "[Upstream link]($link)."
