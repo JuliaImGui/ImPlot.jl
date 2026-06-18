@@ -1,52 +1,22 @@
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStems(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}, args...)
-    return PlotStems(label_id, promote(x, y), args...)
+# Stem plots
+"""$(TYPEDSIGNATURES)"""
+function PlotStems(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}; ref::Real=0, spec::ImPlotSpec=ImPlotSpec())
+    if length(x) != length(y)
+        throw(DimensionMismatch("PlotStems: x ($(length(x))) and y ($(length(y))) lengths differ"))
+    end
+    xc, yc = _coerce(x, y)
+    return PlotStems(label_id, xc, yc, length(xc), Float64(ref), spec)
 end
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStems(label_id, values::AbstractArray{T}; count::Integer=length(values),
-                   y_ref=0.0, xscale=1.0, x0=0.0, offset::Integer=0,
-                   stride::Integer=1) where {T<:ImPlotData}
-    return PlotStems(label_id, values, count, y_ref, xscale, x0, offset, stride * sizeof(T))
+"""$(TYPEDSIGNATURES)"""
+function PlotStems(label_id, x::AbstractRange, y::AbstractArray{<:Real}; ref::Real=0, spec::ImPlotSpec=ImPlotSpec())
+    if length(x) != length(y)
+        throw(DimensionMismatch("PlotStems: x ($(length(x))) and y ($(length(y))) lengths differ"))
+    end
+    yc = _coerce(y)
+    return PlotStems(label_id, yc, length(yc), Float64(ref), Float64(step(x)), Float64(first(x)), spec)
 end
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStems(label_id, values::AbstractArray{T}; count::Integer=length(values),
-                   y_ref=0.0, xscale=1.0, x0=0.0, offset::Integer=0,
-                   stride::Integer=1) where {T<:Real}
-    return PlotStems(label_id, Float64.(values), count, y_ref, xscale, x0, offset,
-                     stride * sizeof(Float64))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStems(label_id, x::AbstractArray{T}, y::AbstractArray{T};
-                   count::Integer=min(length(x), length(y)), y_ref=0.0,
-                   offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    return PlotStems(label_id, x, y, count, y_ref, offset, stride * sizeof(T))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStems(label_id, x::AbstractArray{T}, y::AbstractArray{T};
-                   count::Integer=min(length(x), length(y)), y_ref=0.0,
-                   offset::Integer=0, stride::Integer=1) where {T<:Real}
-    return PlotStems(label_id, Float64.(x), Float64.(y), count, y_ref, offset,
-                     stride * sizeof(Float64))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotStems(label_id, x::AbstractArray{T1}, y::AbstractArray{T2};
-                   kwargs...) where {T1<:Real,T2<:Real}
-    return PlotBars(label_id, promote(x, y)...; kwargs...)
-end
+"""$(TYPEDSIGNATURES)"""
+PlotStems(label_id, y::AbstractArray{<:Real}; ref::Real=0, spec::ImPlotSpec=ImPlotSpec()) =
+    PlotStems(label_id, 0:length(y)-1, y; ref, spec)

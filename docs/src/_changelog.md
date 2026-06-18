@@ -6,6 +6,24 @@ CurrentModule = ImPlot
 This documents notable changes in ImPlot.jl. The format is based on [Keep a
 Changelog](https://keepachangelog.com).
 
+## [v0.8.0] - 2026-06-18
+
+### Changed
+- **Breaking**: Updated to [ImPlot
+  1.0](https://github.com/epezent/implot/releases/tag/v1.0) and ImGui 1.92.8.
+
+  Key changes:
+  - Every `PlotX` styling now goes through a single by-value `ImPlotSpec` struct
+    instead of trailing arguments and functions like
+    `SetNextLineStyle`. Construct `ImPlotSpec` with keywords,
+    e.g. `PlotLine("x", xs, ys; spec=ImPlotSpec(LineColor=col,
+    Marker=ImPlotMarker_Circle))`.
+  - New plot types: `PlotInfLines`, `PlotPolygon`, `PlotBubbles`, `PlotBarGroups`.
+  - Array lengths of `x` and `y` are required to be the same, `count` is
+    automatically derived from `length`.
+  - `PlotHeatmap` now takes an `AbstractMatrix` directly instead of
+    manually-flattened vector.
+
 ## [v0.7.5] - 2026-05-23
 
 ### Fixed

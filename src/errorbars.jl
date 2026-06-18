@@ -1,111 +1,18 @@
-# Error bar plotting/annotation
-
-# Vertical Error Bars
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                       err::AbstractArray{<:Real}, args...)
-    return PlotErrorBars(label_id, promote(x, y, err)..., args...)
+# Error bars. Horizontal via spec=ImPlotSpec(Flags=ImPlotErrorBarsFlags_Horizontal).
+"""$(TYPEDSIGNATURES)"""
+function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}, err::AbstractArray{<:Real}; spec::ImPlotSpec=ImPlotSpec())
+    if !(length(x) == length(y) == length(err))
+        throw(DimensionMismatch("PlotErrorBars: x/y/err lengths differ ($(length(x)),$(length(y)),$(length(err)))"))
+    end
+    xc, yc, ec = _coerce(x, y, err)
+    return PlotErrorBars(label_id, xc, yc, ec, length(xc), spec)
 end
 
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                       neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}, args...)
-    return PlotErrorBars(label_id, promote(x, y, neg, pos), count, offset, stride)
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBars(label_id, x::AbstractArray{T}, y::AbstractArray{T}, error::AbstractArray{T};
-                       count::Integer=min(length(x), length(y), length(error)),
-                       offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    return PlotErrorBars(label_id, x, y, error, count, offset, stride * sizeof(T))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBars(label_id, x::AbstractArray{T}, y::AbstractArray{T}, negative::AbstractArray{T},
-                       positive::AbstractArray{T};
-                       count::Integer=min(length(x), length(y), length(negative),
-                                          length(positive)), offset::Integer=0,
-                       stride::Integer=1) where {T<:ImPlotData}
-    return PlotErrorBars(label_id, x, y, negative, positive, count, offset,
-                         stride * sizeof(T))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                       error::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBars(label_id, promote(x, y, error)...; kwargs...)
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                       neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBars(label_id, promote(x, y, pos, neg)...; kwargs...)
-end
-
-# Horizontal Error bars
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                        err::AbstractArray{<:Real}, args...)
-    return PlotErrorBarsH(label_id, promote(x, y, err)..., args...)
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                        neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}, args...)
-    return PlotErrorBarsH(label_id, promote(x, y, neg, pos), count, offset, stride)
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBarsH(label_id, x::AbstractArray{T}, y::AbstractArray{T}, error::AbstractArray{T};
-                        count::Integer=min(length(x), length(y), length(error)),
-                        offset::Integer=0, stride::Integer=1) where {T<:ImPlotData}
-    return PlotErrorBarsH(label_id, x, y, error, count, offset, stride * sizeof(T))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBarsH(label_id, x::AbstractArray{T}, y::AbstractArray{T},
-                        negative::AbstractArray{T}, positive::AbstractArray{T};
-                        count::Integer=min(length(x), length(y), length(negative),
-                                           length(positive)), offset::Integer=0,
-                        stride::Integer=1) where {T<:ImPlotData}
-    return PlotErrorBarsH(label_id, x, y, negative, positive, count, offset,
-                          stride * sizeof(T))
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                        error::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBarsH(label_id, promote(x, y, error)...; kwargs...)
-end
-
-"""
-$(TYPEDSIGNATURES)
-"""
-function PlotErrorBarsH(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real},
-                        neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}; kwargs...)
-    return PlotErrorBarsH(label_id, promote(x, y, pos, neg)...; kwargs...)
+"""$(TYPEDSIGNATURES)"""
+function PlotErrorBars(label_id, x::AbstractArray{<:Real}, y::AbstractArray{<:Real}, neg::AbstractArray{<:Real}, pos::AbstractArray{<:Real}; spec::ImPlotSpec=ImPlotSpec())
+    if !(length(x) == length(y) == length(neg) == length(pos))
+        throw(DimensionMismatch("PlotErrorBars: x/y/neg/pos lengths differ ($(length(x)),$(length(y)),$(length(neg)),$(length(pos)))"))
+    end
+    xc, yc, nc, pc = _coerce(x, y, neg, pos)
+    return PlotErrorBars(label_id, xc, yc, nc, pc, length(xc), spec)
 end
