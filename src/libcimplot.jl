@@ -43,7 +43,7 @@ const IMPLOT_AUTO_COL = ImVec4(0, 0, 0, -1)
 export IMPLOT_AUTO, IMPLOT_AUTO_COL
 
 
-const __darwin_time_t = Clong
+const __time_t = Clong
 
 struct ImVector_ImU8
     Size::Cint
@@ -63,7 +63,7 @@ struct ImVector_int
     Data::Ptr{Cint}
 end
 
-const time_t = __darwin_time_t
+const time_t = __time_t
 
 struct tm
     tm_sec::Cint
@@ -78,12 +78,6 @@ struct tm
     tm_gmtoff::Clong
     tm_zone::Cstring
 end
-
-const ImPlotFlags = Cint
-
-const ImPlotLocation = Cint
-
-const ImPlotMouseTextFlags = Cint
 
 const ImPlotAxisFlags = Cint
 
@@ -186,6 +180,73 @@ struct ImPlotAxis
     Held::Bool
 end
 
+const ImPlotAxis = ImPlotAxis
+
+const ImPlotDateFmt = Cint
+
+const ImPlotTimeFmt = Cint
+
+struct ImPlotDateTimeSpec
+    Date::ImPlotDateFmt
+    Time::ImPlotTimeFmt
+    UseISO8601::Bool
+    Use24HourClock::Bool
+end
+
+const ImPlotDateTimeSpec = ImPlotDateTimeSpec
+
+struct ImPlotPoint
+    x::Cdouble
+    y::Cdouble
+end
+
+const ImPlotPoint = ImPlotPoint
+
+const ImPlotRange = ImPlotRange
+
+struct ImPlotRect
+    X::ImPlotRange
+    Y::ImPlotRange
+end
+
+const ImPlotRect = ImPlotRect
+
+const ImPlotMarker = Cint
+
+const ImPlotItemFlags = Cint
+
+struct ImPlotSpec
+    LineColor::ImVec4
+    LineColors::Ptr{ImU32}
+    LineWeight::Cfloat
+    FillColor::ImVec4
+    FillColors::Ptr{ImU32}
+    FillAlpha::Cfloat
+    Marker::ImPlotMarker
+    MarkerSize::Cfloat
+    MarkerSizes::Ptr{Cfloat}
+    MarkerLineColor::ImVec4
+    MarkerLineColors::Ptr{ImU32}
+    MarkerFillColor::ImVec4
+    MarkerFillColors::Ptr{ImU32}
+    Size::Cfloat
+    Offset::Cint
+    Stride::Cint
+    Flags::ImPlotItemFlags
+end
+
+const ImPlotSpec = ImPlotSpec
+
+const ImPlotTick = ImPlotTick
+
+const ImPlotTime = ImPlotTime
+
+const ImPlotFlags = Cint
+
+const ImPlotLocation = Cint
+
+const ImPlotMouseTextFlags = Cint
+
 const ImPlotLegendFlags = Cint
 
 struct ImPlotLegend
@@ -202,8 +263,6 @@ struct ImPlotLegend
     Held::Bool
     CanGoInside::Bool
 end
-
-const ImPlotMarker = Cint
 
 struct ImPlotItem
     ID::ImGuiID
@@ -481,28 +540,6 @@ struct ImPlotNextPlotData
     Fit::NTuple{6,Bool}
     LinkedMin::NTuple{6,Ptr{Cdouble}}
     LinkedMax::NTuple{6,Ptr{Cdouble}}
-end
-
-const ImPlotItemFlags = Cint
-
-struct ImPlotSpec
-    LineColor::ImVec4
-    LineColors::Ptr{ImU32}
-    LineWeight::Cfloat
-    FillColor::ImVec4
-    FillColors::Ptr{ImU32}
-    FillAlpha::Cfloat
-    Marker::ImPlotMarker
-    MarkerSize::Cfloat
-    MarkerSizes::Ptr{Cfloat}
-    MarkerLineColor::ImVec4
-    MarkerLineColors::Ptr{ImU32}
-    MarkerFillColor::ImVec4
-    MarkerFillColors::Ptr{ImU32}
-    Size::Cfloat
-    Offset::Cint
-    Stride::Cint
-    Flags::ImPlotItemFlags
 end
 
 struct ImPlotNextItemData
@@ -1003,24 +1040,10 @@ end
     ImPlotBin_Scott = -4
 end
 
-struct ImPlotPoint
-    x::Cdouble
-    y::Cdouble
-end
-
-struct ImPlotRect
-    X::ImPlotRange
-    Y::ImPlotRange
-end
-
 # typedef ImPlotPoint_c ( * ImPlotGetter ) ( int idx , void * user_data )
 const ImPlotGetter = Ptr{Cvoid}
 
 const ImPlotTimeUnit = Cint
-
-const ImPlotDateFmt = Cint
-
-const ImPlotTimeFmt = Cint
 
 const ImPlotMarkerInternal = Cint
 
@@ -1062,13 +1085,6 @@ end
     ImPlotMarker_Invalid = -3
 end
 
-struct ImPlotDateTimeSpec
-    Date::ImPlotDateFmt
-    Time::ImPlotTimeFmt
-    UseISO8601::Bool
-    Use24HourClock::Bool
-end
-
 struct ImPlotPointError
     X::Cdouble
     Y::Cdouble
@@ -1082,22 +1098,6 @@ struct Formatter_Time_Data
     UserFormatter::ImPlotFormatter
     UserFormatterData::Ptr{Cvoid}
 end
-
-const ImPlotDateTimeSpec = ImPlotDateTimeSpec
-
-const ImPlotPoint = ImPlotPoint
-
-const ImPlotRange = ImPlotRange
-
-const ImPlotTime = ImPlotTime
-
-const ImPlotRect = ImPlotRect
-
-const ImPlotSpec = ImPlotSpec
-
-const ImPlotTick = ImPlotTick
-
-const ImPlotAxis = ImPlotAxis
 
 # typedef void * ( * ImPlotPoint_getter ) ( void * data , int idx , ImPlotPoint_c * point )
 const ImPlotPoint_getter = Ptr{Cvoid}
