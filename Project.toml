@@ -1,6 +1,6 @@
 name = "ImPlot"
 uuid = "e8efc688-5342-4ad4-b4ba-9025a731b363"
-version = "0.8.1"
+version = "0.8.2"
 authors = ["Wiktor Phillips <wsphillips@gmail.com>"]
 
 [deps]
