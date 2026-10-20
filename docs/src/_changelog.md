@@ -6,6 +6,11 @@ CurrentModule = ImPlot
 This documents notable changes in ImPlot.jl. The format is based on [Keep a
 Changelog](https://keepachangelog.com).
 
+## [v0.8.2] - 2026-10-17
+
+### Changed
+- Updated for ImGui 1.93.0, we now require CImGui.jl v10 ([#51]).
+
 ## [v0.8.1] - 2026-08-20
 
 ### Changed

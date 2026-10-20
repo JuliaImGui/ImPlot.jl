@@ -1,7 +1,15 @@
 module ImPlot
 
-import DocStringExtensions: TYPEDSIGNATURES
 using ConstructionBase: setproperties
+using DocStringExtensions: DocStringExtensions
+
+# Default values are only supported in DocStringExtensions 0.10 and later
+@static if pkgversion(DocStringExtensions) >= v"0.10"
+    const TYPEDSIGNATURES = DocStringExtensions.TypedMethodSignatures(defaults=true)
+else
+    using DocStringExtensions: TYPEDSIGNATURES
+end
+
 
 import CImGui as ig
 for i in instances(ig.ImGuiCond_)
