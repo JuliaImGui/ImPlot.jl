@@ -24,10 +24,10 @@ julia> include("demo/implot_demo.jl")
 julia> full_demo()
 ```
 
-`implot_demo.jl` replicates all the plotting functionality visible in
-`implot_demo.cpp` of implot v0.8, with the exception of examples using Tables
-(depends on upstream imgui) and custom plotting with `implot_internal.h`
-functions (depends on cimplot v0.9).
+`implot_demo.jl` replicates most of the plotting functionality visible in
+`implot_demo.cpp` of implot v1.0. The exceptions are the benchmark tool and the
+custom plotter example (`PlotCandlestick`), which uses functions from
+`implot_internal.h` and hasn't been ported yet.
 
 Aside from the replication of the C++ interface, we have some convenience for
 some things that are slightly less verbose. See `demo/example_plots.jl` and
@@ -40,7 +40,7 @@ import ImPlot
 ig.set_backend(:GlfwOpenGL3)
 
 ctx = ig.CreateContext()
-p_ctx =ImPlot.CreateContext()
+p_ctx = ImPlot.CreateContext()
 
 ig.render(ctx; on_exit=() -> ImPlot.DestroyContext(p_ctx)) do
     ig.Begin("Plot Window")

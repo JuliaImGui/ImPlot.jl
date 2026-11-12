@@ -326,6 +326,40 @@ struct ImPlotPlot
     Selected::Bool
     ContextLocked::Bool
 end
+function Base.getproperty(x::Ptr{ImPlotPlot}, f::Symbol)
+    f === :ID && return Ptr{ImGuiID}(x + 0)
+    f === :Flags && return Ptr{ImPlotFlags}(x + 4)
+    f === :PreviousFlags && return Ptr{ImPlotFlags}(x + 8)
+    f === :MouseTextLocation && return Ptr{ImPlotLocation}(x + 12)
+    f === :MouseTextFlags && return Ptr{ImPlotMouseTextFlags}(x + 16)
+    f === :Axes && return Ptr{NTuple{6,ImPlotAxis}}(x + 24)
+    f === :TextBuffer && return Ptr{ImGuiTextBuffer}(x + 2280)
+    f === :Items && return Ptr{ImPlotItemGroup}(x + 2296)
+    f === :CurrentX && return Ptr{ImAxis}(x + 2448)
+    f === :CurrentY && return Ptr{ImAxis}(x + 2452)
+    f === :FrameRect && return Ptr{ImRect}(x + 2456)
+    f === :CanvasRect && return Ptr{ImRect}(x + 2472)
+    f === :PlotRect && return Ptr{ImRect}(x + 2488)
+    f === :AxesRect && return Ptr{ImRect}(x + 2504)
+    f === :SelectRect && return Ptr{ImRect}(x + 2520)
+    f === :SelectStart && return Ptr{ImVec2}(x + 2536)
+    f === :TitleOffset && return Ptr{Cint}(x + 2544)
+    f === :JustCreated && return Ptr{Bool}(x + 2548)
+    f === :Initialized && return Ptr{Bool}(x + 2549)
+    f === :SetupLocked && return Ptr{Bool}(x + 2550)
+    f === :FitThisFrame && return Ptr{Bool}(x + 2551)
+    f === :Hovered && return Ptr{Bool}(x + 2552)
+    f === :Held && return Ptr{Bool}(x + 2553)
+    f === :Selecting && return Ptr{Bool}(x + 2554)
+    f === :Selected && return Ptr{Bool}(x + 2555)
+    f === :ContextLocked && return Ptr{Bool}(x + 2556)
+    return getfield(x, f)
+end
+
+function Base.setproperty!(x::Ptr{ImPlotPlot}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
 
 struct ImVector_ImPlotPlot
     Size::Cint
@@ -1110,11 +1144,11 @@ const ImPlotPoint_getter = Ptr{Cvoid}
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L536).
 """
 function ImPlotSpec_ImPlotSpec()
-    ccall((:ImPlotSpec_ImPlotSpec, libcimgui), Ptr{ImPlotSpec}, ())
+    @ccall libcimgui.ImPlotSpec_ImPlotSpec()::Ptr{ImPlotSpec}
 end
 
 function ImPlotSpec_destroy(self)
-    ccall((:ImPlotSpec_destroy, libcimgui), Cvoid, (Ptr{ImPlotSpec},), self)
+    @ccall libcimgui.ImPlotSpec_destroy(self::Ptr{ImPlotSpec})::Cvoid
 end
 
 """
@@ -1123,7 +1157,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L612).
 """
 function ImPlotPoint_ImPlotPoint_Nil()
-    ccall((:ImPlotPoint_ImPlotPoint_Nil, libcimgui), Ptr{ImPlotPoint}, ())
+    @ccall libcimgui.ImPlotPoint_ImPlotPoint_Nil()::Ptr{ImPlotPoint}
 end
 
 """
@@ -1132,7 +1166,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L613).
 """
 function ImPlotPoint_ImPlotPoint_double(_x::Cdouble, _y::Cdouble)
-    ccall((:ImPlotPoint_ImPlotPoint_double, libcimgui), Ptr{ImPlotPoint}, (Cdouble, Cdouble), _x, _y)
+    @ccall libcimgui.ImPlotPoint_ImPlotPoint_double(_x::Cdouble, _y::Cdouble)::Ptr{ImPlotPoint}
 end
 
 """
@@ -1141,7 +1175,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L614).
 """
 function ImPlotPoint_ImPlotPoint_Vec2(p::ImVec2)
-    ccall((:ImPlotPoint_ImPlotPoint_Vec2, libcimgui), Ptr{ImPlotPoint}, (ImVec2,), p)
+    @ccall libcimgui.ImPlotPoint_ImPlotPoint_Vec2(p::ImVec2)::Ptr{ImPlotPoint}
 end
 
 """
@@ -1150,7 +1184,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L627).
 """
 function ImPlotRange_ImPlotRange_Nil()
-    ccall((:ImPlotRange_ImPlotRange_Nil, libcimgui), Ptr{ImPlotRange}, ())
+    @ccall libcimgui.ImPlotRange_ImPlotRange_Nil()::Ptr{ImPlotRange}
 end
 
 """
@@ -1159,7 +1193,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L628).
 """
 function ImPlotRange_ImPlotRange_double(_min::Cdouble, _max::Cdouble)
-    ccall((:ImPlotRange_ImPlotRange_double, libcimgui), Ptr{ImPlotRange}, (Cdouble, Cdouble), _min, _max)
+    @ccall libcimgui.ImPlotRange_ImPlotRange_double(_min::Cdouble, _max::Cdouble)::Ptr{ImPlotRange}
 end
 
 """
@@ -1168,7 +1202,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L629).
 """
 function Contains(self::Union{ImPlotRange,Ptr{ImPlotRange},Ref{ImPlotRange}}, value::Real)
-    ccall((:ImPlotRange_Contains, libcimgui), Bool, (Ptr{ImPlotRange}, Cdouble), self, value)
+    @ccall libcimgui.ImPlotRange_Contains(self::Ptr{ImPlotRange}, value::Cdouble)::Bool
 end
 
 """
@@ -1177,7 +1211,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L630).
 """
 function Size(self::Union{ImPlotRange,Ptr{ImPlotRange},Ref{ImPlotRange}})
-    ccall((:ImPlotRange_Size, libcimgui), Cdouble, (Ptr{ImPlotRange},), self)
+    @ccall libcimgui.ImPlotRange_Size(self::Ptr{ImPlotRange})::Cdouble
 end
 
 """
@@ -1186,7 +1220,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L631).
 """
 function Clamp(self::Union{ImPlotRange,Ptr{ImPlotRange},Ref{ImPlotRange}}, value::Real)
-    ccall((:ImPlotRange_Clamp, libcimgui), Cdouble, (Ptr{ImPlotRange}, Cdouble), self, value)
+    @ccall libcimgui.ImPlotRange_Clamp(self::Ptr{ImPlotRange}, value::Cdouble)::Cdouble
 end
 
 """
@@ -1195,11 +1229,11 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L637).
 """
 function ImPlotRect_ImPlotRect_Nil()
-    ccall((:ImPlotRect_ImPlotRect_Nil, libcimgui), Ptr{ImPlotRect}, ())
+    @ccall libcimgui.ImPlotRect_ImPlotRect_Nil()::Ptr{ImPlotRect}
 end
 
 function ImPlotRect_destroy(self)
-    ccall((:ImPlotRect_destroy, libcimgui), Cvoid, (Ptr{ImPlotRect},), self)
+    @ccall libcimgui.ImPlotRect_destroy(self::Ptr{ImPlotRect})::Cvoid
 end
 
 """
@@ -1208,15 +1242,12 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L638).
 """
 function ImPlotRect_ImPlotRect_double(x_min::Cdouble, x_max::Cdouble, y_min::Cdouble, y_max::Cdouble)
-    ccall(
-        (:ImPlotRect_ImPlotRect_double, libcimgui),
-        Ptr{ImPlotRect},
-        (Cdouble, Cdouble, Cdouble, Cdouble),
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-    )
+    @ccall libcimgui.ImPlotRect_ImPlotRect_double(
+        x_min::Cdouble,
+        x_max::Cdouble,
+        y_min::Cdouble,
+        y_max::Cdouble,
+    )::Ptr{ImPlotRect}
 end
 
 """
@@ -1225,7 +1256,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L639).
 """
 function Contains(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, p::ImPlotPoint)
-    ccall((:ImPlotRect_Contains_PlotPoint, libcimgui), Bool, (Ptr{ImPlotRect}, ImPlotPoint), self, p)
+    @ccall libcimgui.ImPlotRect_Contains_PlotPoint(self::Ptr{ImPlotRect}, p::ImPlotPoint)::Bool
 end
 
 """
@@ -1234,7 +1265,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L640).
 """
 function Contains(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, x::Real, y::Real)
-    ccall((:ImPlotRect_Contains_double, libcimgui), Bool, (Ptr{ImPlotRect}, Cdouble, Cdouble), self, x, y)
+    @ccall libcimgui.ImPlotRect_Contains_double(self::Ptr{ImPlotRect}, x::Cdouble, y::Cdouble)::Bool
 end
 
 """
@@ -1243,7 +1274,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L641).
 """
 function Size(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}})
-    ccall((:ImPlotRect_Size, libcimgui), ImPlotPoint, (Ptr{ImPlotRect},), self)
+    @ccall libcimgui.ImPlotRect_Size(self::Ptr{ImPlotRect})::ImPlotPoint
 end
 
 """
@@ -1252,7 +1283,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L642).
 """
 function Clamp(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, p::ImPlotPoint)
-    ccall((:ImPlotRect_Clamp_PlotPoint, libcimgui), ImPlotPoint, (Ptr{ImPlotRect}, ImPlotPoint), self, p)
+    @ccall libcimgui.ImPlotRect_Clamp_PlotPoint(self::Ptr{ImPlotRect}, p::ImPlotPoint)::ImPlotPoint
 end
 
 """
@@ -1261,7 +1292,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L643).
 """
 function Clamp(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}}, x::Real, y::Real)
-    ccall((:ImPlotRect_Clamp_double, libcimgui), ImPlotPoint, (Ptr{ImPlotRect}, Cdouble, Cdouble), self, x, y)
+    @ccall libcimgui.ImPlotRect_Clamp_double(self::Ptr{ImPlotRect}, x::Cdouble, y::Cdouble)::ImPlotPoint
 end
 
 """
@@ -1270,7 +1301,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L644).
 """
 function Min(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}})
-    ccall((:ImPlotRect_Min, libcimgui), ImPlotPoint, (Ptr{ImPlotRect},), self)
+    @ccall libcimgui.ImPlotRect_Min(self::Ptr{ImPlotRect})::ImPlotPoint
 end
 
 """
@@ -1279,7 +1310,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L645).
 """
 function Max(self::Union{ImPlotRect,Ptr{ImPlotRect},Ref{ImPlotRect}})
-    ccall((:ImPlotRect_Max, libcimgui), ImPlotPoint, (Ptr{ImPlotRect},), self)
+    @ccall libcimgui.ImPlotRect_Max(self::Ptr{ImPlotRect})::ImPlotPoint
 end
 
 """
@@ -1288,12 +1319,12 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L680).
 """
 function ImPlotStyle()
-    ccall((:ImPlotStyle_ImPlotStyle, libcimgui), Ptr{ImPlotStyle}, ())
+    @ccall libcimgui.ImPlotStyle_ImPlotStyle()::Ptr{ImPlotStyle}
 end
 
 function Base.finalizer(self::Union{Ptr{ImPlotStyle},ImPlotStyle})
     ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotStyle_destroy, libcimgui), Cvoid, (Ptr{ImPlotStyle},), self)
+    GC.@preserve self @ccall(libcimgui.ImPlotStyle_destroy(self::Ptr{ImPlotStyle})::Cvoid)
 end
 
 """
@@ -1302,12 +1333,12 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L712).
 """
 function ImPlotInputMap()
-    ccall((:ImPlotInputMap_ImPlotInputMap, libcimgui), Ptr{ImPlotInputMap}, ())
+    @ccall libcimgui.ImPlotInputMap_ImPlotInputMap()::Ptr{ImPlotInputMap}
 end
 
 function Base.finalizer(self::Union{Ptr{ImPlotInputMap},ImPlotInputMap})
     ptr = pointer_from_objref(self)
-    GC.@preserve self ccall((:ImPlotInputMap_destroy, libcimgui), Cvoid, (Ptr{ImPlotInputMap},), self)
+    GC.@preserve self @ccall(libcimgui.ImPlotInputMap_destroy(self::Ptr{ImPlotInputMap})::Cvoid)
 end
 
 """
@@ -1316,7 +1347,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L735).
 """
 function CreateContext()
-    ccall((:ImPlot_CreateContext, libcimgui), Ptr{ImPlotContext}, ())
+    @ccall libcimgui.ImPlot_CreateContext()::Ptr{ImPlotContext}
 end
 
 """
@@ -1325,7 +1356,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L737).
 """
 function DestroyContext(ctx)
-    ccall((:ImPlot_DestroyContext, libcimgui), Cvoid, (Ptr{ImPlotContext},), ctx)
+    @ccall libcimgui.ImPlot_DestroyContext(ctx::Ptr{ImPlotContext})::Cvoid
 end
 
 """
@@ -1334,7 +1365,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L739).
 """
 function GetCurrentContext()
-    ccall((:ImPlot_GetCurrentContext, libcimgui), Ptr{ImPlotContext}, ())
+    @ccall libcimgui.ImPlot_GetCurrentContext()::Ptr{ImPlotContext}
 end
 
 """
@@ -1343,7 +1374,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L741).
 """
 function SetCurrentContext(ctx)
-    ccall((:ImPlot_SetCurrentContext, libcimgui), Cvoid, (Ptr{ImPlotContext},), ctx)
+    @ccall libcimgui.ImPlot_SetCurrentContext(ctx::Ptr{ImPlotContext})::Cvoid
 end
 
 """
@@ -1352,7 +1383,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L747).
 """
 function SetImGuiContext(ctx)
-    ccall((:ImPlot_SetImGuiContext, libcimgui), Cvoid, (Ptr{ImGuiContext},), ctx)
+    @ccall libcimgui.ImPlot_SetImGuiContext(ctx::Ptr{ImGuiContext})::Cvoid
 end
 
 """
@@ -1361,7 +1392,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L769).
 """
 function BeginPlot(title_id, size::ImVec2 = ImVec2(-1, 0), flags::Union{ImPlotFlags_,Integer} = 0)
-    ccall((:ImPlot_BeginPlot, libcimgui), Bool, (Cstring, ImVec2, ImPlotFlags), title_id, size, flags)
+    @ccall libcimgui.ImPlot_BeginPlot(title_id::Cstring, size::ImVec2, flags::ImPlotFlags)::Bool
 end
 
 """
@@ -1370,7 +1401,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L773).
 """
 function EndPlot()
-    ccall((:ImPlot_EndPlot, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_EndPlot()::Cvoid
 end
 
 """
@@ -1387,18 +1418,15 @@ function BeginSubplots(
     row_ratios::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}} = Ptr{Cfloat}(),
     col_ratios::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}} = Ptr{Cfloat}(),
 )
-    ccall(
-        (:ImPlot_BeginSubplots, libcimgui),
-        Bool,
-        (Cstring, Cint, Cint, ImVec2, ImPlotSubplotFlags, Ptr{Cfloat}, Ptr{Cfloat}),
-        title_id,
-        rows,
-        cols,
-        size,
-        flags,
-        row_ratios,
-        col_ratios,
-    )
+    @ccall libcimgui.ImPlot_BeginSubplots(
+        title_id::Cstring,
+        rows::Cint,
+        cols::Cint,
+        size::ImVec2,
+        flags::ImPlotSubplotFlags,
+        row_ratios::Ptr{Cfloat},
+        col_ratios::Ptr{Cfloat},
+    )::Bool
 end
 
 """
@@ -1407,7 +1435,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L835).
 """
 function EndSubplots()
-    ccall((:ImPlot_EndSubplots, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_EndSubplots()::Cvoid
 end
 
 """
@@ -1416,7 +1444,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L867).
 """
 function SetupAxis(axis::Union{ImAxis_,Integer}, label = C_NULL, flags::Union{ImPlotAxisFlags_,Integer} = 0)
-    ccall((:ImPlot_SetupAxis, libcimgui), Cvoid, (ImAxis, Cstring, ImPlotAxisFlags), axis, label, flags)
+    @ccall libcimgui.ImPlot_SetupAxis(axis::ImAxis, label::Cstring, flags::ImPlotAxisFlags)::Cvoid
 end
 
 """
@@ -1425,7 +1453,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L869).
 """
 function SetupAxisLimits(axis::Union{ImAxis_,Integer}, v_min::Real, v_max::Real, cond = ImPlotCond_Once)
-    ccall((:ImPlot_SetupAxisLimits, libcimgui), Cvoid, (ImAxis, Cdouble, Cdouble, ImPlotCond), axis, v_min, v_max, cond)
+    @ccall libcimgui.ImPlot_SetupAxisLimits(axis::ImAxis, v_min::Cdouble, v_max::Cdouble, cond::ImPlotCond)::Cvoid
 end
 
 """
@@ -1438,7 +1466,7 @@ function SetupAxisLinks(
     link_min::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
     link_max::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
 )
-    ccall((:ImPlot_SetupAxisLinks, libcimgui), Cvoid, (ImAxis, Ptr{Cdouble}, Ptr{Cdouble}), axis, link_min, link_max)
+    @ccall libcimgui.ImPlot_SetupAxisLinks(axis::ImAxis, link_min::Ptr{Cdouble}, link_max::Ptr{Cdouble})::Cvoid
 end
 
 """
@@ -1447,23 +1475,20 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L873).
 """
 function SetupAxisFormat(axis::Union{ImAxis_,Integer}, fmt)
-    ccall((:ImPlot_SetupAxisFormat_Str, libcimgui), Cvoid, (ImAxis, Cstring), axis, fmt)
+    @ccall libcimgui.ImPlot_SetupAxisFormat_Str(axis::ImAxis, fmt::Cstring)::Cvoid
 end
 
 """
-    SetupAxisFormat(axis::Union{ImAxis_, Integer}, formatter::ImPlotFormatter, data)
+    SetupAxisFormat(axis::Union{ImAxis_, Integer}, formatter::ImPlotFormatter, data::Union{Ptr, Ref, AbstractArray})
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L875).
 """
-function SetupAxisFormat(axis::Union{ImAxis_,Integer}, formatter::ImPlotFormatter, data)
-    ccall(
-        (:ImPlot_SetupAxisFormat_PlotFormatter, libcimgui),
-        Cvoid,
-        (ImAxis, ImPlotFormatter, Ptr{Cvoid}),
-        axis,
-        formatter,
-        data,
-    )
+function SetupAxisFormat(axis::Union{ImAxis_,Integer}, formatter::ImPlotFormatter, data::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_SetupAxisFormat_PlotFormatter(
+        axis::ImAxis,
+        formatter::ImPlotFormatter,
+        data::Ptr{Cvoid},
+    )::Cvoid
 end
 
 """
@@ -1478,16 +1503,13 @@ function SetupAxisTicks(
     labels::Union{Ptr{Nothing},String,AbstractArray{String}} = C_NULL,
     keep_default = false,
 )
-    ccall(
-        (:ImPlot_SetupAxisTicks_doublePtr, libcimgui),
-        Cvoid,
-        (ImAxis, Ptr{Cdouble}, Cint, Ptr{Cstring}, Bool),
-        axis,
-        values,
-        n_ticks,
-        labels,
-        keep_default,
-    )
+    @ccall libcimgui.ImPlot_SetupAxisTicks_doublePtr(
+        axis::ImAxis,
+        values::Ptr{Cdouble},
+        n_ticks::Cint,
+        labels::Ptr{Cstring},
+        keep_default::Bool,
+    )::Cvoid
 end
 
 """
@@ -1503,17 +1525,14 @@ function SetupAxisTicks(
     labels::Union{Ptr{Nothing},String,AbstractArray{String}} = C_NULL,
     keep_default = false,
 )
-    ccall(
-        (:ImPlot_SetupAxisTicks_double, libcimgui),
-        Cvoid,
-        (ImAxis, Cdouble, Cdouble, Cint, Ptr{Cstring}, Bool),
-        axis,
-        v_min,
-        v_max,
-        n_ticks,
-        labels,
-        keep_default,
-    )
+    @ccall libcimgui.ImPlot_SetupAxisTicks_double(
+        axis::ImAxis,
+        v_min::Cdouble,
+        v_max::Cdouble,
+        n_ticks::Cint,
+        labels::Ptr{Cstring},
+        keep_default::Bool,
+    )::Cvoid
 end
 
 """
@@ -1522,24 +1541,26 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L881).
 """
 function SetupAxisScale(axis::Union{ImAxis_,Integer}, scale::Union{ImPlotScale_,Integer})
-    ccall((:ImPlot_SetupAxisScale_PlotScale, libcimgui), Cvoid, (ImAxis, ImPlotScale), axis, scale)
+    @ccall libcimgui.ImPlot_SetupAxisScale_PlotScale(axis::ImAxis, scale::ImPlotScale)::Cvoid
 end
 
 """
-    SetupAxisScale(axis::Union{ImAxis_, Integer}, forward::ImPlotTransform, inverse::ImPlotTransform, data)
+    SetupAxisScale(axis::Union{ImAxis_, Integer}, forward::ImPlotTransform, inverse::ImPlotTransform, data::Union{Ptr, Ref, AbstractArray})
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L883).
 """
-function SetupAxisScale(axis::Union{ImAxis_,Integer}, forward::ImPlotTransform, inverse::ImPlotTransform, data)
-    ccall(
-        (:ImPlot_SetupAxisScale_PlotTransform, libcimgui),
-        Cvoid,
-        (ImAxis, ImPlotTransform, ImPlotTransform, Ptr{Cvoid}),
-        axis,
-        forward,
-        inverse,
-        data,
-    )
+function SetupAxisScale(
+    axis::Union{ImAxis_,Integer},
+    forward::ImPlotTransform,
+    inverse::ImPlotTransform,
+    data::Union{Ptr,Ref,AbstractArray},
+)
+    @ccall libcimgui.ImPlot_SetupAxisScale_PlotTransform(
+        axis::ImAxis,
+        forward::ImPlotTransform,
+        inverse::ImPlotTransform,
+        data::Ptr{Cvoid},
+    )::Cvoid
 end
 
 """
@@ -1548,7 +1569,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L885).
 """
 function SetupAxisLimitsConstraints(axis::Union{ImAxis_,Integer}, v_min::Real, v_max::Real)
-    ccall((:ImPlot_SetupAxisLimitsConstraints, libcimgui), Cvoid, (ImAxis, Cdouble, Cdouble), axis, v_min, v_max)
+    @ccall libcimgui.ImPlot_SetupAxisLimitsConstraints(axis::ImAxis, v_min::Cdouble, v_max::Cdouble)::Cvoid
 end
 
 """
@@ -1557,7 +1578,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L887).
 """
 function SetupAxisZoomConstraints(axis::Union{ImAxis_,Integer}, z_min::Real, z_max::Real)
-    ccall((:ImPlot_SetupAxisZoomConstraints, libcimgui), Cvoid, (ImAxis, Cdouble, Cdouble), axis, z_min, z_max)
+    @ccall libcimgui.ImPlot_SetupAxisZoomConstraints(axis::ImAxis, z_min::Cdouble, z_max::Cdouble)::Cvoid
 end
 
 """
@@ -1571,15 +1592,12 @@ function SetupAxes(
     x_flags::Union{ImPlotAxisFlags_,Integer} = 0,
     y_flags::Union{ImPlotAxisFlags_,Integer} = 0,
 )
-    ccall(
-        (:ImPlot_SetupAxes, libcimgui),
-        Cvoid,
-        (Cstring, Cstring, ImPlotAxisFlags, ImPlotAxisFlags),
-        x_label,
-        y_label,
-        x_flags,
-        y_flags,
-    )
+    @ccall libcimgui.ImPlot_SetupAxes(
+        x_label::Cstring,
+        y_label::Cstring,
+        x_flags::ImPlotAxisFlags,
+        y_flags::ImPlotAxisFlags,
+    )::Cvoid
 end
 
 """
@@ -1588,16 +1606,13 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L892).
 """
 function SetupAxesLimits(x_min::Real, x_max::Real, y_min::Real, y_max::Real, cond = ImPlotCond_Once)
-    ccall(
-        (:ImPlot_SetupAxesLimits, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, Cdouble, Cdouble, ImPlotCond),
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        cond,
-    )
+    @ccall libcimgui.ImPlot_SetupAxesLimits(
+        x_min::Cdouble,
+        x_max::Cdouble,
+        y_min::Cdouble,
+        y_max::Cdouble,
+        cond::ImPlotCond,
+    )::Cvoid
 end
 
 """
@@ -1606,7 +1621,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L895).
 """
 function SetupLegend(location::Union{ImPlotLocation_,Integer}, flags::Union{ImPlotLegendFlags_,Integer} = 0)
-    ccall((:ImPlot_SetupLegend, libcimgui), Cvoid, (ImPlotLocation, ImPlotLegendFlags), location, flags)
+    @ccall libcimgui.ImPlot_SetupLegend(location::ImPlotLocation, flags::ImPlotLegendFlags)::Cvoid
 end
 
 """
@@ -1615,7 +1630,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L897).
 """
 function SetupMouseText(location::Union{ImPlotLocation_,Integer}, flags::Union{ImPlotMouseTextFlags_,Integer} = 0)
-    ccall((:ImPlot_SetupMouseText, libcimgui), Cvoid, (ImPlotLocation, ImPlotMouseTextFlags), location, flags)
+    @ccall libcimgui.ImPlot_SetupMouseText(location::ImPlotLocation, flags::ImPlotMouseTextFlags)::Cvoid
 end
 
 """
@@ -1624,7 +1639,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L901).
 """
 function SetupFinish()
-    ccall((:ImPlot_SetupFinish, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_SetupFinish()::Cvoid
 end
 
 """
@@ -1633,15 +1648,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L927).
 """
 function SetNextAxisLimits(axis::Union{ImAxis_,Integer}, v_min::Real, v_max::Real, cond = ImPlotCond_Once)
-    ccall(
-        (:ImPlot_SetNextAxisLimits, libcimgui),
-        Cvoid,
-        (ImAxis, Cdouble, Cdouble, ImPlotCond),
-        axis,
-        v_min,
-        v_max,
-        cond,
-    )
+    @ccall libcimgui.ImPlot_SetNextAxisLimits(axis::ImAxis, v_min::Cdouble, v_max::Cdouble, cond::ImPlotCond)::Cvoid
 end
 
 """
@@ -1654,7 +1661,7 @@ function SetNextAxisLinks(
     link_min::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
     link_max::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
 )
-    ccall((:ImPlot_SetNextAxisLinks, libcimgui), Cvoid, (ImAxis, Ptr{Cdouble}, Ptr{Cdouble}), axis, link_min, link_max)
+    @ccall libcimgui.ImPlot_SetNextAxisLinks(axis::ImAxis, link_min::Ptr{Cdouble}, link_max::Ptr{Cdouble})::Cvoid
 end
 
 """
@@ -1663,7 +1670,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L931).
 """
 function SetNextAxisToFit(axis::Union{ImAxis_,Integer})
-    ccall((:ImPlot_SetNextAxisToFit, libcimgui), Cvoid, (ImAxis,), axis)
+    @ccall libcimgui.ImPlot_SetNextAxisToFit(axis::ImAxis)::Cvoid
 end
 
 """
@@ -1672,16 +1679,13 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L934).
 """
 function SetNextAxesLimits(x_min::Real, x_max::Real, y_min::Real, y_max::Real, cond = ImPlotCond_Once)
-    ccall(
-        (:ImPlot_SetNextAxesLimits, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, Cdouble, Cdouble, ImPlotCond),
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        cond,
-    )
+    @ccall libcimgui.ImPlot_SetNextAxesLimits(
+        x_min::Cdouble,
+        x_max::Cdouble,
+        y_min::Cdouble,
+        y_max::Cdouble,
+        cond::ImPlotCond,
+    )::Cvoid
 end
 
 """
@@ -1690,7 +1694,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L936).
 """
 function SetNextAxesToFit()
-    ccall((:ImPlot_SetNextAxesToFit, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_SetNextAxesToFit()::Cvoid
 end
 
 """
@@ -1706,17 +1710,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_FloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_FloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1732,17 +1733,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_doublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_doublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1758,17 +1756,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1784,17 +1779,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1810,17 +1802,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1836,17 +1825,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1862,17 +1848,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1888,17 +1871,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1914,17 +1894,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1940,17 +1917,14 @@ function PlotLine(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1965,16 +1939,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_FloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_FloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -1989,16 +1960,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_doublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_doublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2013,16 +1981,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2037,16 +2002,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2061,16 +2023,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2085,16 +2044,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2109,16 +2065,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2133,16 +2086,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2157,16 +2107,13 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_S64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_S64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2181,34 +2128,34 @@ function PlotLine(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotLine_U64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotLine_U64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotLineG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
+    PlotLineG(label_id, getter::ImPlotPoint_getter, data::Union{Ptr, Ref, AbstractArray}, count::Integer, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L993).
 """
-function PlotLineG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotLineG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        spec,
-    )
+function PlotLineG(
+    label_id,
+    getter::ImPlotPoint_getter,
+    data::Union{Ptr,Ref,AbstractArray},
+    count::Integer,
+    spec::ImPlotSpec = ImPlotSpec(),
+)
+    @ccall libcimgui.ImPlot_PlotLineG_LJ(
+        label_id::Cstring,
+        getter::ImPlotPoint_getter,
+        data::Ptr{Cvoid},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2224,17 +2171,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_FloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_FloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2250,17 +2194,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_doublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_doublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2276,17 +2217,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2302,17 +2240,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2328,17 +2263,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2354,17 +2286,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2380,17 +2309,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2406,17 +2332,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2432,17 +2355,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2458,17 +2378,14 @@ function PlotScatter(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2483,16 +2400,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_FloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_FloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2507,16 +2421,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_doublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_doublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2531,16 +2442,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2555,16 +2463,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2579,16 +2484,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2603,16 +2505,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2627,16 +2526,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2651,16 +2547,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2675,16 +2568,13 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_S64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_S64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2699,34 +2589,34 @@ function PlotScatter(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotScatter_U64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotScatter_U64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotScatterG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
+    PlotScatterG(label_id, getter::ImPlotPoint_getter, data::Union{Ptr, Ref, AbstractArray}, count::Integer, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L998).
 """
-function PlotScatterG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotScatterG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        spec,
-    )
+function PlotScatterG(
+    label_id,
+    getter::ImPlotPoint_getter,
+    data::Union{Ptr,Ref,AbstractArray},
+    count::Integer,
+    spec::ImPlotSpec = ImPlotSpec(),
+)
+    @ccall libcimgui.ImPlot_PlotScatterG_LJ(
+        label_id::Cstring,
+        getter::ImPlotPoint_getter,
+        data::Ptr{Cvoid},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2743,18 +2633,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_FloatPtrFloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_FloatPtrFloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        szs::Ptr{Cfloat},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2771,18 +2658,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_doublePtrdoublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_doublePtrdoublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        szs::Ptr{Cdouble},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2799,18 +2683,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S8PtrS8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S8PtrS8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        szs::Ptr{ImS8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2827,18 +2708,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U8PtrU8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U8PtrU8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        szs::Ptr{ImU8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2855,18 +2733,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S16PtrS16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S16PtrS16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        szs::Ptr{ImS16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2883,18 +2758,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U16PtrU16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U16PtrU16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        szs::Ptr{ImU16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2911,18 +2783,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S32PtrS32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S32PtrS32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        szs::Ptr{ImS32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2939,18 +2808,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U32PtrU32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U32PtrU32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        szs::Ptr{ImU32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2967,18 +2833,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S64PtrS64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S64PtrS64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        szs::Ptr{ImS64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -2995,18 +2858,15 @@ function PlotBubbles(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U64PtrU64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        szs,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U64PtrU64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        szs::Ptr{ImU64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3022,17 +2882,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_FloatPtrFloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_FloatPtrFloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        szs::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3048,17 +2905,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_doublePtrdoublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_doublePtrdoublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        szs::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3074,17 +2928,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S8PtrS8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S8PtrS8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        szs::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3100,17 +2951,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U8PtrU8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U8PtrU8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        szs::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3126,17 +2974,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S16PtrS16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S16PtrS16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        szs::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3152,17 +2997,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U16PtrU16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U16PtrU16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        szs::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3178,17 +3020,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S32PtrS32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S32PtrS32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        szs::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3204,17 +3043,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U32PtrU32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U32PtrU32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        szs::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3230,17 +3066,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_S64PtrS64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_S64PtrS64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        szs::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3256,17 +3089,14 @@ function PlotBubbles(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBubbles_U64PtrU64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        szs,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBubbles_U64PtrU64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        szs::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3281,16 +3111,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_FloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_FloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3305,16 +3132,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_doublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_doublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3329,16 +3153,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_S8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_S8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3353,16 +3174,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_U8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_U8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3377,16 +3195,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_S16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_S16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3401,16 +3216,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_U16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_U16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3425,16 +3237,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_S32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_S32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3449,16 +3258,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_U32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_U32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3473,16 +3279,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_S64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_S64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3497,16 +3300,13 @@ function PlotPolygon(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPolygon_U64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPolygon_U64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3522,17 +3322,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_FloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_FloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3548,17 +3345,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_doublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_doublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3574,17 +3368,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3600,17 +3391,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3626,17 +3414,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3652,17 +3437,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3678,17 +3460,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3704,17 +3483,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3730,17 +3506,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3756,17 +3529,14 @@ function PlotStairs(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3781,16 +3551,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_FloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_FloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3805,16 +3572,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_doublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_doublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3829,16 +3593,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3853,16 +3614,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3877,16 +3635,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3901,16 +3656,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3925,16 +3677,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3949,16 +3698,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3973,16 +3719,13 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_S64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_S64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -3997,34 +3740,34 @@ function PlotStairs(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStairs_U64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStairs_U64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotStairsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
+    PlotStairsG(label_id, getter::ImPlotPoint_getter, data::Union{Ptr, Ref, AbstractArray}, count::Integer, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1010).
 """
-function PlotStairsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotStairsG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        spec,
-    )
+function PlotStairsG(
+    label_id,
+    getter::ImPlotPoint_getter,
+    data::Union{Ptr,Ref,AbstractArray},
+    count::Integer,
+    spec::ImPlotSpec = ImPlotSpec(),
+)
+    @ccall libcimgui.ImPlot_PlotStairsG_LJ(
+        label_id::Cstring,
+        getter::ImPlotPoint_getter,
+        data::Ptr{Cvoid},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4041,18 +3784,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_FloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_FloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4069,18 +3809,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_doublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_doublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4097,18 +3834,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4125,18 +3859,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4153,18 +3884,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4181,18 +3909,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4209,18 +3934,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4237,18 +3959,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4265,18 +3984,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4293,18 +4009,15 @@ function PlotShaded(
     xstart::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        yref,
-        xscale,
-        xstart,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        yref::Cdouble,
+        xscale::Cdouble,
+        xstart::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4320,17 +4033,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_FloatPtrFloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_FloatPtrFloatPtrInt(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4346,17 +4056,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_doublePtrdoublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_doublePtrdoublePtrInt(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4372,17 +4079,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S8PtrS8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S8PtrS8PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4398,17 +4102,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U8PtrU8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U8PtrU8PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4424,17 +4125,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S16PtrS16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S16PtrS16PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4450,17 +4148,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U16PtrU16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U16PtrU16PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4476,17 +4171,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S32PtrS32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S32PtrS32PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4502,17 +4194,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U32PtrU32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U32PtrU32PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4528,17 +4217,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S64PtrS64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S64PtrS64PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4554,17 +4240,14 @@ function PlotShaded(
     yref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U64PtrU64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        yref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U64PtrU64PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        yref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4580,17 +4263,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_FloatPtrFloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_FloatPtrFloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys1::Ptr{Cfloat},
+        ys2::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4606,17 +4286,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_doublePtrdoublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_doublePtrdoublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys1::Ptr{Cdouble},
+        ys2::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4632,17 +4309,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S8PtrS8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S8PtrS8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys1::Ptr{ImS8},
+        ys2::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4658,17 +4332,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U8PtrU8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U8PtrU8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys1::Ptr{ImU8},
+        ys2::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4684,17 +4355,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S16PtrS16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S16PtrS16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys1::Ptr{ImS16},
+        ys2::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4710,17 +4378,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U16PtrU16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U16PtrU16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys1::Ptr{ImU16},
+        ys2::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4736,17 +4401,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S32PtrS32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S32PtrS32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys1::Ptr{ImS32},
+        ys2::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4762,17 +4424,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U32PtrU32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U32PtrU32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys1::Ptr{ImU32},
+        ys2::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4788,17 +4447,14 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_S64PtrS64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_S64PtrS64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys1::Ptr{ImS64},
+        ys2::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4814,45 +4470,39 @@ function PlotShaded(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShaded_U64PtrU64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys1,
-        ys2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShaded_U64PtrU64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys1::Ptr{ImU64},
+        ys2::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotShadedG(label_id, getter1::ImPlotPoint_getter, data1, getter2::ImPlotPoint_getter, data2, count::Integer, spec::ImPlotSpec = ImPlotSpec())
+    PlotShadedG(label_id, getter1::ImPlotPoint_getter, data1::Union{Ptr, Ref, AbstractArray}, getter2::ImPlotPoint_getter, data2::Union{Ptr, Ref, AbstractArray}, count::Integer, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1016).
 """
 function PlotShadedG(
     label_id,
     getter1::ImPlotPoint_getter,
-    data1,
+    data1::Union{Ptr,Ref,AbstractArray},
     getter2::ImPlotPoint_getter,
-    data2,
+    data2::Union{Ptr,Ref,AbstractArray},
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotShadedG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter1,
-        data1,
-        getter2,
-        data2,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotShadedG_LJ(
+        label_id::Cstring,
+        getter1::ImPlotPoint_getter,
+        data1::Ptr{Cvoid},
+        getter2::ImPlotPoint_getter,
+        data2::Ptr{Cvoid},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4868,17 +4518,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_FloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_FloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4894,17 +4541,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_doublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_doublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4920,17 +4564,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4946,17 +4587,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4972,17 +4610,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -4998,17 +4633,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5024,17 +4656,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5050,17 +4679,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5076,17 +4702,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5102,17 +4725,14 @@ function PlotBars(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bar_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        bar_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5128,17 +4748,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_FloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_FloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5154,17 +4771,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_doublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_doublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5180,17 +4794,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5206,17 +4817,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5232,17 +4840,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5258,17 +4863,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5284,17 +4886,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5310,17 +4909,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5336,17 +4932,14 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_S64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_S64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5362,43 +4955,37 @@ function PlotBars(
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBars_U64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBars_U64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotBarsG(label_id, getter::ImPlotPoint_getter, data, count::Integer, bar_size::Real, spec::ImPlotSpec = ImPlotSpec())
+    PlotBarsG(label_id, getter::ImPlotPoint_getter, data::Union{Ptr, Ref, AbstractArray}, count::Integer, bar_size::Real, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1021).
 """
 function PlotBarsG(
     label_id,
     getter::ImPlotPoint_getter,
-    data,
+    data::Union{Ptr,Ref,AbstractArray},
     count::Integer,
     bar_size::Real,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarsG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        bar_size,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarsG_LJ(
+        label_id::Cstring,
+        getter::ImPlotPoint_getter,
+        data::Ptr{Cvoid},
+        count::Cint,
+        bar_size::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5415,18 +5002,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_FloatPtr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{Cfloat}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_FloatPtr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{Cfloat},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5443,18 +5027,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_doublePtr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{Cdouble}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_doublePtr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{Cdouble},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5471,18 +5052,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_S8Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS8}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_S8Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS8},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5499,18 +5077,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_U8Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU8}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_U8Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU8},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5527,18 +5102,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_S16Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS16}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_S16Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS16},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5555,18 +5127,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_U16Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU16}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_U16Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU16},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5583,18 +5152,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_S32Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS32}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_S32Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS32},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5611,18 +5177,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_U32Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU32}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_U32Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU32},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5639,18 +5202,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_S64Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS64}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_S64Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS64},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5667,18 +5227,15 @@ function PlotBarGroups(
     shift::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotBarGroups_U64Ptr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU64}, Cint, Cint, Cdouble, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        item_count,
-        group_count,
-        group_size,
-        shift,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotBarGroups_U64Ptr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU64},
+        item_count::Cint,
+        group_count::Cint,
+        group_size::Cdouble,
+        shift::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5694,17 +5251,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_FloatPtrFloatPtrFloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_FloatPtrFloatPtrFloatPtrInt(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        err::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5720,17 +5274,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_doublePtrdoublePtrdoublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_doublePtrdoublePtrdoublePtrInt(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        err::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5746,17 +5297,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S8PtrS8PtrS8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S8PtrS8PtrS8PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        err::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5772,17 +5320,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U8PtrU8PtrU8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U8PtrU8PtrU8PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        err::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5798,17 +5343,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S16PtrS16PtrS16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S16PtrS16PtrS16PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        err::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5824,17 +5366,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U16PtrU16PtrU16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U16PtrU16PtrU16PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        err::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5850,17 +5389,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S32PtrS32PtrS32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S32PtrS32PtrS32PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        err::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5876,17 +5412,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U32PtrU32PtrU32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U32PtrU32PtrU32PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        err::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5902,17 +5435,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S64PtrS64PtrS64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S64PtrS64PtrS64PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        err::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5928,17 +5458,14 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U64PtrU64PtrU64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        err,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U64PtrU64PtrU64PtrInt(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        err::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5955,18 +5482,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_FloatPtrFloatPtrFloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_FloatPtrFloatPtrFloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        neg::Ptr{Cfloat},
+        pos::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -5983,18 +5507,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_doublePtrdoublePtrdoublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_doublePtrdoublePtrdoublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        neg::Ptr{Cdouble},
+        pos::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6011,18 +5532,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S8PtrS8PtrS8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S8PtrS8PtrS8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        neg::Ptr{ImS8},
+        pos::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6039,18 +5557,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U8PtrU8PtrU8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U8PtrU8PtrU8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        neg::Ptr{ImU8},
+        pos::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6067,18 +5582,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S16PtrS16PtrS16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S16PtrS16PtrS16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        neg::Ptr{ImS16},
+        pos::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6095,18 +5607,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U16PtrU16PtrU16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U16PtrU16PtrU16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        neg::Ptr{ImU16},
+        pos::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6123,18 +5632,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S32PtrS32PtrS32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S32PtrS32PtrS32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        neg::Ptr{ImS32},
+        pos::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6151,18 +5657,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U32PtrU32PtrU32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U32PtrU32PtrU32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        neg::Ptr{ImU32},
+        pos::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6179,18 +5682,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_S64PtrS64PtrS64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_S64PtrS64PtrS64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        neg::Ptr{ImS64},
+        pos::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6207,18 +5707,15 @@ function PlotErrorBars(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotErrorBars_U64PtrU64PtrU64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        neg,
-        pos,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotErrorBars_U64PtrU64PtrU64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        neg::Ptr{ImU64},
+        pos::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6235,18 +5732,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_FloatPtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_FloatPtrInt(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6263,18 +5757,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_doublePtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_doublePtrInt(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6291,18 +5782,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6319,18 +5807,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U8PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U8PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6347,18 +5832,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6375,18 +5857,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U16PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U16PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6403,18 +5882,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6431,18 +5907,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U32PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U32PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6459,18 +5932,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6487,18 +5957,15 @@ function PlotStems(
     start::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U64PtrInt, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cdouble, Cdouble, Cdouble, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        ref,
-        scale,
-        start,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U64PtrInt(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        ref::Cdouble,
+        scale::Cdouble,
+        start::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6514,17 +5981,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_FloatPtrFloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_FloatPtrFloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6540,17 +6004,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_doublePtrdoublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_doublePtrdoublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6566,17 +6027,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S8PtrS8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S8PtrS8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6592,17 +6050,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U8PtrU8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U8PtrU8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6618,17 +6073,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S16PtrS16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S16PtrS16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6644,17 +6096,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U16PtrU16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U16PtrU16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6670,17 +6119,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S32PtrS32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S32PtrS32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6696,17 +6142,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U32PtrU32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U32PtrU32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6722,17 +6165,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_S64PtrS64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_S64PtrS64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6748,17 +6188,14 @@ function PlotStems(
     ref::Real = 0,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotStems_U64PtrU64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, Cdouble, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        ref,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotStems_U64PtrU64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        ref::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6772,15 +6209,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_FloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_FloatPtr(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6794,15 +6228,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_doublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_doublePtr(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6816,15 +6247,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_S8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_S8Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6838,15 +6266,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_U8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_U8Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6860,15 +6285,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_S16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_S16Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6882,15 +6304,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_U16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_U16Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6904,15 +6323,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_S32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_S32Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6926,15 +6342,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_U32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_U32Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6948,15 +6361,12 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_S64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_S64Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -6970,19 +6380,16 @@ function PlotInfLines(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotInfLines_U64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotInfLines_U64Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -6994,29 +6401,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_FloatPtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{Cfloat}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_FloatPtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{Cfloat},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7028,29 +6432,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_doublePtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{Cdouble}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_doublePtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{Cdouble},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7062,29 +6463,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S8PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS8}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S8PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS8},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7096,29 +6494,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U8PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU8}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U8PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU8},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7130,29 +6525,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S16PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS16}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S16PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS16},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7164,29 +6556,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U16PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU16}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U16PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU16},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7198,29 +6587,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S32PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS32}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S32PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS32},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7232,29 +6618,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U32PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU32}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U32PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU32},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7266,29 +6649,26 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S64PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS64}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S64PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS64},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
+    PlotPieChart(label_ids::Union{Ptr{Nothing}, String, AbstractArray{String}}, values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, x::Real, y::Real, radius::Real, fmt::ImPlotFormatter, fmt_data::Union{Ptr, Ref, AbstractArray}, angle0::Real = 90, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1038).
 """
@@ -7300,25 +6680,22 @@ function PlotPieChart(
     y::Real,
     radius::Real,
     fmt::ImPlotFormatter,
-    fmt_data,
+    fmt_data::Union{Ptr,Ref,AbstractArray},
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U64PtrPlotFormatter, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU64}, Cint, Cdouble, Cdouble, Cdouble, ImPlotFormatter, Ptr{Cvoid}, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        fmt,
-        fmt_data,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U64PtrPlotFormatter(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU64},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        fmt::ImPlotFormatter,
+        fmt_data::Ptr{Cvoid},
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7337,20 +6714,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_FloatPtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{Cfloat}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_FloatPtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{Cfloat},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7369,20 +6743,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_doublePtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{Cdouble}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_doublePtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{Cdouble},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7401,20 +6772,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S8PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS8}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S8PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS8},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7433,20 +6801,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U8PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU8}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U8PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU8},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7465,20 +6830,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S16PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS16}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S16PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS16},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7497,20 +6859,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U16PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU16}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U16PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU16},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7529,20 +6888,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S32PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS32}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S32PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS32},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7561,20 +6917,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U32PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU32}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U32PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU32},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7593,20 +6946,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_S64PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImS64}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_S64PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImS64},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7625,20 +6975,17 @@ function PlotPieChart(
     angle0::Real = 90,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotPieChart_U64PtrStr, libcimgui),
-        Cvoid,
-        (Ptr{Cstring}, Ptr{ImU64}, Cint, Cdouble, Cdouble, Cdouble, Cstring, Cdouble, ImPlotSpec),
-        label_ids,
-        values,
-        count,
-        x,
-        y,
-        radius,
-        label_fmt,
-        angle0,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotPieChart_U64PtrStr(
+        label_ids::Ptr{Cstring},
+        values::Ptr{ImU64},
+        count::Cint,
+        x::Cdouble,
+        y::Cdouble,
+        radius::Cdouble,
+        label_fmt::Cstring,
+        angle0::Cdouble,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7658,21 +7005,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_FloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_FloatPtr(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7692,21 +7036,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_doublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_doublePtr(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7726,21 +7067,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_S8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_S8Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7760,21 +7098,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_U8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_U8Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7794,21 +7129,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_S16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_S16Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7828,21 +7160,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_U16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_U16Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7862,21 +7191,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_S32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_S32Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7896,21 +7222,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_U32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_U32Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7930,21 +7253,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_S64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_S64Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7964,21 +7284,18 @@ function PlotHeatmap(
     bounds_max::ImPlotPoint = ImPlotPoint(1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHeatmap_U64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Cint, Cint, Cdouble, Cdouble, Cstring, ImPlotPoint, ImPlotPoint, ImPlotSpec),
-        label_id,
-        values,
-        rows,
-        cols,
-        scale_min,
-        scale_max,
-        label_fmt,
-        bounds_min,
-        bounds_max,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHeatmap_U64Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        rows::Cint,
+        cols::Cint,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        label_fmt::Cstring,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -7995,18 +7312,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_FloatPtr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{Cfloat}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_FloatPtr(
+        label_id::Cstring,
+        values::Ptr{Cfloat},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8023,18 +7337,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_doublePtr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{Cdouble}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_doublePtr(
+        label_id::Cstring,
+        values::Ptr{Cdouble},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8051,18 +7362,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_S8Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS8}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_S8Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS8},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8079,18 +7387,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_U8Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU8}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_U8Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU8},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8107,18 +7412,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_S16Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS16}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_S16Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS16},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8135,18 +7437,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_U16Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU16}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_U16Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU16},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8163,18 +7462,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_S32Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS32}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_S32Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS32},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8191,18 +7487,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_U32Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU32}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_U32Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU32},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8219,18 +7512,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_S64Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS64}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_S64Ptr(
+        label_id::Cstring,
+        values::Ptr{ImS64},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8247,18 +7537,15 @@ function PlotHistogram(
     range::ImPlotRange = ImPlotRange(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram_U64Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU64}, Cint, Cint, Cdouble, ImPlotRange, ImPlotSpec),
-        label_id,
-        values,
-        count,
-        bins,
-        bar_scale,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram_U64Ptr(
+        label_id::Cstring,
+        values::Ptr{ImU64},
+        count::Cint,
+        bins::Cint,
+        bar_scale::Cdouble,
+        range::ImPlotRange,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8276,19 +7563,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_FloatPtr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_FloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8306,19 +7590,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_doublePtr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_doublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8336,19 +7617,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_S8Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_S8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8366,19 +7644,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_U8Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_U8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8396,19 +7671,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_S16Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_S16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8426,19 +7698,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_U16Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_U16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8456,19 +7725,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_S32Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_S32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8486,19 +7752,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_U32Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_U32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8516,19 +7779,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_S64Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_S64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8546,19 +7806,16 @@ function PlotHistogram2D(
     range::ImPlotRect = ImPlotRect(),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotHistogram2D_U64Ptr, libcimgui),
-        Cdouble,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, Cint, Cint, ImPlotRect, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        x_bins,
-        y_bins,
-        range,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotHistogram2D_U64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        x_bins::Cint,
+        y_bins::Cint,
+        range::ImPlotRect,
+        spec::ImPlotSpec,
+    )::Cdouble
 end
 
 """
@@ -8573,16 +7830,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_FloatPtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cfloat}, Ptr{Cfloat}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_FloatPtr(
+        label_id::Cstring,
+        xs::Ptr{Cfloat},
+        ys::Ptr{Cfloat},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8597,16 +7851,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_doublePtr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{Cdouble}, Ptr{Cdouble}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_doublePtr(
+        label_id::Cstring,
+        xs::Ptr{Cdouble},
+        ys::Ptr{Cdouble},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8621,16 +7872,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_S8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS8}, Ptr{ImS8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_S8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS8},
+        ys::Ptr{ImS8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8645,16 +7893,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_U8Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU8}, Ptr{ImU8}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_U8Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU8},
+        ys::Ptr{ImU8},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8669,16 +7914,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_S16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS16}, Ptr{ImS16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_S16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS16},
+        ys::Ptr{ImS16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8693,16 +7935,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_U16Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU16}, Ptr{ImU16}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_U16Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU16},
+        ys::Ptr{ImU16},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8717,16 +7956,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_S32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS32}, Ptr{ImS32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_S32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS32},
+        ys::Ptr{ImS32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8741,16 +7977,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_U32Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU32}, Ptr{ImU32}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_U32Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU32},
+        ys::Ptr{ImU32},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8765,16 +7998,13 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_S64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImS64}, Ptr{ImS64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_S64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImS64},
+        ys::Ptr{ImS64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8789,34 +8019,34 @@ function PlotDigital(
     count::Integer,
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotDigital_U64Ptr, libcimgui),
-        Cvoid,
-        (Cstring, Ptr{ImU64}, Ptr{ImU64}, Cint, ImPlotSpec),
-        label_id,
-        xs,
-        ys,
-        count,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotDigital_U64Ptr(
+        label_id::Cstring,
+        xs::Ptr{ImU64},
+        ys::Ptr{ImU64},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
-    PlotDigitalG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
+    PlotDigitalG(label_id, getter::ImPlotPoint_getter, data::Union{Ptr, Ref, AbstractArray}, count::Integer, spec::ImPlotSpec = ImPlotSpec())
 
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1054).
 """
-function PlotDigitalG(label_id, getter::ImPlotPoint_getter, data, count::Integer, spec::ImPlotSpec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotDigitalG_LJ, libcimgui),
-        Cvoid,
-        (Cstring, ImPlotPoint_getter, Ptr{Cvoid}, Cint, ImPlotSpec),
-        label_id,
-        getter,
-        data,
-        count,
-        spec,
-    )
+function PlotDigitalG(
+    label_id,
+    getter::ImPlotPoint_getter,
+    data::Union{Ptr,Ref,AbstractArray},
+    count::Integer,
+    spec::ImPlotSpec = ImPlotSpec(),
+)
+    @ccall libcimgui.ImPlot_PlotDigitalG_LJ(
+        label_id::Cstring,
+        getter::ImPlotPoint_getter,
+        data::Ptr{Cvoid},
+        count::Cint,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8834,19 +8064,16 @@ function PlotImage(
     tint_col::ImVec4 = ImVec4(1, 1, 1, 1),
     spec::ImPlotSpec = ImPlotSpec(),
 )
-    ccall(
-        (:ImPlot_PlotImage, libcimgui),
-        Cvoid,
-        (Cstring, ImTextureRef, ImPlotPoint, ImPlotPoint, ImVec2, ImVec2, ImVec4, ImPlotSpec),
-        label_id,
-        tex_ref,
-        bounds_min,
-        bounds_max,
-        uv0,
-        uv1,
-        tint_col,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotImage(
+        label_id::Cstring,
+        tex_ref::ImTextureRef,
+        bounds_min::ImPlotPoint,
+        bounds_max::ImPlotPoint,
+        uv0::ImVec2,
+        uv1::ImVec2,
+        tint_col::ImVec4,
+        spec::ImPlotSpec,
+    )::Cvoid
 end
 
 """
@@ -8855,16 +8082,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1064).
 """
 function PlotText(text, x::Real, y::Real, pix_offset::ImVec2 = ImVec2(0, 0), spec::ImPlotSpec = ImPlotSpec())
-    ccall(
-        (:ImPlot_PlotText, libcimgui),
-        Cvoid,
-        (Cstring, Cdouble, Cdouble, ImVec2, ImPlotSpec),
-        text,
-        x,
-        y,
-        pix_offset,
-        spec,
-    )
+    @ccall libcimgui.ImPlot_PlotText(text::Cstring, x::Cdouble, y::Cdouble, pix_offset::ImVec2, spec::ImPlotSpec)::Cvoid
 end
 
 """
@@ -8873,7 +8091,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1067).
 """
 function PlotDummy(label_id, spec::ImPlotSpec = ImPlotSpec())
-    ccall((:ImPlot_PlotDummy, libcimgui), Cvoid, (Cstring, ImPlotSpec), label_id, spec)
+    @ccall libcimgui.ImPlot_PlotDummy(label_id::Cstring, spec::ImPlotSpec)::Cvoid
 end
 
 """
@@ -8892,20 +8110,17 @@ function DragPoint(
     out_hovered = C_NULL,
     out_held = C_NULL,
 )
-    ccall(
-        (:ImPlot_DragPoint, libcimgui),
-        Bool,
-        (Cint, Ptr{Cdouble}, Ptr{Cdouble}, ImVec4, Cfloat, ImPlotDragToolFlags, Ptr{Bool}, Ptr{Bool}, Ptr{Bool}),
-        id,
-        x,
-        y,
-        col,
-        size,
-        flags,
-        out_clicked,
-        out_hovered,
-        out_held,
-    )
+    @ccall libcimgui.ImPlot_DragPoint(
+        id::Cint,
+        x::Ptr{Cdouble},
+        y::Ptr{Cdouble},
+        col::ImVec4,
+        size::Cfloat,
+        flags::ImPlotDragToolFlags,
+        out_clicked::Ptr{Bool},
+        out_hovered::Ptr{Bool},
+        out_held::Ptr{Bool},
+    )::Bool
 end
 
 """
@@ -8923,19 +8138,16 @@ function DragLineX(
     out_hovered = C_NULL,
     out_held = C_NULL,
 )
-    ccall(
-        (:ImPlot_DragLineX, libcimgui),
-        Bool,
-        (Cint, Ptr{Cdouble}, ImVec4, Cfloat, ImPlotDragToolFlags, Ptr{Bool}, Ptr{Bool}, Ptr{Bool}),
-        id,
-        x,
-        col,
-        thickness,
-        flags,
-        out_clicked,
-        out_hovered,
-        out_held,
-    )
+    @ccall libcimgui.ImPlot_DragLineX(
+        id::Cint,
+        x::Ptr{Cdouble},
+        col::ImVec4,
+        thickness::Cfloat,
+        flags::ImPlotDragToolFlags,
+        out_clicked::Ptr{Bool},
+        out_hovered::Ptr{Bool},
+        out_held::Ptr{Bool},
+    )::Bool
 end
 
 """
@@ -8953,19 +8165,16 @@ function DragLineY(
     out_hovered = C_NULL,
     out_held = C_NULL,
 )
-    ccall(
-        (:ImPlot_DragLineY, libcimgui),
-        Bool,
-        (Cint, Ptr{Cdouble}, ImVec4, Cfloat, ImPlotDragToolFlags, Ptr{Bool}, Ptr{Bool}, Ptr{Bool}),
-        id,
-        y,
-        col,
-        thickness,
-        flags,
-        out_clicked,
-        out_hovered,
-        out_held,
-    )
+    @ccall libcimgui.ImPlot_DragLineY(
+        id::Cint,
+        y::Ptr{Cdouble},
+        col::ImVec4,
+        thickness::Cfloat,
+        flags::ImPlotDragToolFlags,
+        out_clicked::Ptr{Bool},
+        out_hovered::Ptr{Bool},
+        out_held::Ptr{Bool},
+    )::Bool
 end
 
 """
@@ -8985,32 +8194,18 @@ function DragRect(
     out_hovered = C_NULL,
     out_held = C_NULL,
 )
-    ccall(
-        (:ImPlot_DragRect, libcimgui),
-        Bool,
-        (
-            Cint,
-            Ptr{Cdouble},
-            Ptr{Cdouble},
-            Ptr{Cdouble},
-            Ptr{Cdouble},
-            ImVec4,
-            ImPlotDragToolFlags,
-            Ptr{Bool},
-            Ptr{Bool},
-            Ptr{Bool},
-        ),
-        id,
-        x1,
-        y1,
-        x2,
-        y2,
-        col,
-        flags,
-        out_clicked,
-        out_hovered,
-        out_held,
-    )
+    @ccall libcimgui.ImPlot_DragRect(
+        id::Cint,
+        x1::Ptr{Cdouble},
+        y1::Ptr{Cdouble},
+        x2::Ptr{Cdouble},
+        y2::Ptr{Cdouble},
+        col::ImVec4,
+        flags::ImPlotDragToolFlags,
+        out_clicked::Ptr{Bool},
+        out_hovered::Ptr{Bool},
+        out_held::Ptr{Bool},
+    )::Bool
 end
 
 """
@@ -9019,17 +8214,14 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1089).
 """
 function Annotation(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, clamp::Bool, round = false)
-    ccall(
-        (:ImPlot_Annotation_Bool, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, ImVec4, ImVec2, Bool, Bool),
-        x,
-        y,
-        col,
-        pix_offset,
-        clamp,
-        round,
-    )
+    @ccall libcimgui.ImPlot_Annotation_Bool(
+        x::Cdouble,
+        y::Cdouble,
+        col::ImVec4,
+        pix_offset::ImVec2,
+        clamp::Bool,
+        round::Bool,
+    )::Cvoid
 end
 
 """
@@ -9038,7 +8230,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1094).
 """
 function TagX(x::Real, col::ImVec4, round = false)
-    ccall((:ImPlot_TagX_Bool, libcimgui), Cvoid, (Cdouble, ImVec4, Bool), x, col, round)
+    @ccall libcimgui.ImPlot_TagX_Bool(x::Cdouble, col::ImVec4, round::Bool)::Cvoid
 end
 
 """
@@ -9047,7 +8239,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1099).
 """
 function TagY(y::Real, col::ImVec4, round = false)
-    ccall((:ImPlot_TagY_Bool, libcimgui), Cvoid, (Cdouble, ImVec4, Bool), y, col, round)
+    @ccall libcimgui.ImPlot_TagY_Bool(y::Cdouble, col::ImVec4, round::Bool)::Cvoid
 end
 
 """
@@ -9056,7 +8248,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1108).
 """
 function SetAxis(axis::Union{ImAxis_,Integer})
-    ccall((:ImPlot_SetAxis, libcimgui), Cvoid, (ImAxis,), axis)
+    @ccall libcimgui.ImPlot_SetAxis(axis::ImAxis)::Cvoid
 end
 
 """
@@ -9065,7 +8257,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1109).
 """
 function SetAxes(x_axis::Union{ImAxis_,Integer}, y_axis::Union{ImAxis_,Integer})
-    ccall((:ImPlot_SetAxes, libcimgui), Cvoid, (ImAxis, ImAxis), x_axis, y_axis)
+    @ccall libcimgui.ImPlot_SetAxes(x_axis::ImAxis, y_axis::ImAxis)::Cvoid
 end
 
 """
@@ -9078,7 +8270,7 @@ function PixelsToPlot(
     x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
     y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
 )
-    ccall((:ImPlot_PixelsToPlot_Vec2, libcimgui), ImPlotPoint, (ImVec2, ImAxis, ImAxis), pix, x_axis, y_axis)
+    @ccall libcimgui.ImPlot_PixelsToPlot_Vec2(pix::ImVec2, x_axis::ImAxis, y_axis::ImAxis)::ImPlotPoint
 end
 
 """
@@ -9092,7 +8284,7 @@ function PixelsToPlot(
     x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
     y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
 )
-    ccall((:ImPlot_PixelsToPlot_Float, libcimgui), ImPlotPoint, (Cfloat, Cfloat, ImAxis, ImAxis), x, y, x_axis, y_axis)
+    @ccall libcimgui.ImPlot_PixelsToPlot_Float(x::Cfloat, y::Cfloat, x_axis::ImAxis, y_axis::ImAxis)::ImPlotPoint
 end
 
 """
@@ -9105,7 +8297,7 @@ function PlotToPixels(
     x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
     y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
 )
-    ccall((:ImPlot_PlotToPixels_PlotPoint, libcimgui), ImVec2, (ImPlotPoint, ImAxis, ImAxis), plt, x_axis, y_axis)
+    @ccall libcimgui.ImPlot_PlotToPixels_PlotPoint(plt::ImPlotPoint, x_axis::ImAxis, y_axis::ImAxis)::ImVec2
 end
 
 """
@@ -9119,7 +8311,7 @@ function PlotToPixels(
     x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
     y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO,
 )
-    ccall((:ImPlot_PlotToPixels_double, libcimgui), ImVec2, (Cdouble, Cdouble, ImAxis, ImAxis), x, y, x_axis, y_axis)
+    @ccall libcimgui.ImPlot_PlotToPixels_double(x::Cdouble, y::Cdouble, x_axis::ImAxis, y_axis::ImAxis)::ImVec2
 end
 
 """
@@ -9128,7 +8320,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1120).
 """
 function GetPlotPos()
-    ccall((:ImPlot_GetPlotPos, libcimgui), ImVec2, ())
+    @ccall libcimgui.ImPlot_GetPlotPos()::ImVec2
 end
 
 """
@@ -9137,7 +8329,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1122).
 """
 function GetPlotSize()
-    ccall((:ImPlot_GetPlotSize, libcimgui), ImVec2, ())
+    @ccall libcimgui.ImPlot_GetPlotSize()::ImVec2
 end
 
 """
@@ -9146,7 +8338,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1125).
 """
 function GetPlotMousePos(x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO, y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_GetPlotMousePos, libcimgui), ImPlotPoint, (ImAxis, ImAxis), x_axis, y_axis)
+    @ccall libcimgui.ImPlot_GetPlotMousePos(x_axis::ImAxis, y_axis::ImAxis)::ImPlotPoint
 end
 
 """
@@ -9155,7 +8347,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1127).
 """
 function GetPlotLimits(x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO, y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_GetPlotLimits, libcimgui), ImPlotRect, (ImAxis, ImAxis), x_axis, y_axis)
+    @ccall libcimgui.ImPlot_GetPlotLimits(x_axis::ImAxis, y_axis::ImAxis)::ImPlotRect
 end
 
 """
@@ -9164,7 +8356,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1130).
 """
 function IsPlotHovered()
-    ccall((:ImPlot_IsPlotHovered, libcimgui), Bool, ())
+    @ccall libcimgui.ImPlot_IsPlotHovered()::Bool
 end
 
 """
@@ -9173,7 +8365,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1132).
 """
 function IsAxisHovered(axis::Union{ImAxis_,Integer})
-    ccall((:ImPlot_IsAxisHovered, libcimgui), Bool, (ImAxis,), axis)
+    @ccall libcimgui.ImPlot_IsAxisHovered(axis::ImAxis)::Bool
 end
 
 """
@@ -9182,7 +8374,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1134).
 """
 function IsSubplotsHovered()
-    ccall((:ImPlot_IsSubplotsHovered, libcimgui), Bool, ())
+    @ccall libcimgui.ImPlot_IsSubplotsHovered()::Bool
 end
 
 """
@@ -9191,7 +8383,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1137).
 """
 function IsPlotSelected()
-    ccall((:ImPlot_IsPlotSelected, libcimgui), Bool, ())
+    @ccall libcimgui.ImPlot_IsPlotSelected()::Bool
 end
 
 """
@@ -9200,7 +8392,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1139).
 """
 function GetPlotSelection(x_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO, y_axis::Union{ImAxis_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_GetPlotSelection, libcimgui), ImPlotRect, (ImAxis, ImAxis), x_axis, y_axis)
+    @ccall libcimgui.ImPlot_GetPlotSelection(x_axis::ImAxis, y_axis::ImAxis)::ImPlotRect
 end
 
 """
@@ -9209,7 +8401,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1141).
 """
 function CancelPlotSelection()
-    ccall((:ImPlot_CancelPlotSelection, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_CancelPlotSelection()::Cvoid
 end
 
 """
@@ -9218,7 +8410,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1145).
 """
 function HideNextItem(hidden = true, cond = ImPlotCond_Once)
-    ccall((:ImPlot_HideNextItem, libcimgui), Cvoid, (Bool, ImPlotCond), hidden, cond)
+    @ccall libcimgui.ImPlot_HideNextItem(hidden::Bool, cond::ImPlotCond)::Cvoid
 end
 
 """
@@ -9227,7 +8419,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1154).
 """
 function BeginAlignedPlots(group_id, vertical = true)
-    ccall((:ImPlot_BeginAlignedPlots, libcimgui), Bool, (Cstring, Bool), group_id, vertical)
+    @ccall libcimgui.ImPlot_BeginAlignedPlots(group_id::Cstring, vertical::Bool)::Bool
 end
 
 """
@@ -9236,7 +8428,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1156).
 """
 function EndAlignedPlots()
-    ccall((:ImPlot_EndAlignedPlots, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_EndAlignedPlots()::Cvoid
 end
 
 """
@@ -9245,7 +8437,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1163).
 """
 function BeginLegendPopup(label_id, mouse_button = 1)
-    ccall((:ImPlot_BeginLegendPopup, libcimgui), Bool, (Cstring, ImGuiMouseButton), label_id, mouse_button)
+    @ccall libcimgui.ImPlot_BeginLegendPopup(label_id::Cstring, mouse_button::ImGuiMouseButton)::Bool
 end
 
 """
@@ -9254,7 +8446,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1165).
 """
 function EndLegendPopup()
-    ccall((:ImPlot_EndLegendPopup, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_EndLegendPopup()::Cvoid
 end
 
 """
@@ -9263,7 +8455,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1167).
 """
 function IsLegendEntryHovered(label_id)
-    ccall((:ImPlot_IsLegendEntryHovered, libcimgui), Bool, (Cstring,), label_id)
+    @ccall libcimgui.ImPlot_IsLegendEntryHovered(label_id::Cstring)::Bool
 end
 
 """
@@ -9272,7 +8464,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1174).
 """
 function BeginDragDropTargetPlot()
-    ccall((:ImPlot_BeginDragDropTargetPlot, libcimgui), Bool, ())
+    @ccall libcimgui.ImPlot_BeginDragDropTargetPlot()::Bool
 end
 
 """
@@ -9281,7 +8473,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1176).
 """
 function BeginDragDropTargetAxis(axis::Union{ImAxis_,Integer})
-    ccall((:ImPlot_BeginDragDropTargetAxis, libcimgui), Bool, (ImAxis,), axis)
+    @ccall libcimgui.ImPlot_BeginDragDropTargetAxis(axis::ImAxis)::Bool
 end
 
 """
@@ -9290,7 +8482,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1178).
 """
 function BeginDragDropTargetLegend()
-    ccall((:ImPlot_BeginDragDropTargetLegend, libcimgui), Bool, ())
+    @ccall libcimgui.ImPlot_BeginDragDropTargetLegend()::Bool
 end
 
 """
@@ -9299,7 +8491,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1180).
 """
 function EndDragDropTarget()
-    ccall((:ImPlot_EndDragDropTarget, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_EndDragDropTarget()::Cvoid
 end
 
 """
@@ -9308,7 +8500,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1186).
 """
 function BeginDragDropSourcePlot(flags = 0)
-    ccall((:ImPlot_BeginDragDropSourcePlot, libcimgui), Bool, (ImGuiDragDropFlags,), flags)
+    @ccall libcimgui.ImPlot_BeginDragDropSourcePlot(flags::ImGuiDragDropFlags)::Bool
 end
 
 """
@@ -9317,7 +8509,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1188).
 """
 function BeginDragDropSourceAxis(axis::Union{ImAxis_,Integer}, flags = 0)
-    ccall((:ImPlot_BeginDragDropSourceAxis, libcimgui), Bool, (ImAxis, ImGuiDragDropFlags), axis, flags)
+    @ccall libcimgui.ImPlot_BeginDragDropSourceAxis(axis::ImAxis, flags::ImGuiDragDropFlags)::Bool
 end
 
 """
@@ -9326,7 +8518,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1190).
 """
 function BeginDragDropSourceItem(label_id, flags = 0)
-    ccall((:ImPlot_BeginDragDropSourceItem, libcimgui), Bool, (Cstring, ImGuiDragDropFlags), label_id, flags)
+    @ccall libcimgui.ImPlot_BeginDragDropSourceItem(label_id::Cstring, flags::ImGuiDragDropFlags)::Bool
 end
 
 """
@@ -9335,7 +8527,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1192).
 """
 function EndDragDropSource()
-    ccall((:ImPlot_EndDragDropSource, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_EndDragDropSource()::Cvoid
 end
 
 """
@@ -9344,7 +8536,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1211).
 """
 function GetStyle()
-    ccall((:ImPlot_GetStyle, libcimgui), Ptr{ImPlotStyle}, ())
+    @ccall libcimgui.ImPlot_GetStyle()::Ptr{ImPlotStyle}
 end
 
 """
@@ -9353,7 +8545,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1214).
 """
 function StyleColorsAuto(dst)
-    ccall((:ImPlot_StyleColorsAuto, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
+    @ccall libcimgui.ImPlot_StyleColorsAuto(dst::Ptr{ImPlotStyle})::Cvoid
 end
 
 """
@@ -9362,7 +8554,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1216).
 """
 function StyleColorsClassic(dst)
-    ccall((:ImPlot_StyleColorsClassic, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
+    @ccall libcimgui.ImPlot_StyleColorsClassic(dst::Ptr{ImPlotStyle})::Cvoid
 end
 
 """
@@ -9371,7 +8563,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1218).
 """
 function StyleColorsDark(dst)
-    ccall((:ImPlot_StyleColorsDark, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
+    @ccall libcimgui.ImPlot_StyleColorsDark(dst::Ptr{ImPlotStyle})::Cvoid
 end
 
 """
@@ -9380,7 +8572,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1220).
 """
 function StyleColorsLight(dst)
-    ccall((:ImPlot_StyleColorsLight, libcimgui), Cvoid, (Ptr{ImPlotStyle},), dst)
+    @ccall libcimgui.ImPlot_StyleColorsLight(dst::Ptr{ImPlotStyle})::Cvoid
 end
 
 """
@@ -9389,7 +8581,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1227).
 """
 function PushStyleColor(idx::Union{ImPlotCol_,Integer}, col::Integer)
-    ccall((:ImPlot_PushStyleColor_U32, libcimgui), Cvoid, (ImPlotCol, ImU32), idx, col)
+    @ccall libcimgui.ImPlot_PushStyleColor_U32(idx::ImPlotCol, col::ImU32)::Cvoid
 end
 
 """
@@ -9398,7 +8590,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1228).
 """
 function PushStyleColor(idx::Union{ImPlotCol_,Integer}, col::ImVec4)
-    ccall((:ImPlot_PushStyleColor_Vec4, libcimgui), Cvoid, (ImPlotCol, ImVec4), idx, col)
+    @ccall libcimgui.ImPlot_PushStyleColor_Vec4(idx::ImPlotCol, col::ImVec4)::Cvoid
 end
 
 """
@@ -9407,7 +8599,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1230).
 """
 function PopStyleColor(count::Integer = 1)
-    ccall((:ImPlot_PopStyleColor, libcimgui), Cvoid, (Cint,), count)
+    @ccall libcimgui.ImPlot_PopStyleColor(count::Cint)::Cvoid
 end
 
 """
@@ -9416,7 +8608,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1233).
 """
 function PushStyleVar(idx::Union{ImPlotStyleVar_,Integer}, val::Real)
-    ccall((:ImPlot_PushStyleVar_Float, libcimgui), Cvoid, (ImPlotStyleVar, Cfloat), idx, val)
+    @ccall libcimgui.ImPlot_PushStyleVar_Float(idx::ImPlotStyleVar, val::Cfloat)::Cvoid
 end
 
 """
@@ -9425,7 +8617,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1235).
 """
 function PushStyleVar(idx::Union{ImPlotStyleVar_,Integer}, val::Integer)
-    ccall((:ImPlot_PushStyleVar_Int, libcimgui), Cvoid, (ImPlotStyleVar, Cint), idx, val)
+    @ccall libcimgui.ImPlot_PushStyleVar_Int(idx::ImPlotStyleVar, val::Cint)::Cvoid
 end
 
 """
@@ -9434,7 +8626,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1237).
 """
 function PushStyleVar(idx::Union{ImPlotStyleVar_,Integer}, val::ImVec2)
-    ccall((:ImPlot_PushStyleVar_Vec2, libcimgui), Cvoid, (ImPlotStyleVar, ImVec2), idx, val)
+    @ccall libcimgui.ImPlot_PushStyleVar_Vec2(idx::ImPlotStyleVar, val::ImVec2)::Cvoid
 end
 
 """
@@ -9443,7 +8635,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1239).
 """
 function PopStyleVar(count::Integer = 1)
-    ccall((:ImPlot_PopStyleVar, libcimgui), Cvoid, (Cint,), count)
+    @ccall libcimgui.ImPlot_PopStyleVar(count::Cint)::Cvoid
 end
 
 """
@@ -9452,7 +8644,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1242).
 """
 function GetLastItemColor()
-    ccall((:ImPlot_GetLastItemColor, libcimgui), ImVec4, ())
+    @ccall libcimgui.ImPlot_GetLastItemColor()::ImVec4
 end
 
 """
@@ -9461,7 +8653,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1245).
 """
 function GetStyleColorName(idx::Union{ImPlotCol_,Integer})
-    ccall((:ImPlot_GetStyleColorName, libcimgui), Cstring, (ImPlotCol,), idx)
+    @ccall libcimgui.ImPlot_GetStyleColorName(idx::ImPlotCol)::Cstring
 end
 
 """
@@ -9470,7 +8662,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1247).
 """
 function GetMarkerName(idx::Union{ImPlotMarker_,Integer})
-    ccall((:ImPlot_GetMarkerName, libcimgui), Cstring, (ImPlotMarker,), idx)
+    @ccall libcimgui.ImPlot_GetMarkerName(idx::ImPlotMarker)::Cstring
 end
 
 """
@@ -9479,7 +8671,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1250).
 """
 function NextMarker()
-    ccall((:ImPlot_NextMarker, libcimgui), ImPlotMarker, ())
+    @ccall libcimgui.ImPlot_NextMarker()::ImPlotMarker
 end
 
 """
@@ -9488,15 +8680,12 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1271).
 """
 function AddColormap(name, cols::Union{ImVec4,AbstractArray{ImVec4}}, size::Integer, qual = true)
-    ccall(
-        (:ImPlot_AddColormap_Vec4Ptr, libcimgui),
-        ImPlotColormap,
-        (Cstring, Ptr{ImVec4}, Cint, Bool),
-        name,
-        cols,
-        size,
-        qual,
-    )
+    @ccall libcimgui.ImPlot_AddColormap_Vec4Ptr(
+        name::Cstring,
+        cols::Ptr{ImVec4},
+        size::Cint,
+        qual::Bool,
+    )::ImPlotColormap
 end
 
 """
@@ -9505,15 +8694,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1272).
 """
 function AddColormap(name, cols::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, size::Integer, qual = true)
-    ccall(
-        (:ImPlot_AddColormap_U32Ptr, libcimgui),
-        ImPlotColormap,
-        (Cstring, Ptr{ImU32}, Cint, Bool),
-        name,
-        cols,
-        size,
-        qual,
-    )
+    @ccall libcimgui.ImPlot_AddColormap_U32Ptr(name::Cstring, cols::Ptr{ImU32}, size::Cint, qual::Bool)::ImPlotColormap
 end
 
 """
@@ -9522,7 +8703,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1275).
 """
 function GetColormapCount()
-    ccall((:ImPlot_GetColormapCount, libcimgui), Cint, ())
+    @ccall libcimgui.ImPlot_GetColormapCount()::Cint
 end
 
 """
@@ -9531,7 +8712,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1277).
 """
 function GetColormapName(cmap::Union{ImPlotColormap_,Integer})
-    ccall((:ImPlot_GetColormapName, libcimgui), Cstring, (ImPlotColormap,), cmap)
+    @ccall libcimgui.ImPlot_GetColormapName(cmap::ImPlotColormap)::Cstring
 end
 
 """
@@ -9540,7 +8721,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1279).
 """
 function GetColormapIndex(name)
-    ccall((:ImPlot_GetColormapIndex, libcimgui), ImPlotColormap, (Cstring,), name)
+    @ccall libcimgui.ImPlot_GetColormapIndex(name::Cstring)::ImPlotColormap
 end
 
 """
@@ -9549,7 +8730,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1282).
 """
 function PushColormap(cmap::Union{ImPlotColormap_,Integer})
-    ccall((:ImPlot_PushColormap_PlotColormap, libcimgui), Cvoid, (ImPlotColormap,), cmap)
+    @ccall libcimgui.ImPlot_PushColormap_PlotColormap(cmap::ImPlotColormap)::Cvoid
 end
 
 """
@@ -9558,7 +8739,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1284).
 """
 function PushColormap(name)
-    ccall((:ImPlot_PushColormap_Str, libcimgui), Cvoid, (Cstring,), name)
+    @ccall libcimgui.ImPlot_PushColormap_Str(name::Cstring)::Cvoid
 end
 
 """
@@ -9567,7 +8748,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1286).
 """
 function PopColormap(count::Integer = 1)
-    ccall((:ImPlot_PopColormap, libcimgui), Cvoid, (Cint,), count)
+    @ccall libcimgui.ImPlot_PopColormap(count::Cint)::Cvoid
 end
 
 """
@@ -9576,7 +8757,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1290).
 """
 function NextColormapColor()
-    ccall((:ImPlot_NextColormapColor, libcimgui), ImVec4, ())
+    @ccall libcimgui.ImPlot_NextColormapColor()::ImVec4
 end
 
 """
@@ -9585,7 +8766,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1296).
 """
 function GetColormapSize(cmap::Union{ImPlotColormap_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_GetColormapSize, libcimgui), Cint, (ImPlotColormap,), cmap)
+    @ccall libcimgui.ImPlot_GetColormapSize(cmap::ImPlotColormap)::Cint
 end
 
 """
@@ -9594,7 +8775,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1298).
 """
 function GetColormapColor(idx::Integer, cmap::Union{ImPlotColormap_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_GetColormapColor, libcimgui), ImVec4, (Cint, ImPlotColormap), idx, cmap)
+    @ccall libcimgui.ImPlot_GetColormapColor(idx::Cint, cmap::ImPlotColormap)::ImVec4
 end
 
 """
@@ -9603,7 +8784,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1300).
 """
 function SampleColormap(t::Real, cmap::Union{ImPlotColormap_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_SampleColormap, libcimgui), ImVec4, (Cfloat, ImPlotColormap), t, cmap)
+    @ccall libcimgui.ImPlot_SampleColormap(t::Cfloat, cmap::ImPlotColormap)::ImVec4
 end
 
 """
@@ -9620,18 +8801,15 @@ function ColormapScale(
     flags::Union{ImPlotColormapScaleFlags_,Integer} = 0,
     cmap::Union{ImPlotColormap_,Integer} = IMPLOT_AUTO,
 )
-    ccall(
-        (:ImPlot_ColormapScale, libcimgui),
-        Cvoid,
-        (Cstring, Cdouble, Cdouble, ImVec2, Cstring, ImPlotColormapScaleFlags, ImPlotColormap),
-        label,
-        scale_min,
-        scale_max,
-        size,
-        format,
-        flags,
-        cmap,
-    )
+    @ccall libcimgui.ImPlot_ColormapScale(
+        label::Cstring,
+        scale_min::Cdouble,
+        scale_max::Cdouble,
+        size::ImVec2,
+        format::Cstring,
+        flags::ImPlotColormapScaleFlags,
+        cmap::ImPlotColormap,
+    )::Cvoid
 end
 
 """
@@ -9646,16 +8824,13 @@ function ColormapSlider(
     format = "",
     cmap::Union{ImPlotColormap_,Integer} = IMPLOT_AUTO,
 )
-    ccall(
-        (:ImPlot_ColormapSlider, libcimgui),
-        Bool,
-        (Cstring, Ptr{Cfloat}, Ptr{ImVec4}, Cstring, ImPlotColormap),
-        label,
-        t,
-        out,
-        format,
-        cmap,
-    )
+    @ccall libcimgui.ImPlot_ColormapSlider(
+        label::Cstring,
+        t::Ptr{Cfloat},
+        out::Ptr{ImVec4},
+        format::Cstring,
+        cmap::ImPlotColormap,
+    )::Bool
 end
 
 """
@@ -9664,7 +8839,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1307).
 """
 function ColormapButton(label, size::ImVec2 = ImVec2(0, 0), cmap::Union{ImPlotColormap_,Integer} = IMPLOT_AUTO)
-    ccall((:ImPlot_ColormapButton, libcimgui), Bool, (Cstring, ImVec2, ImPlotColormap), label, size, cmap)
+    @ccall libcimgui.ImPlot_ColormapButton(label::Cstring, size::ImVec2, cmap::ImPlotColormap)::Bool
 end
 
 """
@@ -9673,7 +8848,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1316).
 """
 function BustColorCache(plot_title_id = C_NULL)
-    ccall((:ImPlot_BustColorCache, libcimgui), Cvoid, (Cstring,), plot_title_id)
+    @ccall libcimgui.ImPlot_BustColorCache(plot_title_id::Cstring)::Cvoid
 end
 
 """
@@ -9682,7 +8857,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1323).
 """
 function GetInputMap()
-    ccall((:ImPlot_GetInputMap, libcimgui), Ptr{ImPlotInputMap}, ())
+    @ccall libcimgui.ImPlot_GetInputMap()::Ptr{ImPlotInputMap}
 end
 
 """
@@ -9691,7 +8866,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1326).
 """
 function MapInputDefault(dst)
-    ccall((:ImPlot_MapInputDefault, libcimgui), Cvoid, (Ptr{ImPlotInputMap},), dst)
+    @ccall libcimgui.ImPlot_MapInputDefault(dst::Ptr{ImPlotInputMap})::Cvoid
 end
 
 """
@@ -9700,7 +8875,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1328).
 """
 function MapInputReverse(dst)
-    ccall((:ImPlot_MapInputReverse, libcimgui), Cvoid, (Ptr{ImPlotInputMap},), dst)
+    @ccall libcimgui.ImPlot_MapInputReverse(dst::Ptr{ImPlotInputMap})::Cvoid
 end
 
 """
@@ -9709,7 +8884,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1335).
 """
 function ItemIcon(col::ImVec4)
-    ccall((:ImPlot_ItemIcon_Vec4, libcimgui), Cvoid, (ImVec4,), col)
+    @ccall libcimgui.ImPlot_ItemIcon_Vec4(col::ImVec4)::Cvoid
 end
 
 """
@@ -9718,7 +8893,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1336).
 """
 function ItemIcon(col::Integer)
-    ccall((:ImPlot_ItemIcon_U32, libcimgui), Cvoid, (ImU32,), col)
+    @ccall libcimgui.ImPlot_ItemIcon_U32(col::ImU32)::Cvoid
 end
 
 """
@@ -9727,7 +8902,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1337).
 """
 function ColormapIcon(cmap::Union{ImPlotColormap_,Integer})
-    ccall((:ImPlot_ColormapIcon, libcimgui), Cvoid, (ImPlotColormap,), cmap)
+    @ccall libcimgui.ImPlot_ColormapIcon(cmap::ImPlotColormap)::Cvoid
 end
 
 """
@@ -9736,7 +8911,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1340).
 """
 function GetPlotDrawList()
-    ccall((:ImPlot_GetPlotDrawList, libcimgui), Ptr{ImDrawList}, ())
+    @ccall libcimgui.ImPlot_GetPlotDrawList()::Ptr{ImDrawList}
 end
 
 """
@@ -9745,7 +8920,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1342).
 """
 function PushPlotClipRect(expand::Real = 0)
-    ccall((:ImPlot_PushPlotClipRect, libcimgui), Cvoid, (Cfloat,), expand)
+    @ccall libcimgui.ImPlot_PushPlotClipRect(expand::Cfloat)::Cvoid
 end
 
 """
@@ -9754,7 +8929,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1344).
 """
 function PopPlotClipRect()
-    ccall((:ImPlot_PopPlotClipRect, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_PopPlotClipRect()::Cvoid
 end
 
 """
@@ -9763,7 +8938,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1347).
 """
 function ShowStyleSelector(label)
-    ccall((:ImPlot_ShowStyleSelector, libcimgui), Bool, (Cstring,), label)
+    @ccall libcimgui.ImPlot_ShowStyleSelector(label::Cstring)::Bool
 end
 
 """
@@ -9772,7 +8947,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1349).
 """
 function ShowColormapSelector(label)
-    ccall((:ImPlot_ShowColormapSelector, libcimgui), Bool, (Cstring,), label)
+    @ccall libcimgui.ImPlot_ShowColormapSelector(label::Cstring)::Bool
 end
 
 """
@@ -9781,7 +8956,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1351).
 """
 function ShowInputMapSelector(label)
-    ccall((:ImPlot_ShowInputMapSelector, libcimgui), Bool, (Cstring,), label)
+    @ccall libcimgui.ImPlot_ShowInputMapSelector(label::Cstring)::Bool
 end
 
 """
@@ -9790,7 +8965,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1353).
 """
 function ShowStyleEditor(ref)
-    ccall((:ImPlot_ShowStyleEditor, libcimgui), Cvoid, (Ptr{ImPlotStyle},), ref)
+    @ccall libcimgui.ImPlot_ShowStyleEditor(ref::Ptr{ImPlotStyle})::Cvoid
 end
 
 """
@@ -9799,7 +8974,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1355).
 """
 function ShowUserGuide()
-    ccall((:ImPlot_ShowUserGuide, libcimgui), Cvoid, ())
+    @ccall libcimgui.ImPlot_ShowUserGuide()::Cvoid
 end
 
 """
@@ -9808,7 +8983,7 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1357).
 """
 function ShowMetricsWindow(p_popen = C_NULL)
-    ccall((:ImPlot_ShowMetricsWindow, libcimgui), Cvoid, (Ptr{Bool},), p_popen)
+    @ccall libcimgui.ImPlot_ShowMetricsWindow(p_popen::Ptr{Bool})::Cvoid
 end
 
 """
@@ -9817,72 +8992,4574 @@ end
 [Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot.h#L1364).
 """
 function ShowDemoWindow(p_open = C_NULL)
-    ccall((:ImPlot_ShowDemoWindow, libcimgui), Cvoid, (Ptr{Bool},), p_open)
+    @ccall libcimgui.ImPlot_ShowDemoWindow(p_open::Ptr{Bool})::Cvoid
+end
+
+"""
+    ImLog10(x::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L107).
+"""
+function ImLog10(x::Real)
+    @ccall libcimgui.ImPlot_ImLog10_double(x::Cdouble)::Cdouble
+end
+
+"""
+    ImSinh(x::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L109).
+"""
+function ImSinh(x::Real)
+    @ccall libcimgui.ImPlot_ImSinh_double(x::Cdouble)::Cdouble
+end
+
+"""
+    ImAsinh(x::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L111).
+"""
+function ImAsinh(x::Real)
+    @ccall libcimgui.ImPlot_ImAsinh_double(x::Cdouble)::Cdouble
+end
+
+"""
+    ImRemap(x::Real, x0::Real, x1::Real, y0::Real, y1::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L119).
+"""
+function ImRemap(x::Real, x0::Real, x1::Real, y0::Real, y1::Real)
+    @ccall libcimgui.ImPlot_ImRemap_double(x::Cdouble, x0::Cdouble, x1::Cdouble, y0::Cdouble, y1::Cdouble)::Cdouble
+end
+
+"""
+    ImRemap01(x::Real, x0::Real, x1::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L122).
+"""
+function ImRemap01(x::Real, x0::Real, x1::Real)
+    @ccall libcimgui.ImPlot_ImRemap01_double(x::Cdouble, x0::Cdouble, x1::Cdouble)::Cdouble
+end
+
+"""
+    ImPosMod(l::Integer, r::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L125).
+"""
+function ImPosMod(l::Integer, r::Integer)
+    @ccall libcimgui.ImPlot_ImPosMod(l::Cint, r::Cint)::Cint
+end
+
+"""
+    ImNan(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L127).
+"""
+function ImNan(val::Real)
+    @ccall libcimgui.ImPlot_ImNan(val::Cdouble)::Bool
+end
+
+"""
+    ImNanOrInf(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L129).
+"""
+function ImNanOrInf(val::Real)
+    @ccall libcimgui.ImPlot_ImNanOrInf(val::Cdouble)::Bool
+end
+
+"""
+    ImConstrainNan(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L131).
+"""
+function ImConstrainNan(val::Real)
+    @ccall libcimgui.ImPlot_ImConstrainNan(val::Cdouble)::Cdouble
+end
+
+"""
+    ImConstrainInf(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L133).
+"""
+function ImConstrainInf(val::Real)
+    @ccall libcimgui.ImPlot_ImConstrainInf(val::Cdouble)::Cdouble
+end
+
+"""
+    ImConstrainLog(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L135).
+"""
+function ImConstrainLog(val::Real)
+    @ccall libcimgui.ImPlot_ImConstrainLog(val::Cdouble)::Cdouble
+end
+
+"""
+    ImConstrainTime(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L137).
+"""
+function ImConstrainTime(val::Real)
+    @ccall libcimgui.ImPlot_ImConstrainTime(val::Cdouble)::Cdouble
+end
+
+"""
+    ImAlmostEqual(v1::Real, v2::Real, ulp::Integer = 2)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L139).
+"""
+function ImAlmostEqual(v1::Real, v2::Real, ulp::Integer = 2)
+    @ccall libcimgui.ImPlot_ImAlmostEqual(v1::Cdouble, v2::Cdouble, ulp::Cint)::Bool
+end
+
+"""
+    ImMinArray(values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_FloatPtr(values::Ptr{Cfloat}, count::Cint)::Cfloat
+end
+
+"""
+    ImMinArray(values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_doublePtr(values::Ptr{Cdouble}, count::Cint)::Cdouble
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_S8Ptr(values::Ptr{ImS8}, count::Cint)::ImS8
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_U8Ptr(values::Ptr{ImU8}, count::Cint)::ImU8
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_S16Ptr(values::Ptr{ImS16}, count::Cint)::ImS16
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_U16Ptr(values::Ptr{ImU16}, count::Cint)::ImU16
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_S32Ptr(values::Ptr{ImS32}, count::Cint)::ImS32
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_U32Ptr(values::Ptr{ImU32}, count::Cint)::ImU32
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_S64Ptr(values::Ptr{ImS64}, count::Cint)::ImS64
+end
+
+"""
+    ImMinArray(values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L142).
+"""
+function ImMinArray(values::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMinArray_U64Ptr(values::Ptr{ImU64}, count::Cint)::ImU64
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_FloatPtr(values::Ptr{Cfloat}, count::Cint)::Cfloat
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_doublePtr(values::Ptr{Cdouble}, count::Cint)::Cdouble
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_S8Ptr(values::Ptr{ImS8}, count::Cint)::ImS8
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_U8Ptr(values::Ptr{ImU8}, count::Cint)::ImU8
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_S16Ptr(values::Ptr{ImS16}, count::Cint)::ImS16
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_U16Ptr(values::Ptr{ImU16}, count::Cint)::ImU16
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_S32Ptr(values::Ptr{ImS32}, count::Cint)::ImS32
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_U32Ptr(values::Ptr{ImU32}, count::Cint)::ImU32
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_S64Ptr(values::Ptr{ImS64}, count::Cint)::ImS64
+end
+
+"""
+    ImMaxArray(values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L145).
+"""
+function ImMaxArray(values::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMaxArray_U64Ptr(values::Ptr{ImU64}, count::Cint)::ImU64
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer, min_out::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, max_out::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+    count::Integer,
+    min_out::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+    max_out::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_FloatPtr(
+        values::Ptr{Cfloat},
+        count::Cint,
+        min_out::Ptr{Cfloat},
+        max_out::Ptr{Cfloat},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer, min_out::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, max_out::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
+    count::Integer,
+    min_out::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
+    max_out::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_doublePtr(
+        values::Ptr{Cdouble},
+        count::Cint,
+        min_out::Ptr{Cdouble},
+        max_out::Ptr{Cdouble},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer, min_out::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, max_out::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}},
+    count::Integer,
+    min_out::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}},
+    max_out::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_S8Ptr(
+        values::Ptr{ImS8},
+        count::Cint,
+        min_out::Ptr{ImS8},
+        max_out::Ptr{ImS8},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer, min_out::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, max_out::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}},
+    count::Integer,
+    min_out::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}},
+    max_out::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_U8Ptr(
+        values::Ptr{ImU8},
+        count::Cint,
+        min_out::Ptr{ImU8},
+        max_out::Ptr{ImU8},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer, min_out::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, max_out::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}},
+    count::Integer,
+    min_out::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}},
+    max_out::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_S16Ptr(
+        values::Ptr{ImS16},
+        count::Cint,
+        min_out::Ptr{ImS16},
+        max_out::Ptr{ImS16},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer, min_out::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, max_out::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}},
+    count::Integer,
+    min_out::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}},
+    max_out::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_U16Ptr(
+        values::Ptr{ImU16},
+        count::Cint,
+        min_out::Ptr{ImU16},
+        max_out::Ptr{ImU16},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer, min_out::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, max_out::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}},
+    count::Integer,
+    min_out::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}},
+    max_out::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_S32Ptr(
+        values::Ptr{ImS32},
+        count::Cint,
+        min_out::Ptr{ImS32},
+        max_out::Ptr{ImS32},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, min_out::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, max_out::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}},
+    count::Integer,
+    min_out::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}},
+    max_out::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_U32Ptr(
+        values::Ptr{ImU32},
+        count::Cint,
+        min_out::Ptr{ImU32},
+        max_out::Ptr{ImU32},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer, min_out::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, max_out::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}},
+    count::Integer,
+    min_out::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}},
+    max_out::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_S64Ptr(
+        values::Ptr{ImS64},
+        count::Cint,
+        min_out::Ptr{ImS64},
+        max_out::Ptr{ImS64},
+    )::Cvoid
+end
+
+"""
+    ImMinMaxArray(values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer, min_out::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, max_out::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L148).
+"""
+function ImMinMaxArray(
+    values::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}},
+    count::Integer,
+    min_out::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}},
+    max_out::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}},
+)
+    @ccall libcimgui.ImPlot_ImMinMaxArray_U64Ptr(
+        values::Ptr{ImU64},
+        count::Cint,
+        min_out::Ptr{ImU64},
+        max_out::Ptr{ImU64},
+    )::Cvoid
+end
+
+"""
+    ImSum(values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_FloatPtr(values::Ptr{Cfloat}, count::Cint)::Cfloat
+end
+
+"""
+    ImSum(values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_doublePtr(values::Ptr{Cdouble}, count::Cint)::Cdouble
+end
+
+"""
+    ImSum(values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_S8Ptr(values::Ptr{ImS8}, count::Cint)::ImS8
+end
+
+"""
+    ImSum(values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_U8Ptr(values::Ptr{ImU8}, count::Cint)::ImU8
+end
+
+"""
+    ImSum(values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_S16Ptr(values::Ptr{ImS16}, count::Cint)::ImS16
+end
+
+"""
+    ImSum(values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_U16Ptr(values::Ptr{ImU16}, count::Cint)::ImU16
+end
+
+"""
+    ImSum(values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_S32Ptr(values::Ptr{ImS32}, count::Cint)::ImS32
+end
+
+"""
+    ImSum(values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_U32Ptr(values::Ptr{ImU32}, count::Cint)::ImU32
+end
+
+"""
+    ImSum(values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_S64Ptr(values::Ptr{ImS64}, count::Cint)::ImS64
+end
+
+"""
+    ImSum(values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L158).
+"""
+function ImSum(values::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImSum_U64Ptr(values::Ptr{ImU64}, count::Cint)::ImU64
+end
+
+"""
+    ImMean(values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_FloatPtr(values::Ptr{Cfloat}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_doublePtr(values::Ptr{Cdouble}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_S8Ptr(values::Ptr{ImS8}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_U8Ptr(values::Ptr{ImU8}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_S16Ptr(values::Ptr{ImS16}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_U16Ptr(values::Ptr{ImU16}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_S32Ptr(values::Ptr{ImS32}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_U32Ptr(values::Ptr{ImU32}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_S64Ptr(values::Ptr{ImS64}, count::Cint)::Cdouble
+end
+
+"""
+    ImMean(values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L166).
+"""
+function ImMean(values::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImMean_U64Ptr(values::Ptr{ImU64}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_FloatPtr(values::Ptr{Cfloat}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{Cdouble}, Ref{Cdouble}, AbstractArray{Cdouble}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{Cdouble},Ref{Cdouble},AbstractArray{Cdouble}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_doublePtr(values::Ptr{Cdouble}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImS8}, Ref{ImS8}, AbstractArray{ImS8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImS8},Ref{ImS8},AbstractArray{ImS8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_S8Ptr(values::Ptr{ImS8}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImU8}, Ref{ImU8}, AbstractArray{ImU8}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImU8},Ref{ImU8},AbstractArray{ImU8}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_U8Ptr(values::Ptr{ImU8}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImS16}, Ref{ImS16}, AbstractArray{ImS16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImS16},Ref{ImS16},AbstractArray{ImS16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_S16Ptr(values::Ptr{ImS16}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImU16}, Ref{ImU16}, AbstractArray{ImU16}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImU16},Ref{ImU16},AbstractArray{ImU16}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_U16Ptr(values::Ptr{ImU16}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImS32}, Ref{ImS32}, AbstractArray{ImS32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImS32},Ref{ImS32},AbstractArray{ImS32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_S32Ptr(values::Ptr{ImS32}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_U32Ptr(values::Ptr{ImU32}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImS64}, Ref{ImS64}, AbstractArray{ImS64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImS64},Ref{ImS64},AbstractArray{ImS64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_S64Ptr(values::Ptr{ImS64}, count::Cint)::Cdouble
+end
+
+"""
+    ImStdDev(values::Union{Ptr{ImU64}, Ref{ImU64}, AbstractArray{ImU64}}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L175).
+"""
+function ImStdDev(values::Union{Ptr{ImU64},Ref{ImU64},AbstractArray{ImU64}}, count::Integer)
+    @ccall libcimgui.ImPlot_ImStdDev_U64Ptr(values::Ptr{ImU64}, count::Cint)::Cdouble
+end
+
+"""
+    ImMixU32(a::Integer, b::Integer, s::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L186).
+"""
+function ImMixU32(a::Integer, b::Integer, s::Integer)
+    @ccall libcimgui.ImPlot_ImMixU32(a::ImU32, b::ImU32, s::ImU32)::ImU32
+end
+
+"""
+    ImLerpU32(colors::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, size::Integer, t::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L208).
+"""
+function ImLerpU32(colors::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}}, size::Integer, t::Real)
+    @ccall libcimgui.ImPlot_ImLerpU32(colors::Ptr{ImU32}, size::Cint, t::Cfloat)::ImU32
+end
+
+"""
+    ImAlphaU32(col::Integer, alpha::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L221).
+"""
+function ImAlphaU32(col::Integer, alpha::Real)
+    @ccall libcimgui.ImPlot_ImAlphaU32(col::ImU32, alpha::Cfloat)::ImU32
+end
+
+"""
+    ImOverlaps(min_a::Real, max_a::Real, min_b::Real, max_b::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L226).
+"""
+function ImOverlaps(min_a::Real, max_a::Real, min_b::Real, max_b::Real)
+    @ccall libcimgui.ImPlot_ImOverlaps_double(min_a::Cdouble, max_a::Cdouble, min_b::Cdouble, max_b::Cdouble)::Bool
+end
+
+"""
+    RollOver(self::Union{ImPlotTime, Ptr{ImPlotTime}, Ref{ImPlotTime}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L309).
+"""
+function RollOver(self::Union{ImPlotTime,Ptr{ImPlotTime},Ref{ImPlotTime}})
+    @ccall libcimgui.ImPlotTime_RollOver(self::Ptr{ImPlotTime})::Cvoid
+end
+
+"""
+    ToDouble(self::Union{ImPlotTime, Ptr{ImPlotTime}, Ref{ImPlotTime}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L310).
+"""
+function ToDouble(self::Union{ImPlotTime,Ptr{ImPlotTime},Ref{ImPlotTime}})
+    @ccall libcimgui.ImPlotTime_ToDouble(self::Ptr{ImPlotTime})::Cdouble
+end
+
+"""
+    FromDouble(t::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L311).
+"""
+function FromDouble(t::Real)
+    @ccall libcimgui.ImPlotTime_FromDouble(t::Cdouble)::ImPlotTime
+end
+
+"""
+    ImPlotColormapData()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L343).
+"""
+function ImPlotColormapData()
+    @ccall libcimgui.ImPlotColormapData_ImPlotColormapData()::Ptr{ImPlotColormapData}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotColormapData},ImPlotColormapData})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotColormapData_destroy(self::Ptr{ImPlotColormapData})::Cvoid)
+end
+
+"""
+    Append(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, name, keys::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, count::Integer, qual::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L345).
+"""
+function Append(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    name,
+    keys::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}},
+    count::Integer,
+    qual::Bool,
+)
+    @ccall libcimgui.ImPlotColormapData_Append(
+        self::Ptr{ImPlotColormapData},
+        name::Cstring,
+        keys::Ptr{ImU32},
+        count::Cint,
+        qual::Bool,
+    )::Cint
+end
+
+"""
+    _AppendTable(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L363).
+"""
+function _AppendTable(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData__AppendTable(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Cvoid
+end
+
+"""
+    RebuildTables(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L402).
+"""
+function RebuildTables(self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}})
+    @ccall libcimgui.ImPlotColormapData_RebuildTables(self::Ptr{ImPlotColormapData})::Cvoid
+end
+
+"""
+    IsQual(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L410).
+"""
+function IsQual(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData_IsQual(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Bool
+end
+
+"""
+    GetName(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L411).
+"""
+function GetName(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData_GetName(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Cstring
+end
+
+"""
+    GetIndex(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, name)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L412).
+"""
+function GetIndex(self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}}, name)
+    @ccall libcimgui.ImPlotColormapData_GetIndex(self::Ptr{ImPlotColormapData}, name::Cstring)::ImPlotColormap
+end
+
+"""
+    GetKeys(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L414).
+"""
+function GetKeys(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData_GetKeys(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Ptr{ImU32}
+end
+
+"""
+    GetKeyCount(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L415).
+"""
+function GetKeyCount(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData_GetKeyCount(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Cint
+end
+
+"""
+    GetKeyColor(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer}, idx::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L416).
+"""
+function GetKeyColor(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+    idx::Integer,
+)
+    @ccall libcimgui.ImPlotColormapData_GetKeyColor(
+        self::Ptr{ImPlotColormapData},
+        cmap::ImPlotColormap,
+        idx::Cint,
+    )::ImU32
+end
+
+"""
+    SetKeyColor(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer}, idx::Integer, value::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L417).
+"""
+function SetKeyColor(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+    idx::Integer,
+    value::Integer,
+)
+    @ccall libcimgui.ImPlotColormapData_SetKeyColor(
+        self::Ptr{ImPlotColormapData},
+        cmap::ImPlotColormap,
+        idx::Cint,
+        value::ImU32,
+    )::Cvoid
+end
+
+"""
+    GetTable(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L419).
+"""
+function GetTable(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData_GetTable(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Ptr{ImU32}
+end
+
+"""
+    GetTableSize(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L420).
+"""
+function GetTableSize(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+)
+    @ccall libcimgui.ImPlotColormapData_GetTableSize(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap)::Cint
+end
+
+"""
+    GetTableColor(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer}, idx::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L421).
+"""
+function GetTableColor(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+    idx::Integer,
+)
+    @ccall libcimgui.ImPlotColormapData_GetTableColor(
+        self::Ptr{ImPlotColormapData},
+        cmap::ImPlotColormap,
+        idx::Cint,
+    )::ImU32
+end
+
+"""
+    LerpTable(self::Union{ImPlotColormapData, Ptr{ImPlotColormapData}, Ref{ImPlotColormapData}}, cmap::Union{ImPlotColormap_, Integer}, t::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L423).
+"""
+function LerpTable(
+    self::Union{ImPlotColormapData,Ptr{ImPlotColormapData},Ref{ImPlotColormapData}},
+    cmap::Union{ImPlotColormap_,Integer},
+    t::Real,
+)
+    @ccall libcimgui.ImPlotColormapData_LerpTable(self::Ptr{ImPlotColormapData}, cmap::ImPlotColormap, t::Cfloat)::ImU32
+end
+
+"""
+    ImPlotAnnotation()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L448).
+"""
+function ImPlotAnnotation()
+    @ccall libcimgui.ImPlotAnnotation_ImPlotAnnotation()::Ptr{ImPlotAnnotation}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotAnnotation},ImPlotAnnotation})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotAnnotation_destroy(self::Ptr{ImPlotAnnotation})::Cvoid)
+end
+
+"""
+    ImPlotAnnotationCollection()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L462).
+"""
+function ImPlotAnnotationCollection()
+    @ccall libcimgui.ImPlotAnnotationCollection_ImPlotAnnotationCollection()::Ptr{ImPlotAnnotationCollection}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotAnnotationCollection},ImPlotAnnotationCollection})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotAnnotationCollection_destroy(self::Ptr{ImPlotAnnotationCollection})::Cvoid)
+end
+
+"""
+    GetText(self::Union{ImPlotAnnotationCollection, Ptr{ImPlotAnnotationCollection}, Ref{ImPlotAnnotationCollection}}, idx::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L484).
+"""
+function GetText(
+    self::Union{ImPlotAnnotationCollection,Ptr{ImPlotAnnotationCollection},Ref{ImPlotAnnotationCollection}},
+    idx::Integer,
+)
+    @ccall libcimgui.ImPlotAnnotationCollection_GetText(self::Ptr{ImPlotAnnotationCollection}, idx::Cint)::Cstring
+end
+
+"""
+    Reset(self::Union{ImPlotAnnotationCollection, Ptr{ImPlotAnnotationCollection}, Ref{ImPlotAnnotationCollection}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L488).
+"""
+function Reset(self::Union{ImPlotAnnotationCollection,Ptr{ImPlotAnnotationCollection},Ref{ImPlotAnnotationCollection}})
+    @ccall libcimgui.ImPlotAnnotationCollection_Reset(self::Ptr{ImPlotAnnotationCollection})::Cvoid
+end
+
+"""
+    ImPlotTag()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L502).
+"""
+function ImPlotTag()
+    @ccall libcimgui.ImPlotTag_ImPlotTag()::Ptr{ImPlotTag}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotTag},ImPlotTag})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotTag_destroy(self::Ptr{ImPlotTag})::Cvoid)
+end
+
+"""
+    ImPlotTagCollection()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L517).
+"""
+function ImPlotTagCollection()
+    @ccall libcimgui.ImPlotTagCollection_ImPlotTagCollection()::Ptr{ImPlotTagCollection}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotTagCollection},ImPlotTagCollection})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotTagCollection_destroy(self::Ptr{ImPlotTagCollection})::Cvoid)
+end
+
+"""
+    GetText(self::Union{ImPlotTagCollection, Ptr{ImPlotTagCollection}, Ref{ImPlotTagCollection}}, idx::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L540).
+"""
+function GetText(self::Union{ImPlotTagCollection,Ptr{ImPlotTagCollection},Ref{ImPlotTagCollection}}, idx::Integer)
+    @ccall libcimgui.ImPlotTagCollection_GetText(self::Ptr{ImPlotTagCollection}, idx::Cint)::Cstring
+end
+
+"""
+    Reset(self::Union{ImPlotTagCollection, Ptr{ImPlotTagCollection}, Ref{ImPlotTagCollection}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L544).
+"""
+function Reset(self::Union{ImPlotTagCollection,Ptr{ImPlotTagCollection},Ref{ImPlotTagCollection}})
+    @ccall libcimgui.ImPlotTagCollection_Reset(self::Ptr{ImPlotTagCollection})::Cvoid
+end
+
+"""
+    ImPlotTick()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L563).
+"""
+function ImPlotTick()
+    @ccall libcimgui.ImPlotTick_ImPlotTick_Nil()::Ptr{ImPlotTick}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotTick},ImPlotTick})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotTick_destroy(self::Ptr{ImPlotTick})::Cvoid)
+end
+
+"""
+    ImPlotTick(value::Cdouble, major::Bool, level::Cint, show_label::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L574).
+"""
+function ImPlotTick(value::Cdouble, major::Bool, level::Cint, show_label::Bool)
+    @ccall libcimgui.ImPlotTick_ImPlotTick_double(
+        value::Cdouble,
+        major::Bool,
+        level::Cint,
+        show_label::Bool,
+    )::Ptr{ImPlotTick}
+end
+
+"""
+    ImPlotTicker()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L592).
+"""
+function ImPlotTicker()
+    @ccall libcimgui.ImPlotTicker_ImPlotTicker()::Ptr{ImPlotTicker}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotTicker},ImPlotTicker})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotTicker_destroy(self::Ptr{ImPlotTicker})::Cvoid)
+end
+
+"""
+    AddTick(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}}, value::Real, major::Bool, level::Integer, show_label::Bool, label)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L596).
+"""
+function AddTick(
+    self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}},
+    value::Real,
+    major::Bool,
+    level::Integer,
+    show_label::Bool,
+    label,
+)
+    @ccall libcimgui.ImPlotTicker_AddTick_doubleStr(
+        self::Ptr{ImPlotTicker},
+        value::Cdouble,
+        major::Bool,
+        level::Cint,
+        show_label::Bool,
+        label::Cstring,
+    )::Ptr{ImPlotTick}
+end
+
+"""
+    AddTick(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}}, value::Real, major::Bool, level::Integer, show_label::Bool, formatter::ImPlotFormatter, data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L606).
+"""
+function AddTick(
+    self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}},
+    value::Real,
+    major::Bool,
+    level::Integer,
+    show_label::Bool,
+    formatter::ImPlotFormatter,
+    data::Union{Ptr,Ref,AbstractArray},
+)
+    @ccall libcimgui.ImPlotTicker_AddTick_doublePlotFormatter(
+        self::Ptr{ImPlotTicker},
+        value::Cdouble,
+        major::Bool,
+        level::Cint,
+        show_label::Bool,
+        formatter::ImPlotFormatter,
+        data::Ptr{Cvoid},
+    )::Ptr{ImPlotTick}
+end
+
+"""
+    AddTick(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}}, tick::ImPlotTick)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L618).
+"""
+function AddTick(self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}}, tick::ImPlotTick)
+    @ccall libcimgui.ImPlotTicker_AddTick_PlotTick(self::Ptr{ImPlotTicker}, tick::ImPlotTick)::Ptr{ImPlotTick}
+end
+
+"""
+    GetText(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}}, idx::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L628).
+"""
+function GetText(self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}}, idx::Integer)
+    @ccall libcimgui.ImPlotTicker_GetText_Int(self::Ptr{ImPlotTicker}, idx::Cint)::Cstring
+end
+
+"""
+    GetText(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}}, tick::ImPlotTick)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L632).
+"""
+function GetText(self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}}, tick::ImPlotTick)
+    @ccall libcimgui.ImPlotTicker_GetText_PlotTick(self::Ptr{ImPlotTicker}, tick::ImPlotTick)::Cstring
+end
+
+"""
+    OverrideSizeLate(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}}, size::ImVec2)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L636).
+"""
+function OverrideSizeLate(self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}}, size::ImVec2)
+    @ccall libcimgui.ImPlotTicker_OverrideSizeLate(self::Ptr{ImPlotTicker}, size::ImVec2)::Cvoid
+end
+
+"""
+    Reset(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L641).
+"""
+function Reset(self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}})
+    @ccall libcimgui.ImPlotTicker_Reset(self::Ptr{ImPlotTicker})::Cvoid
+end
+
+"""
+    TickCount(self::Union{ImPlotTicker, Ptr{ImPlotTicker}, Ref{ImPlotTicker}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L649).
+"""
+function TickCount(self::Union{ImPlotTicker,Ptr{ImPlotTicker},Ref{ImPlotTicker}})
+    @ccall libcimgui.ImPlotTicker_TickCount(self::Ptr{ImPlotTicker})::Cint
+end
+
+"""
+    ImPlotAxis()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L701).
+"""
+function ImPlotAxis()
+    @ccall libcimgui.ImPlotAxis_ImPlotAxis()::Ptr{ImPlotAxis}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotAxis},ImPlotAxis})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotAxis_destroy(self::Ptr{ImPlotAxis})::Cvoid)
+end
+
+"""
+    Reset(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L728).
+"""
+function Reset(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_Reset(self::Ptr{ImPlotAxis})::Cvoid
+end
+
+"""
+    SetMin(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, _min::Real, force = false)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L748).
+"""
+function SetMin(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, _min::Real, force = false)
+    @ccall libcimgui.ImPlotAxis_SetMin(self::Ptr{ImPlotAxis}, _min::Cdouble, force::Bool)::Bool
+end
+
+"""
+    SetMax(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, _max::Real, force = false)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L767).
+"""
+function SetMax(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, _max::Real, force = false)
+    @ccall libcimgui.ImPlotAxis_SetMax(self::Ptr{ImPlotAxis}, _max::Cdouble, force::Bool)::Bool
+end
+
+"""
+    SetRange(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, v1::Real, v2::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L786).
+"""
+function SetRange(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, v1::Real, v2::Real)
+    @ccall libcimgui.ImPlotAxis_SetRange_double(self::Ptr{ImPlotAxis}, v1::Cdouble, v2::Cdouble)::Cvoid
+end
+
+"""
+    SetRange(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, range::ImPlotRange)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L795).
+"""
+function SetRange(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, range::ImPlotRange)
+    @ccall libcimgui.ImPlotAxis_SetRange_PlotRange(self::Ptr{ImPlotAxis}, range::ImPlotRange)::Cvoid
+end
+
+"""
+    SetAspect(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, unit_per_pix::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L799).
+"""
+function SetAspect(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, unit_per_pix::Real)
+    @ccall libcimgui.ImPlotAxis_SetAspect(self::Ptr{ImPlotAxis}, unit_per_pix::Cdouble)::Cvoid
+end
+
+"""
+    PixelSize(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L812).
+"""
+function PixelSize(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_PixelSize(self::Ptr{ImPlotAxis})::Cfloat
+end
+
+"""
+    GetAspect(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L814).
+"""
+function GetAspect(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_GetAspect(self::Ptr{ImPlotAxis})::Cdouble
+end
+
+"""
+    Constrain(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L816).
+"""
+function Constrain(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_Constrain(self::Ptr{ImPlotAxis})::Cvoid
+end
+
+"""
+    UpdateTransformCache(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L838).
+"""
+function UpdateTransformCache(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_UpdateTransformCache(self::Ptr{ImPlotAxis})::Cvoid
+end
+
+"""
+    PlotToPixels(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, plt::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L850).
+"""
+function PlotToPixels(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, plt::Real)
+    @ccall libcimgui.ImPlotAxis_PlotToPixels(self::Ptr{ImPlotAxis}, plt::Cdouble)::Cfloat
+end
+
+"""
+    PixelsToPlot(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, pix::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L860).
+"""
+function PixelsToPlot(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, pix::Real)
+    @ccall libcimgui.ImPlotAxis_PixelsToPlot(self::Ptr{ImPlotAxis}, pix::Cfloat)::Cdouble
+end
+
+"""
+    ExtendFit(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, v::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L870).
+"""
+function ExtendFit(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, v::Real)
+    @ccall libcimgui.ImPlotAxis_ExtendFit(self::Ptr{ImPlotAxis}, v::Cdouble)::Cvoid
+end
+
+"""
+    ExtendFitWith(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, alt, v::Real, v_alt::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L877).
+"""
+function ExtendFitWith(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, alt, v::Real, v_alt::Real)
+    @ccall libcimgui.ImPlotAxis_ExtendFitWith(
+        self::Ptr{ImPlotAxis},
+        alt::Ptr{ImPlotAxis},
+        v::Cdouble,
+        v_alt::Cdouble,
+    )::Cvoid
+end
+
+"""
+    ApplyFit(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, padding::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L886).
+"""
+function ApplyFit(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, padding::Real)
+    @ccall libcimgui.ImPlotAxis_ApplyFit(self::Ptr{ImPlotAxis}, padding::Cfloat)::Cvoid
+end
+
+"""
+    HasLabel(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L902).
+"""
+function HasLabel(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_HasLabel(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    HasGridLines(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L903).
+"""
+function HasGridLines(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_HasGridLines(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    HasTickLabels(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L904).
+"""
+function HasTickLabels(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_HasTickLabels(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    HasTickMarks(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L905).
+"""
+function HasTickMarks(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_HasTickMarks(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    WillRender(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L906).
+"""
+function WillRender(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_WillRender(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsOpposite(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L907).
+"""
+function IsOpposite(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsOpposite(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsInverted(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L908).
+"""
+function IsInverted(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsInverted(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsForeground(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L909).
+"""
+function IsForeground(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsForeground(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsAutoFitting(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L910).
+"""
+function IsAutoFitting(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsAutoFitting(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    CanInitFit(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L911).
+"""
+function CanInitFit(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_CanInitFit(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsRangeLocked(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L912).
+"""
+function IsRangeLocked(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsRangeLocked(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsLockedMin(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L913).
+"""
+function IsLockedMin(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsLockedMin(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsLockedMax(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L914).
+"""
+function IsLockedMax(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsLockedMax(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsLocked(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L915).
+"""
+function IsLocked(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsLocked(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsInputLockedMin(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L916).
+"""
+function IsInputLockedMin(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsInputLockedMin(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsInputLockedMax(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L917).
+"""
+function IsInputLockedMax(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsInputLockedMax(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsInputLocked(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L918).
+"""
+function IsInputLocked(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_IsInputLocked(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    HasMenus(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L919).
+"""
+function HasMenus(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_HasMenus(self::Ptr{ImPlotAxis})::Bool
+end
+
+"""
+    IsPanLocked(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}}, increasing::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L921).
+"""
+function IsPanLocked(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}}, increasing::Bool)
+    @ccall libcimgui.ImPlotAxis_IsPanLocked(self::Ptr{ImPlotAxis}, increasing::Bool)::Bool
+end
+
+"""
+    PushLinks(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L935).
+"""
+function PushLinks(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_PushLinks(self::Ptr{ImPlotAxis})::Cvoid
+end
+
+"""
+    PullLinks(self::Union{ImPlotAxis, Ptr{ImPlotAxis}, Ref{ImPlotAxis}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L940).
+"""
+function PullLinks(self::Union{ImPlotAxis,Ptr{ImPlotAxis},Ref{ImPlotAxis}})
+    @ccall libcimgui.ImPlotAxis_PullLinks(self::Ptr{ImPlotAxis})::Cvoid
+end
+
+"""
+    ImPlotAlignmentData()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L954).
+"""
+function ImPlotAlignmentData()
+    @ccall libcimgui.ImPlotAlignmentData_ImPlotAlignmentData()::Ptr{ImPlotAlignmentData}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotAlignmentData},ImPlotAlignmentData})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotAlignmentData_destroy(self::Ptr{ImPlotAlignmentData})::Cvoid)
+end
+
+"""
+    Begin(self::Union{ImPlotAlignmentData, Ptr{ImPlotAlignmentData}, Ref{ImPlotAlignmentData}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L958).
+"""
+function Begin(self::Union{ImPlotAlignmentData,Ptr{ImPlotAlignmentData},Ref{ImPlotAlignmentData}})
+    @ccall libcimgui.ImPlotAlignmentData_Begin(self::Ptr{ImPlotAlignmentData})::Cvoid
+end
+
+"""
+    Update(self::Union{ImPlotAlignmentData, Ptr{ImPlotAlignmentData}, Ref{ImPlotAlignmentData}}, pad_a::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, pad_b::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, delta_a::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}}, delta_b::Union{Ptr{Cfloat}, Ref{Cfloat}, AbstractArray{Cfloat}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L959).
+"""
+function Update(
+    self::Union{ImPlotAlignmentData,Ptr{ImPlotAlignmentData},Ref{ImPlotAlignmentData}},
+    pad_a::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+    pad_b::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+    delta_a::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+    delta_b::Union{Ptr{Cfloat},Ref{Cfloat},AbstractArray{Cfloat}},
+)
+    @ccall libcimgui.ImPlotAlignmentData_Update(
+        self::Ptr{ImPlotAlignmentData},
+        pad_a::Ptr{Cfloat},
+        pad_b::Ptr{Cfloat},
+        delta_a::Ptr{Cfloat},
+        delta_b::Ptr{Cfloat},
+    )::Cvoid
+end
+
+"""
+    End(self::Union{ImPlotAlignmentData, Ptr{ImPlotAlignmentData}, Ref{ImPlotAlignmentData}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L966).
+"""
+function End(self::Union{ImPlotAlignmentData,Ptr{ImPlotAlignmentData},Ref{ImPlotAlignmentData}})
+    @ccall libcimgui.ImPlotAlignmentData_End(self::Ptr{ImPlotAlignmentData})::Cvoid
+end
+
+"""
+    Reset(self::Union{ImPlotAlignmentData, Ptr{ImPlotAlignmentData}, Ref{ImPlotAlignmentData}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L967).
+"""
+function Reset(self::Union{ImPlotAlignmentData,Ptr{ImPlotAlignmentData},Ref{ImPlotAlignmentData}})
+    @ccall libcimgui.ImPlotAlignmentData_Reset(self::Ptr{ImPlotAlignmentData})::Cvoid
+end
+
+"""
+    ImPlotItem()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L982).
+"""
+function ImPlotItem()
+    @ccall libcimgui.ImPlotItem_ImPlotItem()::Ptr{ImPlotItem}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotItem},ImPlotItem})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotItem_destroy(self::Ptr{ImPlotItem})::Cvoid)
+end
+
+"""
+    ImPlotLegend()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1011).
+"""
+function ImPlotLegend()
+    @ccall libcimgui.ImPlotLegend_ImPlotLegend()::Ptr{ImPlotLegend}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotLegend},ImPlotLegend})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotLegend_destroy(self::Ptr{ImPlotLegend})::Cvoid)
+end
+
+"""
+    Reset(self::Union{ImPlotLegend, Ptr{ImPlotLegend}, Ref{ImPlotLegend}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1019).
+"""
+function Reset(self::Union{ImPlotLegend,Ptr{ImPlotLegend},Ref{ImPlotLegend}})
+    @ccall libcimgui.ImPlotLegend_Reset(self::Ptr{ImPlotLegend})::Cvoid
+end
+
+"""
+    ImPlotItemGroup()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1031).
+"""
+function ImPlotItemGroup()
+    @ccall libcimgui.ImPlotItemGroup_ImPlotItemGroup()::Ptr{ImPlotItemGroup}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotItemGroup},ImPlotItemGroup})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotItemGroup_destroy(self::Ptr{ImPlotItemGroup})::Cvoid)
+end
+
+"""
+    GetItemCount(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1033).
+"""
+function GetItemCount(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}})
+    @ccall libcimgui.ImPlotItemGroup_GetItemCount(self::Ptr{ImPlotItemGroup})::Cint
+end
+
+"""
+    GetItemID(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, label_id)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1034).
+"""
+function GetItemID(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, label_id)
+    @ccall libcimgui.ImPlotItemGroup_GetItemID(self::Ptr{ImPlotItemGroup}, label_id::Cstring)::ImGuiID
+end
+
+"""
+    GetItem(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, id::ImGuiID)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1035).
+"""
+function GetItem(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, id::ImGuiID)
+    @ccall libcimgui.ImPlotItemGroup_GetItem_ID(self::Ptr{ImPlotItemGroup}, id::ImGuiID)::Ptr{ImPlotItem}
+end
+
+"""
+    GetItem(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, label_id)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1036).
+"""
+function GetItem(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, label_id)
+    @ccall libcimgui.ImPlotItemGroup_GetItem_Str(self::Ptr{ImPlotItemGroup}, label_id::Cstring)::Ptr{ImPlotItem}
+end
+
+"""
+    GetOrAddItem(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, id::ImGuiID)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1037).
+"""
+function GetOrAddItem(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, id::ImGuiID)
+    @ccall libcimgui.ImPlotItemGroup_GetOrAddItem(self::Ptr{ImPlotItemGroup}, id::ImGuiID)::Ptr{ImPlotItem}
+end
+
+"""
+    GetItemByIndex(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, i::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1038).
+"""
+function GetItemByIndex(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, i::Integer)
+    @ccall libcimgui.ImPlotItemGroup_GetItemByIndex(self::Ptr{ImPlotItemGroup}, i::Cint)::Ptr{ImPlotItem}
+end
+
+"""
+    GetItemIndex(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, item)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1039).
+"""
+function GetItemIndex(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, item)
+    @ccall libcimgui.ImPlotItemGroup_GetItemIndex(self::Ptr{ImPlotItemGroup}, item::Ptr{ImPlotItem})::Cint
+end
+
+"""
+    GetLegendCount(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1040).
+"""
+function GetLegendCount(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}})
+    @ccall libcimgui.ImPlotItemGroup_GetLegendCount(self::Ptr{ImPlotItemGroup})::Cint
+end
+
+"""
+    GetLegendItem(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, i::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1041).
+"""
+function GetLegendItem(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, i::Integer)
+    @ccall libcimgui.ImPlotItemGroup_GetLegendItem(self::Ptr{ImPlotItemGroup}, i::Cint)::Ptr{ImPlotItem}
+end
+
+"""
+    GetLegendLabel(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}}, i::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1042).
+"""
+function GetLegendLabel(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}}, i::Integer)
+    @ccall libcimgui.ImPlotItemGroup_GetLegendLabel(self::Ptr{ImPlotItemGroup}, i::Cint)::Cstring
+end
+
+"""
+    Reset(self::Union{ImPlotItemGroup, Ptr{ImPlotItemGroup}, Ref{ImPlotItemGroup}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1043).
+"""
+function Reset(self::Union{ImPlotItemGroup,Ptr{ImPlotItemGroup},Ref{ImPlotItemGroup}})
+    @ccall libcimgui.ImPlotItemGroup_Reset(self::Ptr{ImPlotItemGroup})::Cvoid
+end
+
+"""
+    ImPlotPlot()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1076).
+"""
+function ImPlotPlot()
+    @ccall libcimgui.ImPlotPlot_ImPlotPlot()::Ptr{ImPlotPlot}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotPlot},ImPlotPlot})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotPlot_destroy(self::Ptr{ImPlotPlot})::Cvoid)
+end
+
+"""
+    IsInputLocked(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1093).
+"""
+function IsInputLocked(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}})
+    @ccall libcimgui.ImPlotPlot_IsInputLocked(self::Ptr{ImPlotPlot})::Bool
+end
+
+"""
+    ClearTextBuffer(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1105).
+"""
+function ClearTextBuffer(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}})
+    @ccall libcimgui.ImPlotPlot_ClearTextBuffer(self::Ptr{ImPlotPlot})::Cvoid
+end
+
+"""
+    SetTitle(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}}, title)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1107).
+"""
+function SetTitle(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}}, title)
+    @ccall libcimgui.ImPlotPlot_SetTitle(self::Ptr{ImPlotPlot}, title::Cstring)::Cvoid
+end
+
+"""
+    HasTitle(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1116).
+"""
+function HasTitle(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}})
+    @ccall libcimgui.ImPlotPlot_HasTitle(self::Ptr{ImPlotPlot})::Bool
+end
+
+"""
+    GetTitle(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1117).
+"""
+function GetTitle(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}})
+    @ccall libcimgui.ImPlotPlot_GetTitle(self::Ptr{ImPlotPlot})::Cstring
+end
+
+"""
+    XAxis(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}}, i::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1119).
+"""
+function XAxis(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}}, i::Integer)
+    @ccall libcimgui.ImPlotPlot_XAxis_Nil(self::Ptr{ImPlotPlot}, i::Cint)::Ptr{ImPlotAxis}
+end
+
+"""
+    YAxis(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}}, i::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1121).
+"""
+function YAxis(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}}, i::Integer)
+    @ccall libcimgui.ImPlotPlot_YAxis_Nil(self::Ptr{ImPlotPlot}, i::Cint)::Ptr{ImPlotAxis}
+end
+
+"""
+    EnabledAxesX(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1124).
+"""
+function EnabledAxesX(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}})
+    @ccall libcimgui.ImPlotPlot_EnabledAxesX(self::Ptr{ImPlotPlot})::Cint
+end
+
+"""
+    EnabledAxesY(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1131).
+"""
+function EnabledAxesY(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}})
+    @ccall libcimgui.ImPlotPlot_EnabledAxesY(self::Ptr{ImPlotPlot})::Cint
+end
+
+"""
+    SetAxisLabel(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}}, axis, label)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1138).
+"""
+function SetAxisLabel(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}}, axis, label)
+    @ccall libcimgui.ImPlotPlot_SetAxisLabel(self::Ptr{ImPlotPlot}, axis::Ptr{ImPlotAxis}, label::Cstring)::Cvoid
+end
+
+"""
+    GetAxisLabel(self::Union{ImPlotPlot, Ptr{ImPlotPlot}, Ref{ImPlotPlot}}, axis::ImPlotAxis)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1148).
+"""
+function GetAxisLabel(self::Union{ImPlotPlot,Ptr{ImPlotPlot},Ref{ImPlotPlot}}, axis::ImPlotAxis)
+    @ccall libcimgui.ImPlotPlot_GetAxisLabel(self::Ptr{ImPlotPlot}, axis::ImPlotAxis)::Cstring
+end
+
+"""
+    ImPlotSubplot()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1173).
+"""
+function ImPlotSubplot()
+    @ccall libcimgui.ImPlotSubplot_ImPlotSubplot()::Ptr{ImPlotSubplot}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotSubplot},ImPlotSubplot})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotSubplot_destroy(self::Ptr{ImPlotSubplot})::Cvoid)
+end
+
+"""
+    ImPlotNextPlotData()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1196).
+"""
+function ImPlotNextPlotData()
+    @ccall libcimgui.ImPlotNextPlotData_ImPlotNextPlotData()::Ptr{ImPlotNextPlotData}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotNextPlotData},ImPlotNextPlotData})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotNextPlotData_destroy(self::Ptr{ImPlotNextPlotData})::Cvoid)
+end
+
+"""
+    Reset(self::Union{ImPlotNextPlotData, Ptr{ImPlotNextPlotData}, Ref{ImPlotNextPlotData}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1198).
+"""
+function Reset(self::Union{ImPlotNextPlotData,Ptr{ImPlotNextPlotData},Ref{ImPlotNextPlotData}})
+    @ccall libcimgui.ImPlotNextPlotData_Reset(self::Ptr{ImPlotNextPlotData})::Cvoid
+end
+
+"""
+    ImPlotNextItemData()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1219).
+"""
+function ImPlotNextItemData()
+    @ccall libcimgui.ImPlotNextItemData_ImPlotNextItemData()::Ptr{ImPlotNextItemData}
+end
+
+function Base.finalizer(self::Union{Ptr{ImPlotNextItemData},ImPlotNextItemData})
+    ptr = pointer_from_objref(self)
+    GC.@preserve self @ccall(libcimgui.ImPlotNextItemData_destroy(self::Ptr{ImPlotNextItemData})::Cvoid)
+end
+
+"""
+    Reset(self::Union{ImPlotNextItemData, Ptr{ImPlotNextItemData}, Ref{ImPlotNextItemData}})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1220).
+"""
+function Reset(self::Union{ImPlotNextItemData,Ptr{ImPlotNextItemData},Ref{ImPlotNextItemData}})
+    @ccall libcimgui.ImPlotNextItemData_Reset(self::Ptr{ImPlotNextItemData})::Cvoid
+end
+
+"""
+    Initialize(ctx)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1287).
+"""
+function Initialize(ctx)
+    @ccall libcimgui.ImPlot_Initialize(ctx::Ptr{ImPlotContext})::Cvoid
+end
+
+"""
+    ResetCtxForNextPlot(ctx)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1289).
+"""
+function ResetCtxForNextPlot(ctx)
+    @ccall libcimgui.ImPlot_ResetCtxForNextPlot(ctx::Ptr{ImPlotContext})::Cvoid
+end
+
+"""
+    ResetCtxForNextAlignedPlots(ctx)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1291).
+"""
+function ResetCtxForNextAlignedPlots(ctx)
+    @ccall libcimgui.ImPlot_ResetCtxForNextAlignedPlots(ctx::Ptr{ImPlotContext})::Cvoid
+end
+
+"""
+    ResetCtxForNextSubplot(ctx)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1293).
+"""
+function ResetCtxForNextSubplot(ctx)
+    @ccall libcimgui.ImPlot_ResetCtxForNextSubplot(ctx::Ptr{ImPlotContext})::Cvoid
+end
+
+"""
+    GetPlot(title)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1300).
+"""
+function GetPlot(title)
+    @ccall libcimgui.ImPlot_GetPlot(title::Cstring)::Ptr{ImPlotPlot}
+end
+
+"""
+    GetCurrentPlot()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1302).
+"""
+function GetCurrentPlot()
+    @ccall libcimgui.ImPlot_GetCurrentPlot()::Ptr{ImPlotPlot}
+end
+
+"""
+    BustPlotCache()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1304).
+"""
+function BustPlotCache()
+    @ccall libcimgui.ImPlot_BustPlotCache()::Cvoid
+end
+
+"""
+    ShowPlotContextMenu(plot)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1307).
+"""
+function ShowPlotContextMenu(plot)
+    @ccall libcimgui.ImPlot_ShowPlotContextMenu(plot::Ptr{ImPlotPlot})::Cvoid
+end
+
+"""
+    SetupLock()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1314).
+"""
+function SetupLock()
+    @ccall libcimgui.ImPlot_SetupLock()::Cvoid
+end
+
+"""
+    SubplotNextCell()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1326).
+"""
+function SubplotNextCell()
+    @ccall libcimgui.ImPlot_SubplotNextCell()::Cvoid
+end
+
+"""
+    ShowSubplotsContextMenu(subplot)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1329).
+"""
+function ShowSubplotsContextMenu(subplot)
+    @ccall libcimgui.ImPlot_ShowSubplotsContextMenu(subplot::Ptr{ImPlotSubplot})::Cvoid
+end
+
+"""
+    BeginItem(label_id, spec::ImPlotSpec = ImPlotSpec(), item_col = IMPLOT_AUTO_COL, item_mkr = ImPlotMarker_Invalid)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1336).
+"""
+function BeginItem(
+    label_id,
+    spec::ImPlotSpec = ImPlotSpec(),
+    item_col = IMPLOT_AUTO_COL,
+    item_mkr = ImPlotMarker_Invalid,
+)
+    @ccall libcimgui.ImPlot_BeginItem(
+        label_id::Cstring,
+        spec::ImPlotSpec,
+        item_col::ImVec4,
+        item_mkr::ImPlotMarker,
+    )::Bool
+end
+
+"""
+    EndItem()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1351).
+"""
+function EndItem()
+    @ccall libcimgui.ImPlot_EndItem()::Cvoid
+end
+
+"""
+    RegisterOrGetItem(label_id, flags::Union{ImPlotItemFlags_, Integer}, just_created = C_NULL)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1354).
+"""
+function RegisterOrGetItem(label_id, flags::Union{ImPlotItemFlags_,Integer}, just_created = C_NULL)
+    @ccall libcimgui.ImPlot_RegisterOrGetItem(
+        label_id::Cstring,
+        flags::ImPlotItemFlags,
+        just_created::Ptr{Bool},
+    )::Ptr{ImPlotItem}
+end
+
+"""
+    GetItem(label_id)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1356).
+"""
+function GetItem(label_id)
+    @ccall libcimgui.ImPlot_GetItem(label_id::Cstring)::Ptr{ImPlotItem}
+end
+
+"""
+    GetCurrentItem()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1358).
+"""
+function GetCurrentItem()
+    @ccall libcimgui.ImPlot_GetCurrentItem()::Ptr{ImPlotItem}
+end
+
+"""
+    BustItemCache()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1360).
+"""
+function BustItemCache()
+    @ccall libcimgui.ImPlot_BustItemCache()::Cvoid
+end
+
+"""
+    AnyAxesInputLocked(axes, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1367).
+"""
+function AnyAxesInputLocked(axes, count::Integer)
+    @ccall libcimgui.ImPlot_AnyAxesInputLocked(axes::Ptr{ImPlotAxis}, count::Cint)::Bool
+end
+
+"""
+    AllAxesInputLocked(axes, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1376).
+"""
+function AllAxesInputLocked(axes, count::Integer)
+    @ccall libcimgui.ImPlot_AllAxesInputLocked(axes::Ptr{ImPlotAxis}, count::Cint)::Bool
+end
+
+"""
+    AnyAxesHeld(axes, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1384).
+"""
+function AnyAxesHeld(axes, count::Integer)
+    @ccall libcimgui.ImPlot_AnyAxesHeld(axes::Ptr{ImPlotAxis}, count::Cint)::Bool
+end
+
+"""
+    AnyAxesHovered(axes, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1392).
+"""
+function AnyAxesHovered(axes, count::Integer)
+    @ccall libcimgui.ImPlot_AnyAxesHovered(axes::Ptr{ImPlotAxis}, count::Cint)::Bool
+end
+
+"""
+    FitThisFrame()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1401).
+"""
+function FitThisFrame()
+    @ccall libcimgui.ImPlot_FitThisFrame()::Bool
+end
+
+"""
+    FitPointX(x::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1406).
+"""
+function FitPointX(x::Real)
+    @ccall libcimgui.ImPlot_FitPointX(x::Cdouble)::Cvoid
+end
+
+"""
+    FitPointY(y::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1413).
+"""
+function FitPointY(y::Real)
+    @ccall libcimgui.ImPlot_FitPointY(y::Cdouble)::Cvoid
+end
+
+"""
+    FitPoint(p::ImPlotPoint)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1420).
+"""
+function FitPoint(p::ImPlotPoint)
+    @ccall libcimgui.ImPlot_FitPoint(p::ImPlotPoint)::Cvoid
+end
+
+"""
+    RangesOverlap(r1::ImPlotRange, r2::ImPlotRange)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1429).
+"""
+function RangesOverlap(r1::ImPlotRange, r2::ImPlotRange)
+    @ccall libcimgui.ImPlot_RangesOverlap(r1::ImPlotRange, r2::ImPlotRange)::Bool
+end
+
+"""
+    ShowAxisContextMenu(axis, equal_axis, time_allowed = false)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1433).
+"""
+function ShowAxisContextMenu(axis, equal_axis, time_allowed = false)
+    @ccall libcimgui.ImPlot_ShowAxisContextMenu(
+        axis::Ptr{ImPlotAxis},
+        equal_axis::Ptr{ImPlotAxis},
+        time_allowed::Bool,
+    )::Cvoid
+end
+
+"""
+    GetLocationPos(outer_rect::ImRect, inner_size::ImVec2, location::Union{ImPlotLocation_, Integer}, pad::ImVec2 = ImVec2(0, 0))
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1440).
+"""
+function GetLocationPos(
+    outer_rect::ImRect,
+    inner_size::ImVec2,
+    location::Union{ImPlotLocation_,Integer},
+    pad::ImVec2 = ImVec2(0, 0),
+)
+    @ccall libcimgui.ImPlot_GetLocationPos(
+        outer_rect::ImRect,
+        inner_size::ImVec2,
+        location::ImPlotLocation,
+        pad::ImVec2,
+    )::ImVec2
+end
+
+"""
+    CalcLegendSize(items, pad::ImVec2, spacing::ImVec2, vertical::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1442).
+"""
+function CalcLegendSize(items, pad::ImVec2, spacing::ImVec2, vertical::Bool)
+    @ccall libcimgui.ImPlot_CalcLegendSize(
+        items::Ptr{ImPlotItemGroup},
+        pad::ImVec2,
+        spacing::ImVec2,
+        vertical::Bool,
+    )::ImVec2
+end
+
+"""
+    ClampLegendRect(legend_rect, outer_rect::ImRect, pad::ImVec2)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1444).
+"""
+function ClampLegendRect(legend_rect, outer_rect::ImRect, pad::ImVec2)
+    @ccall libcimgui.ImPlot_ClampLegendRect(legend_rect::Ptr{ImRect}, outer_rect::ImRect, pad::ImVec2)::Bool
+end
+
+"""
+    ShowLegendEntries(items, legend_bb::ImRect, interactable::Bool, pad::ImVec2, spacing::ImVec2, vertical::Bool, DrawList)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1446).
+"""
+function ShowLegendEntries(
+    items,
+    legend_bb::ImRect,
+    interactable::Bool,
+    pad::ImVec2,
+    spacing::ImVec2,
+    vertical::Bool,
+    DrawList,
+)
+    @ccall libcimgui.ImPlot_ShowLegendEntries(
+        items::Ptr{ImPlotItemGroup},
+        legend_bb::ImRect,
+        interactable::Bool,
+        pad::ImVec2,
+        spacing::ImVec2,
+        vertical::Bool,
+        DrawList::Ptr{ImDrawList},
+    )::Bool
+end
+
+"""
+    ShowAltLegend(title_id, vertical = true, size::ImVec2 = ImVec2(0, 0), interactable = true)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1448).
+"""
+function ShowAltLegend(title_id, vertical = true, size::ImVec2 = ImVec2(0, 0), interactable = true)
+    @ccall libcimgui.ImPlot_ShowAltLegend(title_id::Cstring, vertical::Bool, size::ImVec2, interactable::Bool)::Cvoid
+end
+
+"""
+    ShowLegendContextMenu(legend, visible::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1450).
+"""
+function ShowLegendContextMenu(legend, visible::Bool)
+    @ccall libcimgui.ImPlot_ShowLegendContextMenu(legend::Ptr{ImPlotLegend}, visible::Bool)::Bool
+end
+
+"""
+    LabelAxisValue(axis::ImPlotAxis, value::Real, buff, size::Integer, round = false)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1457).
+"""
+function LabelAxisValue(axis::ImPlotAxis, value::Real, buff, size::Integer, round = false)
+    @ccall libcimgui.ImPlot_LabelAxisValue(
+        axis::ImPlotAxis,
+        value::Cdouble,
+        buff::Cstring,
+        size::Cint,
+        round::Bool,
+    )::Cvoid
+end
+
+"""
+    GetItemData()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1464).
+"""
+function GetItemData()
+    @ccall libcimgui.ImPlot_GetItemData()::Ptr{ImPlotNextItemData}
+end
+
+"""
+    IsColorAuto(col::ImVec4)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1467).
+"""
+function IsColorAuto(col::ImVec4)
+    @ccall libcimgui.ImPlot_IsColorAuto_Vec4(col::ImVec4)::Bool
+end
+
+"""
+    IsColorAuto(idx::Union{ImPlotCol_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1469).
+"""
+function IsColorAuto(idx::Union{ImPlotCol_,Integer})
+    @ccall libcimgui.ImPlot_IsColorAuto_PlotCol(idx::ImPlotCol)::Bool
+end
+
+"""
+    GetAutoColor(idx::Union{ImPlotCol_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1471).
+"""
+function GetAutoColor(idx::Union{ImPlotCol_,Integer})
+    @ccall libcimgui.ImPlot_GetAutoColor(idx::ImPlotCol)::ImVec4
+end
+
+"""
+    GetStyleColorVec4(idx::Union{ImPlotCol_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1474).
+"""
+function GetStyleColorVec4(idx::Union{ImPlotCol_,Integer})
+    @ccall libcimgui.ImPlot_GetStyleColorVec4(idx::ImPlotCol)::ImVec4
+end
+
+"""
+    GetStyleColorU32(idx::Union{ImPlotCol_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1475).
+"""
+function GetStyleColorU32(idx::Union{ImPlotCol_,Integer})
+    @ccall libcimgui.ImPlot_GetStyleColorU32(idx::ImPlotCol)::ImU32
+end
+
+"""
+    AddTextVertical(DrawList, pos::ImVec2, col::Integer, text_begin, text_end = C_NULL)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1478).
+"""
+function AddTextVertical(DrawList, pos::ImVec2, col::Integer, text_begin, text_end = C_NULL)
+    @ccall libcimgui.ImPlot_AddTextVertical(
+        DrawList::Ptr{ImDrawList},
+        pos::ImVec2,
+        col::ImU32,
+        text_begin::Cstring,
+        text_end::Cstring,
+    )::Cvoid
+end
+
+"""
+    AddTextCentered(DrawList, top_center::ImVec2, col::Integer, text_begin, text_end = C_NULL)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1480).
+"""
+function AddTextCentered(DrawList, top_center::ImVec2, col::Integer, text_begin, text_end = C_NULL)
+    @ccall libcimgui.ImPlot_AddTextCentered(
+        DrawList::Ptr{ImDrawList},
+        top_center::ImVec2,
+        col::ImU32,
+        text_begin::Cstring,
+        text_end::Cstring,
+    )::Cvoid
+end
+
+"""
+    CalcTextSizeVertical(text)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1482).
+"""
+function CalcTextSizeVertical(text)
+    @ccall libcimgui.ImPlot_CalcTextSizeVertical(text::Cstring)::ImVec2
+end
+
+"""
+    CalcTextColor(bg::ImVec4)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1487).
+"""
+function CalcTextColor(bg::ImVec4)
+    @ccall libcimgui.ImPlot_CalcTextColor_Vec4(bg::ImVec4)::ImU32
+end
+
+"""
+    CalcTextColor(bg::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1488).
+"""
+function CalcTextColor(bg::Integer)
+    @ccall libcimgui.ImPlot_CalcTextColor_U32(bg::ImU32)::ImU32
+end
+
+"""
+    CalcHoverColor(col::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1490).
+"""
+function CalcHoverColor(col::Integer)
+    @ccall libcimgui.ImPlot_CalcHoverColor(col::ImU32)::ImU32
+end
+
+"""
+    ClampLabelPos(pos::ImVec2, size::ImVec2, Min::ImVec2, Max::ImVec2)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1493).
+"""
+function ClampLabelPos(pos::ImVec2, size::ImVec2, Min::ImVec2, Max::ImVec2)
+    @ccall libcimgui.ImPlot_ClampLabelPos(pos::ImVec2, size::ImVec2, Min::ImVec2, Max::ImVec2)::ImVec2
+end
+
+"""
+    GetColormapColorU32(idx::Integer, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1502).
+"""
+function GetColormapColorU32(idx::Integer, cmap::Union{ImPlotColormap_,Integer})
+    @ccall libcimgui.ImPlot_GetColormapColorU32(idx::Cint, cmap::ImPlotColormap)::ImU32
+end
+
+"""
+    NextColormapColorU32()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1504).
+"""
+function NextColormapColorU32()
+    @ccall libcimgui.ImPlot_NextColormapColorU32()::ImU32
+end
+
+"""
+    SampleColormapU32(t::Real, cmap::Union{ImPlotColormap_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1506).
+"""
+function SampleColormapU32(t::Real, cmap::Union{ImPlotColormap_,Integer})
+    @ccall libcimgui.ImPlot_SampleColormapU32(t::Cfloat, cmap::ImPlotColormap)::ImU32
+end
+
+"""
+    RenderColorBar(colors::Union{Ptr{ImU32}, Ref{ImU32}, AbstractArray{ImU32}}, size::Integer, DrawList, bounds::ImRect, vert::Bool, reversed::Bool, continuous::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1509).
+"""
+function RenderColorBar(
+    colors::Union{Ptr{ImU32},Ref{ImU32},AbstractArray{ImU32}},
+    size::Integer,
+    DrawList,
+    bounds::ImRect,
+    vert::Bool,
+    reversed::Bool,
+    continuous::Bool,
+)
+    @ccall libcimgui.ImPlot_RenderColorBar(
+        colors::Ptr{ImU32},
+        size::Cint,
+        DrawList::Ptr{ImDrawList},
+        bounds::ImRect,
+        vert::Bool,
+        reversed::Bool,
+        continuous::Bool,
+    )::Cvoid
+end
+
+"""
+    AddLineH(draw_list, x1::Real, x2::Real, y::Real, col::Integer, thickness::Real = 1.0 * f)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1516).
+"""
+function AddLineH(draw_list, x1::Real, x2::Real, y::Real, col::Integer, thickness::Real = 1.0 * f)
+    @ccall libcimgui.ImPlot_AddLineH(
+        draw_list::Ptr{ImDrawList},
+        x1::Cfloat,
+        x2::Cfloat,
+        y::Cfloat,
+        col::ImU32,
+        thickness::Cfloat,
+    )::Cvoid
+end
+
+"""
+    AddLineV(draw_list, x::Real, y1::Real, y2::Real, col::Integer, thickness::Real = 1.0 * f)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1517).
+"""
+function AddLineV(draw_list, x::Real, y1::Real, y2::Real, col::Integer, thickness::Real = 1.0 * f)
+    @ccall libcimgui.ImPlot_AddLineV(
+        draw_list::Ptr{ImDrawList},
+        x::Cfloat,
+        y1::Cfloat,
+        y2::Cfloat,
+        col::ImU32,
+        thickness::Cfloat,
+    )::Cvoid
+end
+
+"""
+    NiceNum(x::Real, round::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1525).
+"""
+function NiceNum(x::Real, round::Bool)
+    @ccall libcimgui.ImPlot_NiceNum(x::Cdouble, round::Bool)::Cdouble
+end
+
+"""
+    OrderOfMagnitude(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1527).
+"""
+function OrderOfMagnitude(val::Real)
+    @ccall libcimgui.ImPlot_OrderOfMagnitude(val::Cdouble)::Cint
+end
+
+"""
+    OrderToPrecision(order::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1529).
+"""
+function OrderToPrecision(order::Integer)
+    @ccall libcimgui.ImPlot_OrderToPrecision(order::Cint)::Cint
+end
+
+"""
+    Precision(val::Real)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1531).
+"""
+function Precision(val::Real)
+    @ccall libcimgui.ImPlot_Precision(val::Cdouble)::Cint
+end
+
+"""
+    RoundTo(val::Real, prec::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1533).
+"""
+function RoundTo(val::Real, prec::Integer)
+    @ccall libcimgui.ImPlot_RoundTo(val::Cdouble, prec::Cint)::Cdouble
+end
+
+"""
+    Intersection(a1::ImVec2, a2::ImVec2, b1::ImVec2, b2::ImVec2)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1536).
+"""
+function Intersection(a1::ImVec2, a2::ImVec2, b1::ImVec2, b2::ImVec2)
+    @ccall libcimgui.ImPlot_Intersection(a1::ImVec2, a2::ImVec2, b1::ImVec2, b2::ImVec2)::ImVec2
+end
+
+"""
+    IsLeapYear(year::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1578).
+"""
+function IsLeapYear(year::Integer)
+    @ccall libcimgui.ImPlot_IsLeapYear(year::Cint)::Bool
+end
+
+"""
+    GetDaysInMonth(year::Integer, month::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1582).
+"""
+function GetDaysInMonth(year::Integer, month::Integer)
+    @ccall libcimgui.ImPlot_GetDaysInMonth(year::Cint, month::Cint)::Cint
+end
+
+"""
+    MkGmtTime(ptm)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1588).
+"""
+function MkGmtTime(ptm)
+    @ccall libcimgui.ImPlot_MkGmtTime(ptm::Ptr{tm})::ImPlotTime
+end
+
+"""
+    GetGmtTime(t::ImPlotTime, ptm)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1590).
+"""
+function GetGmtTime(t::ImPlotTime, ptm)
+    @ccall libcimgui.ImPlot_GetGmtTime(t::ImPlotTime, ptm::Ptr{tm})::Ptr{tm}
+end
+
+"""
+    MkLocTime(ptm)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1593).
+"""
+function MkLocTime(ptm)
+    @ccall libcimgui.ImPlot_MkLocTime(ptm::Ptr{tm})::ImPlotTime
+end
+
+"""
+    GetLocTime(t::ImPlotTime, ptm)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1595).
+"""
+function GetLocTime(t::ImPlotTime, ptm)
+    @ccall libcimgui.ImPlot_GetLocTime(t::ImPlotTime, ptm::Ptr{tm})::Ptr{tm}
+end
+
+"""
+    MkTime(ptm)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1601).
+"""
+function MkTime(ptm)
+    @ccall libcimgui.ImPlot_MkTime(ptm::Ptr{tm})::ImPlotTime
+end
+
+"""
+    GetTime(t::ImPlotTime, ptm)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1606).
+"""
+function GetTime(t::ImPlotTime, ptm)
+    @ccall libcimgui.ImPlot_GetTime(t::ImPlotTime, ptm::Ptr{tm})::Ptr{tm}
+end
+
+"""
+    MakeTime(year::Integer, month::Integer = 0, day::Integer = 1, hour::Integer = 0, min::Integer = 0, sec::Integer = 0, us::Integer = 0)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1613).
+"""
+function MakeTime(
+    year::Integer,
+    month::Integer = 0,
+    day::Integer = 1,
+    hour::Integer = 0,
+    min::Integer = 0,
+    sec::Integer = 0,
+    us::Integer = 0,
+)
+    @ccall libcimgui.ImPlot_MakeTime(
+        year::Cint,
+        month::Cint,
+        day::Cint,
+        hour::Cint,
+        min::Cint,
+        sec::Cint,
+        us::Cint,
+    )::ImPlotTime
+end
+
+"""
+    GetYear(t::ImPlotTime)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1615).
+"""
+function GetYear(t::ImPlotTime)
+    @ccall libcimgui.ImPlot_GetYear(t::ImPlotTime)::Cint
+end
+
+"""
+    GetMonth(t::ImPlotTime)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1617).
+"""
+function GetMonth(t::ImPlotTime)
+    @ccall libcimgui.ImPlot_GetMonth(t::ImPlotTime)::Cint
+end
+
+"""
+    AddTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_, Integer}, count::Integer)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1620).
+"""
+function AddTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_,Integer}, count::Integer)
+    @ccall libcimgui.ImPlot_AddTime(t::ImPlotTime, unit::ImPlotTimeUnit, count::Cint)::ImPlotTime
+end
+
+"""
+    FloorTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1622).
+"""
+function FloorTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_,Integer})
+    @ccall libcimgui.ImPlot_FloorTime(t::ImPlotTime, unit::ImPlotTimeUnit)::ImPlotTime
+end
+
+"""
+    CeilTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1624).
+"""
+function CeilTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_,Integer})
+    @ccall libcimgui.ImPlot_CeilTime(t::ImPlotTime, unit::ImPlotTimeUnit)::ImPlotTime
+end
+
+"""
+    RoundTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_, Integer})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1626).
+"""
+function RoundTime(t::ImPlotTime, unit::Union{ImPlotTimeUnit_,Integer})
+    @ccall libcimgui.ImPlot_RoundTime(t::ImPlotTime, unit::ImPlotTimeUnit)::ImPlotTime
+end
+
+"""
+    CombineDateTime(date_part::ImPlotTime, time_part::ImPlotTime)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1628).
+"""
+function CombineDateTime(date_part::ImPlotTime, time_part::ImPlotTime)
+    @ccall libcimgui.ImPlot_CombineDateTime(date_part::ImPlotTime, time_part::ImPlotTime)::ImPlotTime
+end
+
+"""
+    Now()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1631).
+"""
+function Now()
+    @ccall libcimgui.ImPlot_Now()::ImPlotTime
+end
+
+"""
+    Today()
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1633).
+"""
+function Today()
+    @ccall libcimgui.ImPlot_Today()::ImPlotTime
+end
+
+"""
+    FormatTime(t::ImPlotTime, buffer, size::Integer, fmt::Union{ImPlotTimeFmt_, Integer}, use_24_hr_clk::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1636).
+"""
+function FormatTime(t::ImPlotTime, buffer, size::Integer, fmt::Union{ImPlotTimeFmt_,Integer}, use_24_hr_clk::Bool)
+    @ccall libcimgui.ImPlot_FormatTime(
+        t::ImPlotTime,
+        buffer::Cstring,
+        size::Cint,
+        fmt::ImPlotTimeFmt,
+        use_24_hr_clk::Bool,
+    )::Cint
+end
+
+"""
+    FormatDate(t::ImPlotTime, buffer, size::Integer, fmt::Union{ImPlotDateFmt_, Integer}, use_iso_8601::Bool)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1638).
+"""
+function FormatDate(t::ImPlotTime, buffer, size::Integer, fmt::Union{ImPlotDateFmt_,Integer}, use_iso_8601::Bool)
+    @ccall libcimgui.ImPlot_FormatDate(
+        t::ImPlotTime,
+        buffer::Cstring,
+        size::Cint,
+        fmt::ImPlotDateFmt,
+        use_iso_8601::Bool,
+    )::Cint
+end
+
+"""
+    FormatDateTime(t::ImPlotTime, buffer, size::Integer, fmt::ImPlotDateTimeSpec)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1640).
+"""
+function FormatDateTime(t::ImPlotTime, buffer, size::Integer, fmt::ImPlotDateTimeSpec)
+    @ccall libcimgui.ImPlot_FormatDateTime(t::ImPlotTime, buffer::Cstring, size::Cint, fmt::ImPlotDateTimeSpec)::Cint
+end
+
+"""
+    ShowDatePicker(id, level, t, t1, t2)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1646).
+"""
+function ShowDatePicker(id, level, t, t1, t2)
+    @ccall libcimgui.ImPlot_ShowDatePicker(
+        id::Cstring,
+        level::Ptr{Cint},
+        t::Ptr{ImPlotTime},
+        t1::Ptr{ImPlotTime},
+        t2::Ptr{ImPlotTime},
+    )::Bool
+end
+
+"""
+    ShowTimePicker(id, t)
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1649).
+"""
+function ShowTimePicker(id, t)
+    @ccall libcimgui.ImPlot_ShowTimePicker(id::Cstring, t::Ptr{ImPlotTime})::Bool
+end
+
+"""
+    TransformForward_Log10(v::Real, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1655).
+"""
+function TransformForward_Log10(v::Real, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_TransformForward_Log10(v::Cdouble, noname1::Ptr{Cvoid})::Cdouble
+end
+
+"""
+    TransformInverse_Log10(v::Real, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1660).
+"""
+function TransformInverse_Log10(v::Real, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_TransformInverse_Log10(v::Cdouble, noname1::Ptr{Cvoid})::Cdouble
+end
+
+"""
+    TransformForward_SymLog(v::Real, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1664).
+"""
+function TransformForward_SymLog(v::Real, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_TransformForward_SymLog(v::Cdouble, noname1::Ptr{Cvoid})::Cdouble
+end
+
+"""
+    TransformInverse_SymLog(v::Real, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1668).
+"""
+function TransformInverse_SymLog(v::Real, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_TransformInverse_SymLog(v::Cdouble, noname1::Ptr{Cvoid})::Cdouble
+end
+
+"""
+    TransformForward_Logit(v::Real, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1672).
+"""
+function TransformForward_Logit(v::Real, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_TransformForward_Logit(v::Cdouble, noname1::Ptr{Cvoid})::Cdouble
+end
+
+"""
+    TransformInverse_Logit(v::Real, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1677).
+"""
+function TransformInverse_Logit(v::Real, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_TransformInverse_Logit(v::Cdouble, noname1::Ptr{Cvoid})::Cdouble
+end
+
+"""
+    Formatter_Default(value::Real, buff, size::Integer, data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1685).
+"""
+function Formatter_Default(value::Real, buff, size::Integer, data::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_Formatter_Default(value::Cdouble, buff::Cstring, size::Cint, data::Ptr{Cvoid})::Cint
+end
+
+"""
+    Formatter_Logit(value::Real, buff, size::Integer, noname1::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1690).
+"""
+function Formatter_Logit(value::Real, buff, size::Integer, noname1::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_Formatter_Logit(value::Cdouble, buff::Cstring, size::Cint, noname1::Ptr{Cvoid})::Cint
+end
+
+"""
+    Formatter_Time(noname1::Real, buff, size::Integer, data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1706).
+"""
+function Formatter_Time(noname1::Real, buff, size::Integer, data::Union{Ptr,Ref,AbstractArray})
+    @ccall libcimgui.ImPlot_Formatter_Time(noname1::Cdouble, buff::Cstring, size::Cint, data::Ptr{Cvoid})::Cint
+end
+
+"""
+    Locator_Default(ticker, range::ImPlotRange, pixels::Real, vertical::Bool, formatter::ImPlotFormatter, formatter_data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1715).
+"""
+function Locator_Default(
+    ticker,
+    range::ImPlotRange,
+    pixels::Real,
+    vertical::Bool,
+    formatter::ImPlotFormatter,
+    formatter_data::Union{Ptr,Ref,AbstractArray},
+)
+    @ccall libcimgui.ImPlot_Locator_Default(
+        ticker::Ptr{ImPlotTicker},
+        range::ImPlotRange,
+        pixels::Cfloat,
+        vertical::Bool,
+        formatter::ImPlotFormatter,
+        formatter_data::Ptr{Cvoid},
+    )::Cvoid
+end
+
+"""
+    Locator_Time(ticker, range::ImPlotRange, pixels::Real, vertical::Bool, formatter::ImPlotFormatter, formatter_data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1716).
+"""
+function Locator_Time(
+    ticker,
+    range::ImPlotRange,
+    pixels::Real,
+    vertical::Bool,
+    formatter::ImPlotFormatter,
+    formatter_data::Union{Ptr,Ref,AbstractArray},
+)
+    @ccall libcimgui.ImPlot_Locator_Time(
+        ticker::Ptr{ImPlotTicker},
+        range::ImPlotRange,
+        pixels::Cfloat,
+        vertical::Bool,
+        formatter::ImPlotFormatter,
+        formatter_data::Ptr{Cvoid},
+    )::Cvoid
+end
+
+"""
+    Locator_Log10(ticker, range::ImPlotRange, pixels::Real, vertical::Bool, formatter::ImPlotFormatter, formatter_data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1717).
+"""
+function Locator_Log10(
+    ticker,
+    range::ImPlotRange,
+    pixels::Real,
+    vertical::Bool,
+    formatter::ImPlotFormatter,
+    formatter_data::Union{Ptr,Ref,AbstractArray},
+)
+    @ccall libcimgui.ImPlot_Locator_Log10(
+        ticker::Ptr{ImPlotTicker},
+        range::ImPlotRange,
+        pixels::Cfloat,
+        vertical::Bool,
+        formatter::ImPlotFormatter,
+        formatter_data::Ptr{Cvoid},
+    )::Cvoid
+end
+
+"""
+    Locator_SymLog(ticker, range::ImPlotRange, pixels::Real, vertical::Bool, formatter::ImPlotFormatter, formatter_data::Union{Ptr, Ref, AbstractArray})
+
+
+
+!!! warning
+    This function is internal, it may change in the future.
+
+[Upstream link](https://github.com/epezent/implot/blob/851cdbd/implot_internal.h#L1718).
+"""
+function Locator_SymLog(
+    ticker,
+    range::ImPlotRange,
+    pixels::Real,
+    vertical::Bool,
+    formatter::ImPlotFormatter,
+    formatter_data::Union{Ptr,Ref,AbstractArray},
+)
+    @ccall libcimgui.ImPlot_Locator_SymLog(
+        ticker::Ptr{ImPlotTicker},
+        range::ImPlotRange,
+        pixels::Cfloat,
+        vertical::Bool,
+        formatter::ImPlotFormatter,
+        formatter_data::Ptr{Cvoid},
+    )::Cvoid
 end
 
 function Annotation(x::Real, y::Real, pix_offset::ImVec2, fmt::String)
     col = GetLastItemColor()
-    ccall(
-        (:ImPlot_Annotation_Str, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, ImVec4, ImVec2, Bool, Cstring),
-        x,
-        y,
-        col,
-        pix_offset,
-        false,
-        fmt,
-    )
+    @ccall libcimgui.ImPlot_Annotation_Str(
+        x::Cdouble,
+        y::Cdouble,
+        col::ImVec4,
+        pix_offset::ImVec2,
+        false::Bool,
+        fmt::Cstring,
+    )::Cvoid
 end
 
 function AnnotationClamped(x::Real, y::Real, pix_offset::ImVec2, fmt::String)
     col = GetLastItemColor()
-    ccall(
-        (:ImPlot_Annotation_Str, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, ImVec4, ImVec2, Bool, Cstring),
-        x,
-        y,
-        col,
-        pix_offset,
-        true,
-        fmt,
-    )
+    @ccall libcimgui.ImPlot_Annotation_Str(
+        x::Cdouble,
+        y::Cdouble,
+        col::ImVec4,
+        pix_offset::ImVec2,
+        true::Bool,
+        fmt::Cstring,
+    )::Cvoid
 end
 
 function Annotation(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, fmt::String)
-    ccall(
-        (:ImPlot_Annotation_Str, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, ImVec4, ImVec2, Bool, Cstring),
-        x,
-        y,
-        col,
-        pix_offset,
-        false,
-        fmt,
-    )
+    @ccall libcimgui.ImPlot_Annotation_Str(
+        x::Cdouble,
+        y::Cdouble,
+        col::ImVec4,
+        pix_offset::ImVec2,
+        false::Bool,
+        fmt::Cstring,
+    )::Cvoid
 end
 
 function AnnotationClamped(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, fmt::String)
-    ccall(
-        (:ImPlot_Annotation_Str, libcimgui),
-        Cvoid,
-        (Cdouble, Cdouble, ImVec4, ImVec2, Bool, Cstring),
-        x,
-        y,
-        col,
-        pix_offset,
-        true,
-        fmt,
-    )
+    @ccall libcimgui.ImPlot_Annotation_Str(
+        x::Cdouble,
+        y::Cdouble,
+        col::ImVec4,
+        pix_offset::ImVec2,
+        true::Bool,
+        fmt::Cstring,
+    )::Cvoid
 end
 
 
 # exports
-const PREFIXES = ["ImPlot", "IMPLOT"]
-for name in names(@__MODULE__; all = true), prefix in PREFIXES
-    if startswith(string(name), prefix)
-        @eval export $name
+let prefixes = ["ImPlot", "IMPLOT"],
+    internal = Set([
+        :Formatter_Time_Data,
+        :ImPlotAlignmentData,
+        :ImPlotAnnotation,
+        :ImPlotAnnotationCollection,
+        :ImPlotAxis,
+        :ImPlotColormapData,
+        :ImPlotContext,
+        :ImPlotDateFmt,
+        :ImPlotDateFmt_,
+        :ImPlotDateFmt_DayMo,
+        :ImPlotDateFmt_DayMoYr,
+        :ImPlotDateFmt_Mo,
+        :ImPlotDateFmt_MoYr,
+        :ImPlotDateFmt_None,
+        :ImPlotDateFmt_Yr,
+        :ImPlotDateTimeSpec,
+        :ImPlotItem,
+        :ImPlotItemGroup,
+        :ImPlotLegend,
+        :ImPlotMarkerInternal,
+        :ImPlotMarkerInternal_,
+        :ImPlotMarker_Invalid,
+        :ImPlotNextItemData,
+        :ImPlotNextPlotData,
+        :ImPlotPlot,
+        :ImPlotPointError,
+        :ImPlotSubplot,
+        :ImPlotTag,
+        :ImPlotTagCollection,
+        :ImPlotTick,
+        :ImPlotTicker,
+        :ImPlotTime,
+        :ImPlotTimeFmt,
+        :ImPlotTimeFmt_,
+        :ImPlotTimeFmt_Hr,
+        :ImPlotTimeFmt_HrMin,
+        :ImPlotTimeFmt_HrMinS,
+        :ImPlotTimeFmt_HrMinSMs,
+        :ImPlotTimeFmt_MinSMs,
+        :ImPlotTimeFmt_None,
+        :ImPlotTimeFmt_S,
+        :ImPlotTimeFmt_SMs,
+        :ImPlotTimeFmt_SUs,
+        :ImPlotTimeFmt_Us,
+        :ImPlotTimeUnit,
+        :ImPlotTimeUnit_,
+        :ImPlotTimeUnit_COUNT,
+        :ImPlotTimeUnit_Day,
+        :ImPlotTimeUnit_Hr,
+        :ImPlotTimeUnit_Min,
+        :ImPlotTimeUnit_Mo,
+        :ImPlotTimeUnit_Ms,
+        :ImPlotTimeUnit_S,
+        :ImPlotTimeUnit_Us,
+        :ImPlotTimeUnit_Yr,
+    ])
+
+    for name in names(@__MODULE__; all = true)
+        if any(p -> startswith(string(name), p), prefixes) && name ∉ internal
+            @eval export $name
+        end
     end
+end
+
+@static if VERSION >= v"1.11"
+    eval(
+        Meta.parse(
+            "public AddColormap, Annotation, AnnotationClamped, BeginAlignedPlots, BeginDragDropSourceAxis, BeginDragDropSourceItem, BeginDragDropSourcePlot, BeginDragDropTargetAxis, BeginDragDropTargetLegend, BeginDragDropTargetPlot, BeginLegendPopup, BeginPlot, BeginSubplots, BustColorCache, CancelPlotSelection, Clamp, ColormapButton, ColormapIcon, ColormapScale, ColormapSlider, Contains, CreateContext, DestroyContext, DragLineX, DragLineY, DragPoint, DragRect, EndAlignedPlots, EndDragDropSource, EndDragDropTarget, EndLegendPopup, EndPlot, EndSubplots, GetColormapColor, GetColormapCount, GetColormapIndex, GetColormapName, GetColormapSize, GetCurrentContext, GetInputMap, GetLastItemColor, GetMarkerName, GetPlotDrawList, GetPlotLimits, GetPlotMousePos, GetPlotPos, GetPlotSelection, GetPlotSize, GetStyle, GetStyleColorName, HideNextItem, IsAxisHovered, IsLegendEntryHovered, IsPlotHovered, IsPlotSelected, IsSubplotsHovered, ItemIcon, MapInputDefault, MapInputReverse, Max, Min, NextColormapColor, NextMarker, PixelsToPlot, PlotBarGroups, PlotBars, PlotBarsG, PlotBubbles, PlotDigital, PlotDigitalG, PlotDummy, PlotErrorBars, PlotHeatmap, PlotHistogram, PlotHistogram2D, PlotImage, PlotInfLines, PlotLine, PlotLineG, PlotPieChart, PlotPolygon, PlotScatter, PlotScatterG, PlotShaded, PlotShadedG, PlotStairs, PlotStairsG, PlotStems, PlotText, PlotToPixels, PopColormap, PopPlotClipRect, PopStyleColor, PopStyleVar, PushColormap, PushPlotClipRect, PushStyleColor, PushStyleVar, SampleColormap, SetAxes, SetAxis, SetCurrentContext, SetImGuiContext, SetNextAxesLimits, SetNextAxesToFit, SetNextAxisLimits, SetNextAxisLinks, SetNextAxisToFit, SetupAxes, SetupAxesLimits, SetupAxis, SetupAxisFormat, SetupAxisLimits, SetupAxisLimitsConstraints, SetupAxisLinks, SetupAxisScale, SetupAxisTicks, SetupAxisZoomConstraints, SetupFinish, SetupLegend, SetupMouseText, ShowColormapSelector, ShowDemoWindow, ShowInputMapSelector, ShowMetricsWindow, ShowStyleEditor, ShowStyleSelector, ShowUserGuide, Size, StyleColorsAuto, StyleColorsClassic, StyleColorsDark, StyleColorsLight, TagX, TagY",
+        ),
+    )
 end

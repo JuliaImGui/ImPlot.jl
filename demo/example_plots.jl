@@ -83,7 +83,7 @@ function simple_demo(; engine=nothing)
                 y_ref = -2.0
                 # ImPlot.SetNextAxesLimits(0,1000,-2,1, ig.ImGuiCond_Always)
                 if ImPlot.BeginPlot("##shaded", "", "", ig.ImVec2(-1,300))
-                    ImPlot.PlotShaded("data", x, y1; y_ref=y_ref)
+                    ImPlot.PlotShaded("data", x, y1; yref=y_ref)
                     ImPlot.EndPlot()
                 end
             end
@@ -103,7 +103,7 @@ function simple_demo(; engine=nothing)
 
             if ig.CollapsingHeader("Histogram")
                 if ImPlot.BeginPlot("##hist")
-                    ImPlot.PlotHistogram("data", ys1, length(ys1))  # default bins (ImPlotBin_Sturges)
+                    ImPlot.PlotHistogram("data", ys1)  # default bins (ImPlotBin_Sturges)
                     ImPlot.EndPlot()
                 end
             end

@@ -28,8 +28,8 @@ function _coerce(a::AbstractArray{<:Real}, b::AbstractArray{<:Real}, rest::Abstr
     return map(x -> x isa DenseArray{T} ? x : convert(Array{T}, x), arrs)
 end
 
-# Shared array-of-structs field extraction (fail-loud); used by PlotLine/PlotScatter/PlotStairs/PlotDigital/PlotShaded.
-# `extra...` are positional args (e.g. PlotShaded's y_ref) inserted between count and spec in the low-level call.
+# Shared array-of-structs field extraction (fail-loud); used by the generated xs/ys plot methods in plotting.jl.
+# `extra...` are positional args (e.g. PlotShaded's yref) inserted between count and spec in the low-level call.
 function _plot_structfields(plotfn, label_id, data::AbstractVector{S}, xfield::Symbol, yfield::Symbol, spec::ImPlotSpec, extra...) where {S}
     if !(data isa DenseArray)
         throw(ArgumentError("$plotfn struct-field extraction needs a dense vector (got $(typeof(data))); collect it first"))

@@ -5,7 +5,6 @@ output_file_path = "../src/libcimplot.jl"
 module_name = ""
 jll_pkg_name = ""
 jll_pkg_extra = []
-export_symbol_prefixes = ["ImPlot", "IMPLOT"]
 prologue_file_path = "./prologue.jl"
 epilogue_file_path = "./epilogue.jl"
 # Entries are full-match regexes (see Clang's should_exclude_node).
@@ -26,7 +25,21 @@ output_ignorelist = ["ImPlotPoint_ImPlotPointNil",
                      # _LJ out-pointer variant (ImPlotPoint_getter: (data,idx,point) -> writes
                      # point; the only style used by the package/demo) and drop the non-suffixed
                      # by-value variant (ImPlotGetter: (idx,data) -> returns ImPlotPoint).
-                     "ImPlot_Plot(Line|Scatter|Stairs|Shaded|Bars|Digital)G"]
+                     "ImPlot_Plot(Line|Scatter|Stairs|Shaded|Bars|Digital)G",
+                     # Internal value types: the C constructors return heap pointers and
+                     # would overwrite the default Julia struct constructors.
+                     "ImPlotTime_(ImPlotTime_.*|destroy)",
+                     "ImPlotDateTimeSpec_(ImPlotDateTimeSpec_.*|destroy)",
+                     "ImPlotPointError_(ImPlotPointError_.*|destroy)",
+                     # The const overloads are identical to the non-const ones in Julia
+                     "ImPlotPlot_(XAxis|YAxis)__const",
+                     # Takes an ImVector_T* so all the type variants collapse to the same
+                     # Julia signature, and there's no use for it from Julia anyway.
+                     "ImPlot_FillRange_.*",
+                     # Internal scalar math helpers: the per-type C variants collapse to
+                     # duplicate Real/Integer Julia signatures, so only keep the double variant.
+                     "ImPlot_Im(Remap|Remap01|Overlaps)_(Float|S8|U8|S16|U16|S32|U32|S64|U64)",
+                     "ImPlot_Im(Log10|Sinh|Asinh)_Float"]
 use_julia_native_enum_type = false
 print_using_CEnum = true
 print_enum_as_integer = false
@@ -62,9 +75,9 @@ always_NUL_terminated_string = true
 is_function_strictly_typed = true
 opaque_func_arg_as_PtrCvoid = false
 opaque_as_mutable_struct = true
-use_ccall_macro = false
+use_ccall_macro = true
 wrap_variadic_function = false
-field_access_method_list = ["ImPlotInputMap", "ImPlotStyle"]
+field_access_method_list = ["ImPlotInputMap", "ImPlotStyle", "ImPlotPlot"]
 function_argument_conflict_symbols = []
 # emit constructors for all custom-layout structs like bitfield in the list,
 # or set to `true` to do so for all such structs

@@ -109,7 +109,8 @@ function BinarySearch(arr::Vector{T}, l::Int, r::Int, x::T) where T
     return -1
 end
 
-#= PlotCandlestick requires imgui_internal.h, which is available in cimplot v0.9+ only
+#= PlotCandlestick requires functions from implot_internal.h, which are wrapped
+# now but this example hasn't been ported yet.
 # Example for Custom Plotters and Tooltips section.
 function PlotCandlestick(label_id::String, xs::Vector{Float64}, opens::Vector{Float64},
                          closes::Vector{Float64}, lows::Vector{Float64}, highs::Vector{Float64},
@@ -446,9 +447,9 @@ function ShowDemoWindow()
             ImPlot.SetNextAxesLimits(0, 100, 0, 500)
             if ImPlot.BeginPlot("Stock Prices", "Days", "Price")
                 if show_fills
-                    ImPlot.PlotShaded("Stock 1", xs1, ys1; y_ref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
-                    ImPlot.PlotShaded("Stock 2", xs1, ys2; y_ref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
-                    ImPlot.PlotShaded("Stock 3", xs1, ys3; y_ref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
+                    ImPlot.PlotShaded("Stock 1", xs1, ys1; yref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
+                    ImPlot.PlotShaded("Stock 2", xs1, ys2; yref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
+                    ImPlot.PlotShaded("Stock 3", xs1, ys3; yref=fill_ref, spec=ImPlotSpec(FillAlpha=0.25))
                 end
                 if show_lines
                     ImPlot.PlotLine("Stock 1", xs1, ys1)
@@ -781,7 +782,7 @@ function ShowDemoWindow()
             ImPlot.SetNextAxisLimitsX(t - history, t, ImGuiCond_Always)
             if ImPlot.BeginPlot("##Scrolling", "", "", ImVec2(-1,150);
                 flags = 0, x_flags = rt_axis, y_flags = rt_axis | ImPlotAxisFlags_LockMin)
-                ImPlot.PlotShaded("Data 1", sdata1.data, :x, :y; y_ref=0)
+                ImPlot.PlotShaded("Data 1", sdata1.data, :x, :y; yref=0)
                 ImPlot.PlotLine("Data 2", sdata2.data, :x, :y;)
                 ImPlot.EndPlot()
             end

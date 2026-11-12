@@ -1,5 +1,6 @@
 using Test
 
+import Aqua
 using ImGuiTestEngine
 import ImGuiTestEngine as te
 import CImGui as ig
@@ -9,6 +10,9 @@ import GLFW
 import ModernGL
 ig.set_backend(:GlfwOpenGL3)
 
+@testset "Aqua.jl" begin
+    Aqua.test_all(ImPlot)
+end
 
 include(joinpath(@__DIR__, "..", "demo", "demo.jl"))
 
