@@ -89,20 +89,10 @@ function SetupAxisTicksY(v_min::Real, v_max::Real, n_ticks, labels, keep_default
 end
 
 include("constructors.jl")
-include("lines.jl")
-include("stairs.jl")
-include("shaded.jl")
-include("scatter.jl")
+include("plotting.jl")
 include("heatmap.jl")
-include("digital.jl")
-include("barchart.jl")
 include("piechart.jl")
-include("errorbars.jl")
-include("stems.jl")
-include("inflines.jl")
 include("tags.jl")
-include("polygon.jl")
-include("bubbles.jl")
 include("bargroups.jl")
 
 end # module

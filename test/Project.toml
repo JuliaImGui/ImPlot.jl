@@ -1,4 +1,5 @@
 [deps]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 CImGui = "5d785b6c-b76f-510e-a07c-3070796c7e87"
 CSyntax = "ea656a56-6ca6-5dda-bba5-7b6963a5f74c"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -9,3 +10,6 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Setfield = "efcf1570-3423-57d1-acb7-fd33fddbac46"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+Aqua = "0.8"

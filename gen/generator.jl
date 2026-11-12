@@ -1,5 +1,5 @@
 using Clang.Generators
-using ExprTools, MacroTools, JSON3
+using ExprTools, MacroTools, JSON
 using MacroTools: postwalk
 using JuliaFormatter: format_file
 import CImGuiPack_jll
@@ -68,10 +68,11 @@ const IMGUI_ISBITS_TYPES = [:ImPlotPoint, :ImPlotRange, :ImVec2, :ImVec4, :ImPlo
                             :ImPlotPoint_c, :ImPlotRange_c, :ImVec2_c, :ImVec4_c, :ImPlotRect_c, :ImPlotSpec_c]
 
 # Read in JSON metadata
-FUNCTION_METADATA, ENUMS, ENUM_CONSTANTS = read_metadata();
+FUNCTION_METADATA, STRUCTS_AND_ENUMS, ENUMS, ENUM_CONSTANTS = read_metadata();
 
-# Find and extract metadata for specific cimplot function
-filter_internal_functions!(options, FUNCTION_METADATA)
+# We generate the exports ourselves in generate_exports() so that internal types
+# aren't exported, that's why export_symbol_prefixes is empty in generator.toml.
+const EXPORT_PREFIXES = ["ImPlot", "IMPLOT"]
 
 function get_docstring(node, doc, docstrings)
     id = string(node.id)
@@ -84,13 +85,25 @@ end
 
 function generate()
     docstrings = Dict{String, String}()
+    public_names = Set{Symbol}()
     options["general"]["callback_documentation"] = (node, doc) -> get_docstring(node, doc, docstrings)
 
     cd(@__DIR__) do
+        output_file = joinpath(@__DIR__, "..", "src", "libcimplot.jl")
+
         ctx = create_context(CIMPLOT_H, args, options)
         build!(ctx, BUILDSTAGE_NO_PRINTING)
-        rewrite!(ctx.dag, FUNCTION_METADATA, options, docstrings)
+        rewrite!(ctx.dag, FUNCTION_METADATA, options, docstrings, public_names)
         build!(ctx, BUILDSTAGE_PRINTING_ONLY)
-        format_file(joinpath(@__DIR__,"..","src", "libcimplot.jl"); margin=120)
+
+        # The functions in the epilogue are all public
+        union!(public_names, function_names(options["general"]["epilogue_file_path"]))
+        open(output_file, "a") do io
+            write(io, generate_exports(public_names, EXPORT_PREFIXES))
+        end
+
+        format_file(output_file; margin=120)
+
+        generate_plot_wrappers(FUNCTION_METADATA, joinpath(@__DIR__, "..", "src", "plotting.jl"))
     end
 end

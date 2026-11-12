@@ -6,6 +6,44 @@ CurrentModule = ImPlot
 This documents notable changes in ImPlot.jl. The format is based on [Keep a
 Changelog](https://keepachangelog.com).
 
+## [v1.0.0] - 2026-11-12
+
+### Added
+- Added `Ptr{T}` accessors for the internal `ImPlotPlot` struct ([#52]).
+- The functions from `implot_internal.h` are now wrapped too. They aren't
+  exported or public, and their docstrings are marked as internal ([#52]).
+- Because the high-level plotting methods are now generated, some plot types
+  gained methods that previously had to be called with the low-level API
+  ([#52]):
+  - [`PlotHistogram()`](@ref) and [`PlotHistogram2D()`](@ref) accept arrays
+    directly.
+  - [`PlotBars()`](@ref) accepts a single array of values.
+  - [`PlotBubbles()`](@ref) accepts values and sizes with an `AbstractRange` or
+    `xscale`/`xstart` for the x values.
+  - [`PlotBars()`](@ref), [`PlotStems()`](@ref), [`PlotPolygon()`](@ref), and
+    [`PlotHistogram2D()`](@ref) accept a vector of structs with field names,
+    like [`PlotLine()`](@ref).
+  - The single-array methods of [`PlotLine()`](@ref), [`PlotScatter()`](@ref),
+    [`PlotStairs()`](@ref), and [`PlotShaded()`](@ref) accept `xscale`/`xstart`
+    keyword arguments, and [`PlotStems()`](@ref) accepts `scale`/`start`.
+
+### Changed
+- **Breaking**: the high-level plotting methods are now generated
+  automatically, and their keyword arguments use the same names as upstream.
+  The only rename is the `y_ref` keyword argument of [`PlotShaded()`](@ref),
+  which is now `yref` ([#52]).
+- **Breaking**: the types, enums, and enum values from `implot_internal.h` are
+  no longer exported. They're still accessible with e.g. `ImPlot.ImPlotAxis`,
+  but they're internal and may change at any time ([#52]).
+- **Breaking**: `void*` user data arguments must now be a `Ptr`, `Ref`, or
+  `AbstractArray`. This affects the `data` argument of
+  [`SetupAxisFormat()`](@ref), [`SetupAxisScale()`](@ref), and the `PlotXG()`
+  functions like [`PlotLineG()`](@ref), and the `fmt_data` argument of
+  [`PlotPieChart()`](@ref). This fixes method ambiguities in
+  [`PlotPieChart()`](@ref) ([#52]).
+- All non-internal functions are now marked as `public` on Julia 1.11+
+  ([#52]).
+
 ## [v0.8.2] - 2026-10-17
 
 ### Changed

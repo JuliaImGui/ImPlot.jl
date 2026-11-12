@@ -1,21 +1,21 @@
 function Annotation(x::Real, y::Real, pix_offset::ImVec2, fmt::String)
     col = GetLastItemColor()
-    ccall((:ImPlot_Annotation_Str, libcimgui), Cvoid, (Cdouble,Cdouble,ImVec4,ImVec2,Bool,Cstring),
-          x, y, col, pix_offset, false, fmt)
+    @ccall libcimgui.ImPlot_Annotation_Str(x::Cdouble, y::Cdouble, col::ImVec4, pix_offset::ImVec2,
+                                           false::Bool, fmt::Cstring)::Cvoid
 end
 
 function AnnotationClamped(x::Real, y::Real, pix_offset::ImVec2, fmt::String)
     col = GetLastItemColor()
-    ccall((:ImPlot_Annotation_Str, libcimgui), Cvoid, (Cdouble,Cdouble,ImVec4,ImVec2,Bool,Cstring),
-          x, y, col, pix_offset, true, fmt)
+    @ccall libcimgui.ImPlot_Annotation_Str(x::Cdouble, y::Cdouble, col::ImVec4, pix_offset::ImVec2,
+                                           true::Bool, fmt::Cstring)::Cvoid
 end
 
 function Annotation(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, fmt::String)
-    ccall((:ImPlot_Annotation_Str, libcimgui), Cvoid, (Cdouble,Cdouble,ImVec4,ImVec2,Bool,Cstring),
-          x, y, col, pix_offset, false, fmt)
+    @ccall libcimgui.ImPlot_Annotation_Str(x::Cdouble, y::Cdouble, col::ImVec4, pix_offset::ImVec2,
+                                           false::Bool, fmt::Cstring)::Cvoid
 end
 
 function AnnotationClamped(x::Real, y::Real, col::ImVec4, pix_offset::ImVec2, fmt::String)
-    ccall((:ImPlot_Annotation_Str, libcimgui), Cvoid, (Cdouble,Cdouble,ImVec4,ImVec2,Bool,Cstring),
-          x, y, col, pix_offset, true, fmt)
+    @ccall libcimgui.ImPlot_Annotation_Str(x::Cdouble, y::Cdouble, col::ImVec4, pix_offset::ImVec2,
+                                           true::Bool, fmt::Cstring)::Cvoid
 end
